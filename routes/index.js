@@ -11,12 +11,12 @@ router.all('/login', function (req, res) {
 
     if (jsonData[0].email.length > 0 && jsonData[0].password.length > 0) {
         request({
-            url: 'http://144.76.34.244:8080/magento/1.9/web/index.php/excellence/mobile/api/v1' + jsonData[0].url, //URL to hit
+            url: jsonData[1].url+'/customer/login/', //URL to hit
             method: 'POST',
-            headers: jsonData[1],
+            headers: jsonData[0],
             body: JSON.stringify({
-                email: jsonData[0].email,
-                password: jsonData[0].password
+                email: email,
+                password:password
             })
 
         }, function (error, response, body) {
@@ -31,18 +31,27 @@ router.all('/login', function (req, res) {
     }
 });
 
-
+var html_dir = './public/';
+router.get('/', function(req, res) {
+    res.sendfile( html_dir + 'first.html');
+    
+});
 router.all('/register', function (req, res) {
-    if (jsonData[2].firstname.length > 0 && jsonData[2].lastname.length > 0 && jsonData[2].email.length > 0 && jsonData[2].password.length > 0) {
+    var firstname = req.body.firstname;
+    var lastname = req.body.lastname;
+    var email = req.body.email;
+    var password = req.body.password;
+    console.log(email);
+    if (firstname.length > 0 && lastname.length > 0 && email.length > 0 && password.length > 0) {
         request({
-            url: 'http://144.76.34.244:8080/magento/1.9/web/index.php/excellence/mobile/api/v1' + jsonData[2].url, //URL to hit
-            method: 'GET',
-            headers: jsonData[1],
+            url:  jsonData[1].url+'/customer/register/', //URL to hit
+            method: 'POST',
+            headers: jsonData[0],
             body: JSON.stringify({
-                firstname: jsonData[2].firstname,
-                lastname: jsonData[2].lastname,
-                email: jsonData[2].email,
-                password: jsonData[2].password
+                firstname: firstname,
+                lastname: lastname,
+                email: email,
+                password: password
             })
 
         }, function (error, response, body) {

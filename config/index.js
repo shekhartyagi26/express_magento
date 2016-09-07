@@ -1,5 +1,4 @@
 jsonData = [
-	{"email": "manish@excellencetechnologies.in","password": "java@123","url":"/customer/login/"},
- {'APP_ID': 'com.tethr'},
- {"firstname": "shekhar","lastname": "tyagi","email":"shekhar13@gmail.com","password":"123456","url":"/customer/register/"},
+	{'APP_ID': 'com.tethr'},
+ {"url":"http://144.76.34.244:8080/magento/1.9/web/index.php/excellence/mobile/api/v1/customer/register/"},
 ]
