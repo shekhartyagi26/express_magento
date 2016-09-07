@@ -16,7 +16,6 @@ request({
         email: jsonData[0].email,
         password: jsonData[0].password
     })
-            //Set the body as a string
 }, function (error, response, body) {
     if (error) {
         console.log(error);
