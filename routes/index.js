@@ -12,8 +12,8 @@ request({
     headers: {
         'APP_ID': 'com.tethr'
     },
-    body:JSON.stringify({
-        email:jsonData[0].email ,
+    body: JSON.stringify({
+        email: jsonData[0].email,
         password: jsonData[0].password
     })
             //Set the body as a string
