@@ -1,4 +1,3 @@
 jsonData = [
-
- {"email": "manish@excellencetechnologies.in","password": "java@123"},
+	{"email": "manish@excellencetechnologies.in","password": "java@123"},
 ]
