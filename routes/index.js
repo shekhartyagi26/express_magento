@@ -7,12 +7,13 @@ require('node-import');
 imports('config/index');
 
 
-router.all('/login', function (req, res) {
-
-    if (jsonData[0].email.length > 0 && jsonData[0].password.length > 0) {
+router.post('/login', function (req, res) {
+    var email = req.body.email;
+    var password = req.body.password;
+    if (email.length > 0 && password.length > 0) {
         request({
             url: jsonData[1].url+'/customer/login/', //URL to hit
-            method: 'POST',
+            method: 'post',
             headers: jsonData[0],
             body: JSON.stringify({
                 email: email,
@@ -23,25 +24,27 @@ router.all('/login', function (req, res) {
             if (error) {
                 console.log(error);
                 res.json(error);
-            } else {
+            }
+            if (response.statusCode == 500) {
+                console.log("not found");
+                res.json({status: 0, msg: "not found"});
+            }else {
+
                 console.log(response.statusCode, body);
-                res.json(response.statusCode, body);
+                res.json({status:1,statuscode:response.statusCode, body:body});
             }
         });
+    }else {
+        res.json({status: 0, msg: "Invalid Fields"});
     }
 });
 
-var html_dir = './public/';
-router.get('/', function(req, res) {
-    res.sendfile( html_dir + 'first.html');
-    
-});
-router.all('/register', function (req, res) {
+
+router.post('/register', function (req, res) {
     var firstname = req.body.firstname;
     var lastname = req.body.lastname;
     var email = req.body.email;
     var password = req.body.password;
-    console.log(email);
     if (firstname.length > 0 && lastname.length > 0 && email.length > 0 && password.length > 0) {
         request({
             url:  jsonData[1].url+'/customer/register/', //URL to hit
@@ -58,11 +61,17 @@ router.all('/register', function (req, res) {
             if (error) {
                 console.log(error);
                 res.json(error);
-            } else {
+            } if (response.statusCode == 500) {
+                console.log("not found");
+                res.json({status: 0, msg: "not found"});
+            }else {
+
                 console.log(response.statusCode, body);
-                res.json(response.statusCode, body);
+                res.json({status:1,statuscode:response.statusCode, body:body});
             }
         });
+    }else {
+        res.json({status: 0, msg: "Invalid Fields"});
     }
 
 });
