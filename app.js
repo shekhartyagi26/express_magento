@@ -7,6 +7,8 @@ var bodyParser = require('body-parser');
 var mongoose =require('mongoose');
 
 var routes = require('./routes/index');
+var category = require('./routes/category');
+var customer = require('./routes/customer');
 var db = require('./mods/db.js');
 
 
@@ -26,6 +28,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(db());
 app.use('/', routes);
+app.use('/category',category);
+app.use('/customer',customer);
 
 
 
