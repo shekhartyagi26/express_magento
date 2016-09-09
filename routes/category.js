@@ -16,11 +16,10 @@ router.post('/products', function (req, res) {
         client.hgetall('category', function (err, object) {
             if (object.id == id) {
                 console.log("exist");
-                res.json(object);
+                console.log(object);
+                res.json({msg: "exist", statuscode: "200", data: object});
 
             } else {
-                console.log('doesnt exist');
-                res.json('doesnt exist');
                 request({
                     url: jsonData[1].url + '/category/products/', //URL to hit
                     method: 'post',
@@ -43,18 +42,18 @@ router.post('/products', function (req, res) {
                             'id': id,
                             "body": body
                         });
-                        client.hgetall('category', function (err, object) {
-                            console.log(object);
-                        });
+                        // client.hgetall('category', function (err, object) {
+                        //     console.log(object);
+                        // });
                         console.log(response.statusCode, body);
-                        res.json({status: 1, statuscode: response.statusCode, body: body});
+                        res.json({msg: "doesnt exist", statuscode: response.statusCode, body: body});
                     }
                 });
             }
         });
     } else {
         res.json({status: 0, error: "500", msg: "Invalid Fields"});
-        console.log("Invalid Fields")
+        console.log("Invalid Fields");
     }
 });
 
