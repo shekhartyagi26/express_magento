@@ -8,8 +8,9 @@ imports('config/index');
 
 var redis = require("redis"),
         client = redis.createClient();
-        
-router.post('/products', function (req, res) {
+
+router.all('/products', function (req, res) {
+    console.log(config.url);
     var id = req.body.id;
     if (id > 0) {
         client.hgetall('category_' + id, function (err, object) {
@@ -20,9 +21,9 @@ router.post('/products', function (req, res) {
 
             } else {
                 request({
-                    url: jsonData[1].url + '/category/products/', //URL to hit
+                    url: config.url + '/category/products/', //URL to hit
                     method: 'post',
-                    headers: jsonData[0],
+                    headers: {APP_ID: config.APP_ID},
                     body: JSON.stringify({
                         id: id
                     })
@@ -45,7 +46,7 @@ router.post('/products', function (req, res) {
                         console.log("doesnt exist");
                         console.log(response.statusCode, body);
                         res.json({msg: "doesnt exist", statuscode: response.statusCode, body: body});
-                    client.expire('category_'+id, jsonData[2].expiresAt);
+                        client.expire('category_' + id, config.category_expiresAt);
                     }
                 });
             }

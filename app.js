@@ -9,11 +9,15 @@ var mongoose =require('mongoose');
 var routes = require('./routes/index');
 var category = require('./routes/category');
 var customer = require('./routes/customer');
+var product = require('./routes/product');
+var home = require('./routes/home');
 var db = require('./mods/db.js');
 
 
 
 var app = express();
+
+cors = require('cors')
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -30,6 +34,10 @@ app.use(db());
 app.use('/', routes);
 app.use('/category',category);
 app.use('/customer',customer);
+app.use('/product',product);
+app.use('/home',home);
+
+app.use(cors());
 
 
 
