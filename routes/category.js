@@ -8,17 +8,17 @@ imports('config/index');
 
 var redis = require("redis"),
         client = redis.createClient();
-
+        
 router.post('/products', function (req, res) {
     var id = req.body.id;
     if (id > 0) {
-        client.hgetall('category_'+id, function (err, object) {
-            if (object!= null && object.id == id ) {
+        client.hgetall('category_' + id, function (err, object) {
+            if (object != null && object.id == id) {
                 console.log("exist");
                 console.log(object.id);
-                 res.json({msg: "exist", statuscode: "200", data: object});
+                res.json({msg: "exist", statuscode: "200", data: object});
 
-            } else  {
+            } else {
                 request({
                     url: jsonData[1].url + '/category/products/', //URL to hit
                     method: 'post',
@@ -34,23 +34,24 @@ router.post('/products', function (req, res) {
                     }
                     if (response.statusCode == 500) {
                         console.log("not found");
-                         res.json({status: 0, error: response.statusCode, msg: "not found"});
+                        res.json({status: 0, error: response.statusCode, msg: "not found"});
                     } else {
 
-                        client.hmset('category_'+id, {
+                        client.hmset('category_' + id, {
                             'id': id,
                             "body": body
                         });
-                       
+
                         console.log("doesnt exist");
                         console.log(response.statusCode, body);
                         res.json({msg: "doesnt exist", statuscode: response.statusCode, body: body});
+                    client.expire('category_'+id, jsonData[2].expiresAt);
                     }
                 });
             }
         });
     } else {
-         res.json({status: 0, error: "500", msg: "Invalid Fields"});
+        res.json({status: 0, error: "500", msg: "Invalid Fields"});
         console.log("Invalid Fields");
     }
 });
