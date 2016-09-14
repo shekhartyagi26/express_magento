@@ -11,10 +11,10 @@ imports('config/index');
 router.post('/login', function (req, res) {
     var email = req.body.email;
     var password = req.body.password;
-    if(email == undefined && password == undefined){
+    if (email == undefined && password == undefined) {
         console.log("undefined ");
-        res.json({status:0 , msg:"undefined "});
-    } else if (email.length >0 && password.length > 0) {
+        res.json({status: 0, msg: "undefined "});
+    } else if (email.length > 0 && password.length > 0) {
         request({
             url: config.url + '/customer/login/', //URL to hit
             method: 'post',
@@ -79,7 +79,6 @@ router.post('/register', function (req, res) {
         res.json({status: 0, msg: "Invalid Fields"});
     }
 });
-
 router.post('/forgot', function (req, res) {
     var email = req.body.email;
     if (email.length > 0) {
