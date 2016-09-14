@@ -9,6 +9,7 @@ imports('config/index');
 
 
 router.post('/login', function (req, res) {
+    console.log(req.body);
     var email = req.body.email;
     var password = req.body.password;
     if (email == undefined && password == undefined) {
