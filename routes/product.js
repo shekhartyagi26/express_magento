@@ -7,7 +7,6 @@ imports('config/index');
 var redis = require("redis"),
         client = redis.createClient();
 
-
 router.post('/get', function (req, res) {
     var sku = req.body.sku;
     if (sku.length > 0) {
@@ -34,7 +33,6 @@ router.post('/get', function (req, res) {
                         console.log("not found");
                         res.json({status: 0, msg: "not found"});
                     } else {
-                        console.log("doesn't exist")
                         client.hmset('product_' + sku, {
                             'sku': sku,
                             "body": body
