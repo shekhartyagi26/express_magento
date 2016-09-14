@@ -14,7 +14,6 @@ router.post('/get', function (req, res) {
             if (object != null && object.sku == sku) {
                 console.log({msg: "exist", statuscode: "200", data: object});
                 res.json({msg: "exist", statuscode: "200", data: object});
-
             } else {
                 request({
                     url: config.url + '/product/get/', //URL to hit
@@ -40,9 +39,7 @@ router.post('/get', function (req, res) {
                         console.log({status: "doesnt exist", statuscode: response.statusCode, body: body});
                         res.json({status: 1, body: body});
                         client.expire('product_' + sku, config.product_expiresAt);
-
                     }
-
                 });
             }
         });
