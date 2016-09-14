@@ -3,15 +3,18 @@ var router = express.Router();
 var path = require('path');
 var request = require('request');
 var cors = require('cors');
+var bodyParser = require('body-parser');
 require('node-import');
 imports('config/index');
+
 
 router.post('/login', function (req, res) {
     var email = req.body.email;
     var password = req.body.password;
-    console.log({email: email, password: password});
-
-    if (email && password) {
+    if(email == undefined && password == undefined){
+        console.log("undefined ");
+        res.json({status:0 , msg:"undefined "});
+    } else if (email.length >0 && password.length > 0) {
         request({
             url: config.url + '/customer/login/', //URL to hit
             method: 'post',
