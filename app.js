@@ -11,6 +11,8 @@ var category = require('./routes/category');
 var customer = require('./routes/customer');
 var product = require('./routes/product');
 var home = require('./routes/home');
+var account = require('./routes/account');
+var order = require('./routes/order');
 var db = require('./mods/db.js');
 
 
@@ -36,6 +38,8 @@ app.use('/category',category);
 app.use('/customer',customer);
 app.use('/product',product);
 app.use('/home',home);
+app.use('/account',account);
+app.use('/order',order);
 
 
 

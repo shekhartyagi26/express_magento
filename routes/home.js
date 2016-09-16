@@ -83,5 +83,36 @@ router.post('/categories', function (req, res) {
     });
 });
 
+router.post('/slider', function (req, res) {
+    client.hgetall('slider', function (err, object) {
+        if (object != null && object == object) {
+            console.log({msg: "exist", statuscode: "200", data: object});
+            res.json({msg: "exist", statuscode: "200", data: object});
+
+        } else {
+            request({
+                url: config.url + '/home/slider/', //URL to hit
+                method: 'post',
+                headers: {APP_ID: config.APP_ID},
+            }, function (error, result, body) {
+                if (error) {
+                    console.log(error);
+                    res.json({status: 0, error: error});
+                } else if (result.statusCode == 500) {
+                    console.log("not found");
+                    res.json({status: 0, error: result.statusCode, msg: "not found"});
+                } else {
+                    console.log("doesnt exist");
+                    client.hmset('slider', {
+                        "body": body
+                    });
+                    console.log(result.statusCode, body);
+                    res.json({status: 1, msg: "doesnt exist", statuscode: result.statusCode, body: body});
+                    client.expire('categories', config.product_expiresAt);
+                }
+            });
+        }
+    });
+});
 
 module.exports = router;
