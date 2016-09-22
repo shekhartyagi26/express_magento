@@ -9,6 +9,7 @@ const request_ = require('../service/request');
 var redis = require("redis"),
         client = redis.createClient();
 
+
 router.all('/products', function (req, res) {
     var id = req.body.id;
     var page = req.body.page;
@@ -22,19 +23,25 @@ router.all('/products', function (req, res) {
                 var headers = {APP_ID: config.APP_ID};
                 var url = '/category/products/';
                 request_.request(body, headers, url, function (req, response, msg) {
-                    client.hmset('category_' + id, {
-                        'id': id,
-                        "page": page,
-                        "limit": limit,
-                        "body": response
-                    });
-                    client.expire('category_' + id, config.category_expiresAt);
-                    res.json({status: 1, statuscode: req.statusCode, body: response, msg :msg});
+                    if (msg == "error") {
+                        res.json({status: 0, statuscode: "500", error: response});
+                    } else if (req.statusCode == 500) {
+                        res.json({status: 0, statuscode: req.statusCode, body:response});
+                    } else {
+                        client.hmset('category_' + id, {
+                            'id': id,
+                            "page": page,
+                            "limit": limit,
+                            "body": response
+                        });
+                        client.expire('category_' + id, config.category_expiresAt);
+                        res.json({status: 1, statuscode: req.statusCode, body: response});
+                    }
                 });
             }
         });
     } else {
-        res.json({status: 0, statuscode: "500", msg: "Invalid Fields"});
+        res.json({status: 0, statuscode: "500", body: "Invalid Fields"});
     }
 });
 
@@ -51,19 +58,25 @@ router.all('/categorylist', function (req, res) {
                 var headers = {APP_ID: config.APP_ID};
                 var url = '/category/categorylist/';
                 request_.request(body, headers, url, function (req, response, msg) {
-                    client.hmset('category_' + parent_id, {
-                        'parent_id': parent_id,
-                        "body": response,
-                        "type": type
-                    });
-                    client.expire('category_' + parent_id, config.category_expiresAt);
-                    res.json({status: 1, statuscode: req.statusCode, body: response, msg :msg});
+                    if (msg == "error") {
+                        res.json({status: 0, statuscode: "500", error: response});
+                    } else if (req.statusCode == 500) {
+                        res.json({status: 0, statuscode: req.statusCode, body:response});
+                    } else {
+                        client.hmset('category_' + parent_id, {
+                            'parent_id': parent_id,
+                            "body": response,
+                            "type": type
+                        });
+                        client.expire('category_' + parent_id, config.category_expiresAt);
+                        res.json({status: 1, statuscode: req.statusCode, body: response});
+                    }
                 });
+
             }
         });
     } else {
-        res.json({status: 0, error: "500", msg: "Invalid Fields"});
-        console.log("Invalid Fields");
+        res.json({status: 0, error: "500", body: "Invalid Fields"});
     }
 });
 

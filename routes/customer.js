@@ -6,9 +6,8 @@ var cors = require('cors');
 var bodyParser = require('body-parser');
 require('node-import');
 imports('config/index');
-
-
 const request_ = require('../service/request');
+
 router.post('/login', function (req, res) {
 
     var email = req.body.email;
@@ -20,11 +19,17 @@ router.post('/login', function (req, res) {
         var body = ({email: email, password: password});
         var headers = {APP_ID: config.APP_ID};
         var url = '/customer/login/';
-        request_.request(body, headers, url, function (req, response , msg) {
-            res.json({status: 1, statuscode: req.statusCode, body: response, msg :msg});
+        request_.request(body, headers, url, function (req, response, msg) {
+            if (msg == "error") {
+                res.json({status: 0, statuscode: "500", error: response});
+            } else if (req.statusCode == 500) {
+                res.json({status: 0, statuscode: req.statusCode, body:response});
+            } else {
+                res.json({status: 1, statuscode: req.statusCode, body: response});
+            }
         });
     } else {
-        res.json({status: 0, statuscode: "500", msg: "Invalid Fields"});
+        res.json({status: 0, statuscode: "500", body: "Invalid Fields"});
     }
 });
 
@@ -39,11 +44,16 @@ router.post('/register', function (req, res) {
         var headers = {APP_ID: config.APP_ID};
         var url = '/customer/register/';
         request_.request(body, headers, url, function (req, response, msg) {
-            console.log(response);
-            res.json({status: 1, statuscode: req.statusCode, body: response, msg :msg});
+            if (msg == "error") {
+                res.json({status: 0, statuscode: "500", error: response});
+            } else if (req.statusCode == 500) {
+                res.json({status: 0, statuscode: req.statusCode, body:response});
+            } else {
+                res.json({status: 1, statuscode: req.statusCode, body: response});
+            }
         });
     } else {
-        res.json({status: 0, statuscode: "500", msg: "Invalid Fields"});
+        res.json({status: 0, statuscode: "500", body: "Invalid Fields"});
     }
 });
 
@@ -54,11 +64,16 @@ router.post('/forgot', function (req, res) {
         var headers = {APP_ID: config.APP_ID};
         var url = '/customer/forget/';
         request_.request(body, headers, url, function (req, response, msg) {
-            console.log(response);
-            res.json({status: 1, statuscode: req.statusCode, body: response, msg :msg});
+            if (msg == "error") {
+                res.json({status: 0, statuscode: "500", error: response});
+            } else if (req.statusCode == 500) {
+                res.json({status: 0, statuscode: req.statusCode, body:response});
+            } else {
+                res.json({status: 1, statuscode: req.statusCode, body: response});
+            }
         });
     } else {
-        res.json({status: 0, statuscode: "500", msg: "Invalid Fields"});
+        res.json({status: 0, statuscode: "500", body: "Invalid Fields"});
     }
 });
 

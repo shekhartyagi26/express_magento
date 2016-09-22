@@ -23,7 +23,13 @@ router.post('/alllist', function (req, res) {
         var headers = {APP_ID: config.APP_ID, "Authorization": access_token};
         var url = '/order/alllist/';
         request_.request(body, headers, url, function (req, response, msg) {
-            res.json({status: 1, statuscode: req.statusCode, body: response, msg :msg});
+            if (msg == "error") {
+                res.json({status: 0, statuscode: "500", error: response});
+            } else if (req.statusCode == 500) {
+                res.json({status: 1, statuscode: req.statusCode, body: response});
+            } else {
+                res.json({status: 1, statuscode: req.statusCode, body: response});
+            }
         });
     } else {
         res.json({status: 0, statuscode: "500", msg: "Invalid Fields"});
@@ -41,10 +47,16 @@ router.post('/totalorder', function (req, res) {
         var headers = {APP_ID: config.APP_ID, "Authorization": access_token};
         var url = '/order/totalorder/';
         request_.request(body, headers, url, function (req, response, msg) {
-            res.json({status: 1, statuscode: req.statusCode, body: response, msg :msg});
+            if (msg == "error") {
+                res.json({status: 0, statuscode: "500", error: response});
+            } else if (req.statusCode == 500) {
+                res.json({status: 0, statuscode: req.statusCode, body:response});
+            } else {
+                res.json({status: 1, statuscode: req.statusCode, body: response});
+            }
         });
     } else {
-        res.json({status: 0, statuscode: "500", msg: "Invalid Fields"});
+        res.json({status: 0, statuscode: "500", body: "Invalid Fields"});
     }
 });
 

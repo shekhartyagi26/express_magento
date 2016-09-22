@@ -19,21 +19,25 @@ router.post('/products', function (req, res) {
                 var headers = {APP_ID: config.APP_ID};
                 var url = '/home/products/';
                 request_.request(body, headers, url, function (req, response, msg) {
-                    client.hmset('products_' + type, {
-                        'type': type,
-                        "data": response
-                    });
-                    client.expire('products_' + type, config.product_expiresAt);
-                    res.json({status: 1, statuscode: req.statusCode, body: response, msg :msg});
+                    if (msg == "error") {
+                        res.json({status: 0, statuscode: "500", error: response});
+                    } else if (req.statusCode == 500) {
+                        res.json({status: 0, statuscode: req.statusCode, body:response});
+                    } else {
+                        res.json({status: 1, statuscode: req.statusCode, body: response});
+                        client.hmset('products_' + type, {
+                            'type': type,
+                            "data": response
+                        });
+                        client.expire('products_' + type, config.product_expiresAt);
+                    }
                 });
             }
         });
     } else {
-        res.json({status: 0, error: "500", msg: "Invalid Fields"});
+        res.json({status: 0, error: "500", body: "Invalid Fields"});
     }
 });
-
-
 
 router.post('/categories', function (req, res) {
     client.hgetall('categories', function (err, object) {
@@ -44,12 +48,18 @@ router.post('/categories', function (req, res) {
             var body = ({});
             var headers = {APP_ID: config.APP_ID};
             var url = '/home/categories/';
-            request_.request(body, headers, url, function (req, response) {
-                client.hmset('categories', {
-                    "body": response
-                });
-                client.expire('categories', config.product_expiresAt);
-                res.json({status: 1, statuscode: req.statusCode, body: response, msg :msg});
+            request_.request(body, headers, url, function (req, response, msg) {
+                if (msg == "error") {
+                    res.json({status: 0, statuscode: "500", error: response});
+                } else if (req.statusCode == 500) {
+                    res.json({status: 0, statuscode: req.statusCode, body:response});
+                } else {
+                    res.json({status: 1, statuscode: req.statusCode, body: response});
+                    client.hmset('categories', {
+                        "body": response
+                    });
+                    client.expire('categories', config.product_expiresAt);
+                }
             });
         }
     });
@@ -64,12 +74,18 @@ router.post('/slider', function (req, res) {
             var body = ({});
             var headers = {APP_ID: config.APP_ID};
             var url = '/home/slider/';
-            request_.request(body, headers, url, function (req, response) {
-                client.hmset('slider', {
-                    "body": response
-                });
-                client.expire('categories', config.product_expiresAt);
-                res.json({status: 1, statuscode: req.statusCode, body: response, msg :msg});
+            request_.request(body, headers, url, function (req, response, msg) {
+                if (msg == "error") {
+                    res.json({status: 0, statuscode: req.statusCode, body:response});
+                } else if (req.statusCode == 500) {
+                    res.json({status: 0, statuscode: req.statusCode, msg: msg});
+                } else {
+                    client.hmset('slider', {
+                        "body": response
+                    });
+                    client.expire('categories', config.product_expiresAt);
+                    res.json({status: 1, statuscode: req.statusCode, body: response});
+                }
             });
         }
     });

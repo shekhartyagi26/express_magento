@@ -27,10 +27,16 @@ router.post('/edit', function (req, res) {
         var headers = {APP_ID: config.APP_ID, "Authorization": access_token};
         var url = '/address/edit/';
         request_.request(body, headers, url, function (req, response, msg) {
-            res.json({status: 1, statuscode: req.statusCode, body: response, msg :msg});
+            if (msg == "error") {
+                res.json({status: 0, statuscode: "500", error: response});
+            } else if (req.statusCode == 500) {
+                res.json({status: 0, statuscode: req.statusCode, body:response});
+            } else {
+                res.json({status: 1, statuscode: req.statusCode, body: response});
+            }
         });
     } else {
-        res.json({status: 0, error: "500", msg: "Invalid Fields"});
+        res.json({status: 0, error: "500", body: "Invalid Fields"});
     }
 });
 

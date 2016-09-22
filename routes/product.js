@@ -20,17 +20,23 @@ router.post('/get', function (req, res) {
                 var headers = {APP_ID: config.APP_ID};
                 var url = '/product/get/';
                 request_.request(body, headers, url, function (req, response, msg) {
-                    client.hmset('product_' + sku, {
-                        'sku': sku,
-                        "data": response
-                    });
-                    client.expire('product_' + sku, config.product_expiresAt);
-                    res.json({status: 1, statuscode: req.statusCode, body: response, msg :msg});
+                    if (msg == "error") {
+                        res.json({status: 0, statuscode: req.statusCode, body:response});
+                    } else if (req.statusCode == 500) {
+                        res.json({status: 0, statuscode: req.statusCode, body: response});
+                    } else {
+                        client.hmset('product_' + sku, {
+                            'sku': sku,
+                            "data": response
+                        });
+                        client.expire('product_' + sku, config.product_expiresAt);
+                        res.json({status: 1, statuscode: req.statusCode, body: response});
+                    }
                 });
             }
         });
     } else {
-        res.json({status: 0, statuscode: "500", msg: "Invalid Fields"});
+        res.json({status: 0, statuscode: "500", body: "Invalid Fields"});
     }
 });
 
