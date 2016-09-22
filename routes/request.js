@@ -3,28 +3,20 @@ require('node-import');
 imports('config/index');
 
 
-exports.login = function (email, password, callback) {
-
+exports.request = function (body, headers, url, callback) {
     request({
-        url: config.url + '/customer/login/', //URL to hit
+        url: config.url + url, //URL to hit
         method: 'post',
-        headers: {APP_ID: config.APP_ID},
+        headers: headers,
         timeout: 10000,
-        body: JSON.stringify({
-            email: email,
-            password: password
-        })
-
+        body: JSON.stringify(body)
     }, function (error, result, body) {
         if (error) {
-            console.log(error);
-            callback(null, body, error);
+            callback(400, error, "error");
         } else if (result.statusCode == 500) {
-            console.log("not found");
-            callback(null, body, notfound)
+            callback(result, body, "notfound")
         } else {
-            callback(null, body, 'successfully');
-
+            callback(result, body, 'successfully');
         }
     });
 } 

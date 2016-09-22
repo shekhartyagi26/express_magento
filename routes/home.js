@@ -6,41 +6,25 @@ require('node-import');
 imports('config/index');
 var redis = require("redis"),
         client = redis.createClient();
-
+const request_ = require('./request');
 router.post('/products', function (req, res) {
-
     var type = req.body.type;
     if (type.length > 0) {
         client.hgetall('products_' + type, function (err, object) {
             if (object != null && object.type == type) {
                 console.log({msg: "exist", statuscode: "200", data: object});
                 res.json(object);
-
             } else {
-                request({
-                    url: config.url + '/home/products/', //URL to hit
-                    method: 'post',
-                    headers: {APP_ID: config.APP_ID},
-                    body: JSON.stringify({
-                        type: type
-                    })
-
-                }, function (error, result, body) {
-                    if (error) {
-                        console.log(error);
-                        res.json({status: 0, error: error});
-                    } else if (result.statusCode == 500) {
-                        console.log("not found");
-                        res.json({status: 0, error: result.statusCode, msg: "not found"});
-                    } else {
-                        client.hmset('products_' + type, {
-                            'type': type,
-                            "data": body
-                        });
-                        console.log(result.statusCode, body);
-                        res.json({status: 1, msg: "doesnt exist", statuscode: result.statusCode, body: body});
-                        client.expire('products_' + type, config.product_expiresAt);
-                    }
+                var body = ({type: type});
+                var headers = {APP_ID: config.APP_ID};
+                var url = '/home/products/';
+                request_.request(body, headers, url, function (req, response) {
+                    client.hmset('products_' + type, {
+                        'type': type,
+                        "data": response
+                    });
+                    client.expire('products_' + type, config.product_expiresAt);
+                    res.json({status: 1, statuscode: req.statusCode, body: response});
                 });
             }
         });
@@ -56,28 +40,16 @@ router.post('/categories', function (req, res) {
         if (object != null && object == object) {
             console.log({msg: "exist", statuscode: "200", data: object});
             res.json({msg: "exist", statuscode: "200", data: object});
-
         } else {
-            request({
-                url: config.url + '/home/categories/', //URL to hit
-                method: 'post',
-                headers: {APP_ID: config.APP_ID},
-            }, function (error, result, body) {
-                if (error) {
-                    console.log(error);
-                    res.json({status: 0, error: error});
-                } else if (result.statusCode == 500) {
-                    console.log("not found");
-                    res.json({status: 0, error: result.statusCode, msg: "not found"});
-                } else {
-                    console.log("doesnt exist");
-                    client.hmset('categories', {
-                        "body": body
-                    });
-                    console.log(result.statusCode, body);
-                    res.json({status: 1, msg: "doesnt exist", statuscode: result.statusCode, body: body});
-                    client.expire('categories', config.product_expiresAt);
-                }
+            var body = ({});
+            var headers = {APP_ID: config.APP_ID};
+            var url = '/home/categories/';
+            request_.request(body, headers, url, function (req, response) {
+                client.hmset('categories', {
+                    "body": response
+                });
+                client.expire('categories', config.product_expiresAt);
+                res.json({status: 1, statuscode: req.statusCode, body: response});
             });
         }
     });
@@ -88,28 +60,16 @@ router.post('/slider', function (req, res) {
         if (object != null && object == object) {
             console.log({msg: "exist", statuscode: "200", data: object});
             res.json({msg: "exist", statuscode: "200", data: object});
-
         } else {
-            request({
-                url: config.url + '/home/slider/', //URL to hit
-                method: 'post',
-                headers: {APP_ID: config.APP_ID},
-            }, function (error, result, body) {
-                if (error) {
-                    console.log(error);
-                    res.json({status: 0, error: error});
-                } else if (result.statusCode == 500) {
-                    console.log("not found");
-                    res.json({status: 0, error: result.statusCode, msg: "not found"});
-                } else {
-                    console.log("doesnt exist");
-                    client.hmset('slider', {
-                        "body": body
-                    });
-                    console.log(result.statusCode, body);
-                    res.json({status: 1, msg: "doesnt exist", statuscode: result.statusCode, body: body});
-                    client.expire('categories', config.product_expiresAt);
-                }
+            var body = ({});
+            var headers = {APP_ID: config.APP_ID};
+            var url = '/home/slider/';
+            request_.request(body, headers, url, function (req, response) {
+                client.hmset('slider', {
+                    "body": response
+                });
+                client.expire('categories', config.product_expiresAt);
+                res.json({status: 1, statuscode: req.statusCode, body: response});
             });
         }
     });

@@ -13,18 +13,17 @@ router.post('/login', function (req, res) {
     var email = req.body.email;
     var password = req.body.password;
     if (email == undefined && password == undefined) {
-        console.log("undefined ");
         res.json({status: 0, msg: "undefined "});
     } else if (email.length > 0 && password.length > 0) {
 
-        request_.login(email, password, function (req, response, callback) {
-            console.log(response);
-            res.json(response);
-
+        var body = ({email: email, password: password});
+        var headers = {APP_ID: config.APP_ID};
+        var url = '/customer/login/';
+        request_.request(body, headers, url, function (req, response) {
+            res.json({status: 1, statuscode: req.statusCode, body: response});
         });
-        ;
     } else {
-        res.json({status: 0, msg: "Invalid Fields"});
+        res.json({status: 0, statuscode: "500", msg: "Invalid Fields"});
     }
 });
 
@@ -35,64 +34,30 @@ router.post('/register', function (req, res) {
     var email = req.body.email;
     var password = req.body.password;
     if (firstname.length > 0 && lastname.length > 0 && email.length > 0 && password.length > 0) {
-        request({
-            url: config.url + '/customer/register/', //URL to hit
-            method: 'POST',
-            headers: {APP_ID: config.APP_ID},
-            body: JSON.stringify({
-                firstname: firstname,
-                lastname: lastname,
-                email: email,
-                password: password
-            })
-
-        }, function (error, response, body) {
-            if (error) {
-                console.log(error);
-                res.json(error);
-            }
-            console.log(response.statusCode);
-            if (response.statusCode == 500) {
-                console.log("exist");
-                console.log({status: 1, msg: "exist", body: body});
-                res.json({status: 0, msg: "the customer email id already exists", body: body});
-            } else {
-                console.log("registered successfully");
-                console.log(response.statusCode, body);
-                res.json({status: 1, msg: "registered successfully", body: body});
-            }
+        var body = ({firstname: firstname, lastname: lastname, email: email, password: password});
+        var headers = {APP_ID: config.APP_ID};
+        var url = '/customer/register/';
+        request_.request(body, headers, url, function (req, response) {
+            console.log(response);
+            res.json({status: 1, statuscode: req.statusCode, body: response});
         });
     } else {
-        res.json({status: 0, msg: "Invalid Fields"});
+        res.json({status: 0, statuscode: "500", msg: "Invalid Fields"});
     }
 });
+
 router.post('/forgot', function (req, res) {
     var email = req.body.email;
     if (email.length > 0) {
-        request({
-            url: config.url + '/customer/forgot/', //URL to hit
-            method: 'POST',
-            headers: {APP_ID: config.APP_ID},
-            body: JSON.stringify({
-                email: email
-            })
-
-        }, function (error, response, body) {
-            if (error) {
-                console.log(error);
-                res.json(error);
-            }
-            if (response.statusCode == 500) {
-                console.log("not found");
-                res.json({status: 0, msg: "not found"});
-            } else {
-                console.log({status: "1", statuscode: response.statusCode, body: body});
-                res.json({status: 1, statuscode: response.statusCode, body: body});
-            }
-
+        var body = ({email: email});
+        var headers = {APP_ID: config.APP_ID};
+        var url = '/customer/forget/';
+        request_.request(body, headers, url, function (req, response) {
+            console.log(response);
+            res.json({status: 1, statuscode: req.statusCode, body: response});
         });
     } else {
-        res.json({status: 0, msg: "Invalid Fields"});
+        res.json({status: 0, statuscode: "500", msg: "Invalid Fields"});
     }
 });
 
