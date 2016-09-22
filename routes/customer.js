@@ -7,7 +7,8 @@ var bodyParser = require('body-parser');
 require('node-import');
 imports('config/index');
 
-const request_ = require('./request');
+
+const request_ = require('../service/request');
 router.post('/login', function (req, res) {
 
     var email = req.body.email;
@@ -19,8 +20,8 @@ router.post('/login', function (req, res) {
         var body = ({email: email, password: password});
         var headers = {APP_ID: config.APP_ID};
         var url = '/customer/login/';
-        request_.request(body, headers, url, function (req, response) {
-            res.json({status: 1, statuscode: req.statusCode, body: response});
+        request_.request(body, headers, url, function (req, response , msg) {
+            res.json({status: 1, statuscode: req.statusCode, body: response, msg :msg});
         });
     } else {
         res.json({status: 0, statuscode: "500", msg: "Invalid Fields"});
@@ -37,9 +38,9 @@ router.post('/register', function (req, res) {
         var body = ({firstname: firstname, lastname: lastname, email: email, password: password});
         var headers = {APP_ID: config.APP_ID};
         var url = '/customer/register/';
-        request_.request(body, headers, url, function (req, response) {
+        request_.request(body, headers, url, function (req, response, msg) {
             console.log(response);
-            res.json({status: 1, statuscode: req.statusCode, body: response});
+            res.json({status: 1, statuscode: req.statusCode, body: response, msg :msg});
         });
     } else {
         res.json({status: 0, statuscode: "500", msg: "Invalid Fields"});
@@ -52,9 +53,9 @@ router.post('/forgot', function (req, res) {
         var body = ({email: email});
         var headers = {APP_ID: config.APP_ID};
         var url = '/customer/forget/';
-        request_.request(body, headers, url, function (req, response) {
+        request_.request(body, headers, url, function (req, response, msg) {
             console.log(response);
-            res.json({status: 1, statuscode: req.statusCode, body: response});
+            res.json({status: 1, statuscode: req.statusCode, body: response, msg :msg});
         });
     } else {
         res.json({status: 0, statuscode: "500", msg: "Invalid Fields"});

@@ -6,7 +6,7 @@ require('node-import');
 imports('config/index');
 var redis = require("redis"),
         client = redis.createClient();
-const request_ = require('./request');
+const request_ = require('../service/request');
 router.post('/products', function (req, res) {
     var type = req.body.type;
     if (type.length > 0) {
@@ -18,13 +18,13 @@ router.post('/products', function (req, res) {
                 var body = ({type: type});
                 var headers = {APP_ID: config.APP_ID};
                 var url = '/home/products/';
-                request_.request(body, headers, url, function (req, response) {
+                request_.request(body, headers, url, function (req, response, msg) {
                     client.hmset('products_' + type, {
                         'type': type,
                         "data": response
                     });
                     client.expire('products_' + type, config.product_expiresAt);
-                    res.json({status: 1, statuscode: req.statusCode, body: response});
+                    res.json({status: 1, statuscode: req.statusCode, body: response, msg :msg});
                 });
             }
         });
@@ -49,7 +49,7 @@ router.post('/categories', function (req, res) {
                     "body": response
                 });
                 client.expire('categories', config.product_expiresAt);
-                res.json({status: 1, statuscode: req.statusCode, body: response});
+                res.json({status: 1, statuscode: req.statusCode, body: response, msg :msg});
             });
         }
     });
@@ -69,7 +69,7 @@ router.post('/slider', function (req, res) {
                     "body": response
                 });
                 client.expire('categories', config.product_expiresAt);
-                res.json({status: 1, statuscode: req.statusCode, body: response});
+                res.json({status: 1, statuscode: req.statusCode, body: response, msg :msg});
             });
         }
     });

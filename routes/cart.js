@@ -7,7 +7,7 @@ require('node-import');
 imports('config/index');
 var redis = require("redis"),
         client = redis.createClient();
-const request_ = require('./request');
+const request_ = require('../service/request');
 router.all('/cart', function (req, res) {
     var productid = req.body.productid;
     var secret = req.body.secret;
@@ -16,8 +16,8 @@ router.all('/cart', function (req, res) {
         var body = ({productid: productid, secret: secret});
         var headers = {APP_ID: config.APP_ID, "Authorization": access_token};
         var url = '/cart/cart/';
-        request_.request(body, headers, url, function (req, response) {
-            res.json({status: 1, statuscode: req.statusCode, body: response});
+        request_.request(body, headers, url, function (req, response, msg) {
+            res.json({status: 1, statuscode: req.statusCode, body: response, msg :msg});
         });
     } else {
         res.json({status: 0, error: "500", msg: "Invalid Fields"});

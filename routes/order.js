@@ -7,7 +7,7 @@ require('node-import');
 imports('config/index');
 var redis = require("redis"),
         client = redis.createClient();
-const request_ = require('./request');
+const request_ = require('../service/request');
 
 router.post('/alllist', function (req, res) {
     var access_token = req.headers.authorization;
@@ -22,8 +22,8 @@ router.post('/alllist', function (req, res) {
         var body = ({to: to, from: from, limit: limit, secret: secret});
         var headers = {APP_ID: config.APP_ID, "Authorization": access_token};
         var url = '/order/alllist/';
-        request_.request(body, headers, url, function (req, response) {
-            res.json({status: 1, statuscode: req.statusCode, body: response});
+        request_.request(body, headers, url, function (req, response, msg) {
+            res.json({status: 1, statuscode: req.statusCode, body: response, msg :msg});
         });
     } else {
         res.json({status: 0, statuscode: "500", msg: "Invalid Fields"});
@@ -40,8 +40,8 @@ router.post('/totalorder', function (req, res) {
         var body = ({secret: secret});
         var headers = {APP_ID: config.APP_ID, "Authorization": access_token};
         var url = '/order/totalorder/';
-        request_.request(body, headers, url, function (req, response) {
-            res.json({status: 1, statuscode: req.statusCode, body: response});
+        request_.request(body, headers, url, function (req, response, msg) {
+            res.json({status: 1, statuscode: req.statusCode, body: response, msg :msg});
         });
     } else {
         res.json({status: 0, statuscode: "500", msg: "Invalid Fields"});

@@ -5,7 +5,7 @@ var request = require('request');
 var cors = require('cors');
 require('node-import');
 imports('config/index');
-const request_ = require('./request');
+const request_ = require('../service/request');
 var redis = require("redis"),
         client = redis.createClient();
 
@@ -21,7 +21,7 @@ router.all('/products', function (req, res) {
                 var body = ({id: id, page: page, limit: limit});
                 var headers = {APP_ID: config.APP_ID};
                 var url = '/category/products/';
-                request_.request(body, headers, url, function (req, response) {
+                request_.request(body, headers, url, function (req, response, msg) {
                     client.hmset('category_' + id, {
                         'id': id,
                         "page": page,
@@ -29,7 +29,7 @@ router.all('/products', function (req, res) {
                         "body": response
                     });
                     client.expire('category_' + id, config.category_expiresAt);
-                    res.json({status: 1, statuscode: req.statusCode, body: response});
+                    res.json({status: 1, statuscode: req.statusCode, body: response, msg :msg});
                 });
             }
         });
@@ -50,14 +50,14 @@ router.all('/categorylist', function (req, res) {
                 var body = ({parent_id: parent_id, type: type});
                 var headers = {APP_ID: config.APP_ID};
                 var url = '/category/categorylist/';
-                request_.request(body, headers, url, function (req, response) {
+                request_.request(body, headers, url, function (req, response, msg) {
                     client.hmset('category_' + parent_id, {
                         'parent_id': parent_id,
                         "body": response,
                         "type": type
                     });
                     client.expire('category_' + parent_id, config.category_expiresAt);
-                    res.json({status: 1, statuscode: req.statusCode, body: response});
+                    res.json({status: 1, statuscode: req.statusCode, body: response, msg :msg});
                 });
             }
         });

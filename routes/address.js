@@ -6,7 +6,7 @@ var cors = require('cors');
 var bodyParser = require('body-parser');
 require('node-import');
 imports('config/index');
-const request_ = require('./request');
+const request_ = require('../service/request');
 router.post('/edit', function (req, res) {
     var access_token = req.headers.authorization;
     var secret = req.body.secret;
@@ -26,8 +26,8 @@ router.post('/edit', function (req, res) {
         var body = ({countryid: countryid, zip: zip, city: city, teliphone: teliphone, fax: fax, company: company, street: street, firstname: firstname, lastname: lastname, secret: secret});
         var headers = {APP_ID: config.APP_ID, "Authorization": access_token};
         var url = '/address/edit/';
-        request_.request(body, headers, url, function (req, response) {
-            res.json({status: 1, statuscode: req.statusCode, body: response});
+        request_.request(body, headers, url, function (req, response, msg) {
+            res.json({status: 1, statuscode: req.statusCode, body: response, msg :msg});
         });
     } else {
         res.json({status: 0, error: "500", msg: "Invalid Fields"});

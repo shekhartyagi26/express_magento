@@ -6,7 +6,7 @@ require('node-import');
 imports('config/index');
 var redis = require("redis"),
         client = redis.createClient();
-const request_ = require('./request');
+const request_ = require('../service/request');
 
 router.post('/get', function (req, res) {
     var sku = req.body.sku;
@@ -19,13 +19,13 @@ router.post('/get', function (req, res) {
                 var body = ({sku: sku});
                 var headers = {APP_ID: config.APP_ID};
                 var url = '/product/get/';
-                request_.request(body, headers, url, function (req, response) {
+                request_.request(body, headers, url, function (req, response, msg) {
                     client.hmset('product_' + sku, {
                         'sku': sku,
                         "data": response
                     });
                     client.expire('product_' + sku, config.product_expiresAt);
-                    res.json({status: 1, statuscode: req.statusCode, body: response});
+                    res.json({status: 1, statuscode: req.statusCode, body: response, msg :msg});
                 });
             }
         });
