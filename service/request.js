@@ -18,7 +18,7 @@ exports.request = function (body, headers, url, callback) {
         } else if (result.statusCode == 500) {
             callback(result, body, notfound)
         } else {
-            callback(result, body, successfully);
+            callback(result, body, success);
         }
     });
 } 
