@@ -9,11 +9,12 @@ var redis = require("redis"),
 
 router.post('/get', function (req, res) {
     var sku = req.body.sku;
+
     if (sku.length > 0) {
         client.hgetall('product_' + sku, function (err, object) {
             if (object != null && object.sku == sku) {
-                console.log({msg: "exist", statuscode: "200", data: object});
-                res.json({msg: "exist", statuscode: "200", data: object});
+                console.log(object);
+                res.json(object);
             } else {
                 request({
                     url: config.url + '/product/get/', //URL to hit
@@ -34,10 +35,11 @@ router.post('/get', function (req, res) {
                     } else {
                         client.hmset('product_' + sku, {
                             'sku': sku,
-                            "body": body
+                            "data": body
                         });
-                        console.log({status: "doesnt exist", statuscode: response.statusCode, body: body});
-                        res.json({status: 1, body: body});
+                        console.log({sku: sku, data: body});
+                        res, json({sku: sku, data: body});
+
                         client.expire('product_' + sku, config.product_expiresAt);
                     }
                 });

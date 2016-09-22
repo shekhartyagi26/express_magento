@@ -14,7 +14,7 @@ router.post('/products', function (req, res) {
         client.hgetall('products_' + type, function (err, object) {
             if (object != null && object.type == type) {
                 console.log({msg: "exist", statuscode: "200", data: object});
-                res.json({msg: "exist", statuscode: "200", data: object});
+                res.json(object);
 
             } else {
                 request({
@@ -35,7 +35,7 @@ router.post('/products', function (req, res) {
                     } else {
                         client.hmset('products_' + type, {
                             'type': type,
-                            "body": body
+                            "data": body
                         });
                         console.log(result.statusCode, body);
                         res.json({status: 1, msg: "doesnt exist", statuscode: result.statusCode, body: body});

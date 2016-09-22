@@ -13,6 +13,8 @@ var product = require('./routes/product');
 var home = require('./routes/home');
 var account = require('./routes/account');
 var order = require('./routes/order');
+var address = require('./routes/address');
+var cart = require('./routes/cart');
 var db = require('./mods/db.js');
 
 
@@ -40,9 +42,8 @@ app.use('/product',product);
 app.use('/home',home);
 app.use('/account',account);
 app.use('/order',order);
-
-
-
+app.use('/address',address);
+app.use('/cart',cart);
 
 
 
