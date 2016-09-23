@@ -15,6 +15,7 @@ var account = require('./routes/account');
 var order = require('./routes/order');
 var address = require('./routes/address');
 var cart = require('./routes/cart');
+var redis = require('./routes/redis');
 var db = require('./mods/db.js');
 
 
@@ -44,6 +45,7 @@ app.use('/account',account);
 app.use('/order',order);
 app.use('/address',address);
 app.use('/cart',cart);
+app.use('/redis',redis);
 
 
 
