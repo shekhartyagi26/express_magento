@@ -21,23 +21,23 @@ router.post('/edit', function (req, res) {
     var street = req.body.street;
     var firstname = req.body.firstname;
     var lastname = req.body.lastname;
-    if (countryid == constant.undefine && zip == constant.undefine && street == constant.undefine && access_token == constant.undefine) {
-        res.json({status: 0, msg: constant.undefine});
+    if (countryid == constant.UNDEFINE && zip == constant.UNDEFINE && street == constant.UNDEFINE && access_token == constant.UNDEFINE) {
+        res.json({status: 0, msg: constant.UNDEFINE});
     } else if (countryid.length > 0 && zip.length > 0 && street.length > 0 && access_token.length > 0) {
         var body = ({countryid: countryid, zip: zip, city: city, teliphone: teliphone, fax: fax, company: company, street: street, firstname: firstname, lastname: lastname, secret: secret});
         var headers = {APP_ID: config.APP_ID, "Authorization": access_token};
         var url = '/address/edit/';
         request_.request(body, headers, url, function (req, response, msg) {
-            if (msg == constant.err) {
-                res.json({status: 0, statuscode: constant.err_status, error: response});
-            } else if (req.statusCode == constant.err_status) {
+            if (msg == constant.ERROR) {
+                res.json({status: 0, statuscode: constant.ERR_STATUS, error: response});
+            } else if (req.statusCode == constant.ERR_STATUS) {
                 res.json({status: 0, statuscode: req.statusCode, body: response});
             } else {
                 res.json({status: 1, statuscode: req.statusCode, body: response});
             }
         });
     } else {
-        res.json({status: 0, error: constant.err_status, body: constant.invalid});
+        res.json({status: 0, error: constant.ERR_STATUS, body: constant.INVALID});
     }
 });
 

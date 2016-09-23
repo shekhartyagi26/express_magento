@@ -18,16 +18,16 @@ router.all('/address', function (req, res) {
         var headers = {APP_ID: config.APP_ID, "Authorization": access_token};
         var url = '/account/address/';
         request_.request(body, headers, url, function (req, response, msg) {
-            if (msg == constant.err) {
-                res.json({status: 0, statuscode: constant.err_status, error: response});
-            } else if (req.statusCode == constant.err_status) {
+            if (msg == constant.ERROR) {
+                res.json({status: 0, statuscode: constant.ERR_STATUS, error: response});
+            } else if (req.statusCode == constant.ERR_STATUS) {
                 res.json({status: 0, statuscode: req.statusCode, body: response});
             } else {
                 res.json({status: 1, statuscode: req.statusCode, body: response});
             }
         });
     } else {
-        res.json({status: 0, statuscode: constant.err_status, msg: constant.invalid});
+        res.json({status: 0, statuscode: constant.ERR_STATUS, msg: constant.INVALID});
     }
 });
 
@@ -42,16 +42,16 @@ router.post('/changepassword', function (req, res) {
         var headers = {APP_ID: config.APP_ID, "Authorization": access_token};
         var url = '/account/changepassword/';
         request_.request(body, headers, url, function (req, response, msg) {
-            if (msg == constant.err) {
-                res.json({status: 0, statuscode: constant.err_status, error: response});
-            } else if (req.statusCode == constant.err_status) {
+            if (msg == constant.ERROR) {
+                res.json({status: 0, statuscode: constant.ERR_STATUS, error: response});
+            } else if (req.statusCode == constant.ERR_STATUS) {
                 res.json({status: 0, statuscode: req.statusCode, body: response});
             } else {
                 res.json({status: 1, statuscode: req.statusCode, body: response});
             }
         });
     } else {
-        res.json({status: 0, statuscode: constant.err_status, body: constant.invalid});
+        res.json({status: 0, statuscode: constant.ERR_STATUS, body: constant.INVALID});
     }
 });
 

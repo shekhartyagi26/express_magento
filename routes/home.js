@@ -13,15 +13,15 @@ router.post('/products', function (req, res) {
     if (type.length > 0) {
         client.hgetall('products_' + type, function (err, object) {
             if (object != null && object.type == type) {
-                res.json({status: 1, statuscode: constant.success_status, body: object});
+                res.json({status: 1, statuscode: constant.SUCCESS_STATUS, body: object});
             } else {
                 var body = ({type: type});
                 var headers = {APP_ID: config.APP_ID};
                 var url = '/home/products/';
                 request_.request(body, headers, url, function (req, response, msg) {
-                    if (msg == constant.err) {
-                        res.json({status: 0, statuscode: constant.err_status, error: response});
-                    } else if (req.statusCode == constant.err_status) {
+                    if (msg == constant.ERROR) {
+                        res.json({status: 0, statuscode: constant.ERR_STATUS, error: response});
+                    } else if (req.statusCode == constant.ERR_STATUS) {
                         res.json({status: 0, statuscode: req.statusCode, body: response});
                     } else {
                         res.json({status: 1, statuscode: req.statusCode, body: response});
@@ -29,35 +29,35 @@ router.post('/products', function (req, res) {
                             'type': type,
                             "data": response
                         });
-                        client.expire('products_' + type, config.product_expiresAt);
+                        client.expire('products_' + type, config.PRODUCT_EXPIRESAT);
                     }
                 });
             }
         });
     } else {
-        res.json({status: 0, error: constant.err_status, body: constant.invalid});
+        res.json({status: 0, error: constant.ERR_STATUS, body: constant.INVALID});
     }
 });
 
 router.post('/categories', function (req, res) {
     client.hgetall('categories', function (err, object) {
         if (object != null && object == object) {
-            res.json({status: 1, statuscode: constant.success_status, body: object});
+            res.json({status: 1, statuscode: constant.SUCCESS_STATUS, body: object});
         } else {
             var body = ({});
             var headers = {APP_ID: config.APP_ID};
             var url = '/home/categories/';
             request_.request(body, headers, url, function (req, response, msg) {
                 if (msg == constant.err) {
-                    res.json({status: 0, statuscode: constant.err_status, error: response});
-                } else if (req.statusCode == constant.err_status) {
+                    res.json({status: 0, statuscode: constant.ERR_STATUS, error: response});
+                } else if (req.statusCode == constant.ERR_STATUS) {
                     res.json({status: 0, statuscode: req.statusCode, body: response});
                 } else {
                     res.json({status: 1, statuscode: req.statusCode, body: response});
                     client.hmset('categories', {
                         "body": response
                     });
-                    client.expire('categories', config.product_expiresAt);
+                    client.expire('categories', config.PRODUCT_EXPIRESAT);
                 }
             });
         }
@@ -67,21 +67,21 @@ router.post('/categories', function (req, res) {
 router.post('/slider', function (req, res) {
     client.hgetall('slider', function (err, object) {
         if (object != null && object == object) {
-            res.json({status: 1, statuscode: constant.success_status, body: object});
+            res.json({status: 1, statuscode: constant.SUCCESS_STATUS, body: object});
         } else {
             var body = ({});
             var headers = {APP_ID: config.APP_ID};
             var url = '/home/slider/';
             request_.request(body, headers, url, function (req, response, msg) {
                 if (msg == constant.err) {
-                    res.json({status: 0, statuscode: req.statusCode, body: response});
-                } else if (req.statusCode == constant.err_status) {
+                    res.json({status: 0, statuscode: constant.ERR_STATUS, error: response});
+                } else if (req.statusCode == constant.ERR_STATUS) {
                     res.json({status: 0, statuscode: req.statusCode, msg: msg});
                 } else {
                     client.hmset('slider', {
                         "body": response
                     });
-                    client.expire('categories', config.product_expiresAt);
+                    client.expire('categories', config.PRODUCT_EXPIRESAT);
                     res.json({status: 1, statuscode: req.statusCode, body: response});
                 }
             });

@@ -14,29 +14,29 @@ router.post('/get', function (req, res) {
     if (sku.length > 0) {
         client.hgetall('product_' + sku, function (err, object) {
             if (object != null && object.sku == sku) {
-                res.json({status: 1, statuscode: constant.success_status, body: object});
+                res.json({status: 1, statuscode: constant.SUCCESS_STATUS, body: object});
             } else {
                 var body = ({sku: sku});
                 var headers = {APP_ID: config.APP_ID};
                 var url = '/product/get/';
                 request_.request(body, headers, url, function (req, response, msg) {
-                    if (msg == constant.err) {
+                    if (msg == constant.ERROR) {
                         res.json({status: 0, statuscode: req.statusCode, body: response});
-                    } else if (req.statusCode == constant.err_status) {
+                    } else if (req.statusCode == constant.ERR_STATUS) {
                         res.json({status: 0, statuscode: req.statusCode, body: response});
                     } else {
                         client.hmset('product_' + sku, {
                             'sku': sku,
                             "data": response
                         });
-                        client.expire('product_' + sku, config.product_expiresAt);
+                        client.expire('product_' + sku, config.PRODUCT_EXPIRESAT);
                         res.json({status: 1, statuscode: req.statusCode, body: response});
                     }
                 });
             }
         });
     } else {
-        res.json({status: 0, statuscode: constant.err_status, body: constant.invalid});
+        res.json({status: 0, statuscode: constant.ERR_STATUS, body: constant.INVALID});
     }
 });
 

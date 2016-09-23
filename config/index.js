@@ -1,2 +1,2 @@
-config ={'APP_ID': 'com.tethr', "url": "http://144.76.34.244:8080/magento/1.9/web/index.php/excellence/mobile/api/v1", "category_expiresAt": "216000", "product_expiresAt": "216000","account_expiresAt":"21600" }
+config ={'APP_ID': 'com.tethr', "URL": "http://144.76.34.244:8080/magento/1.9/web/index.php/excellence/mobile/api/v1", "CATEGORY_EXPIRESAT": "216000", "PRODUCT_EXPIRESAT": "216000","ACCOUNT_EXPIRESAT":"21600" }
  

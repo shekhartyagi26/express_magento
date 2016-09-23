@@ -17,15 +17,15 @@ router.all('/products', function (req, res) {
     if (id > 0) {
         client.hgetall('category_' + id, function (err, object) {
             if (object != null && object.id == id) {
-                res.json({status: 1, statuscode: constant.success_status, body: object});
+                res.json({status: 1, statuscode: constant.SUCCESS_STATUS, body: object});
             } else {
                 var body = ({id: id, page: page, limit: limit});
                 var headers = {APP_ID: config.APP_ID};
                 var url = '/category/products/';
                 request_.request(body, headers, url, function (req, response, msg) {
-                    if (msg == constant.err) {
-                        res.json({status: 0, statuscode: constant.err_status, error: response});
-                    } else if (req.statusCode == constant.err_status) {
+                    if (msg == constant.ERROR) {
+                        res.json({status: 0, statuscode: constant.ERR_STATUS, error: response});
+                    } else if (req.statusCode == constant.ERR_STATUS) {
                         res.json({status: 0, statuscode: req.statusCode, body: response});
                     } else {
                         client.hmset('category_' + id, {
@@ -34,14 +34,14 @@ router.all('/products', function (req, res) {
                             "limit": limit,
                             "body": response
                         });
-                        client.expire('category_' + id, config.category_expiresAt);
+                        client.expire('category_' + id, config.CATEGORY_EXPIRESAT);
                         res.json({status: 1, statuscode: req.statusCode, body: response});
                     }
                 });
             }
         });
     } else {
-        res.json({status: 0, statuscode: constant.err_status, body: constant.invalid});
+        res.json({status: 0, statuscode: constant.ERR_STATUS, body: constant.INVALID});
     }
 });
 
@@ -52,15 +52,15 @@ router.all('/categorylist', function (req, res) {
     if (parent_id > 0) {
         client.hgetall('category_' + parent_id, function (err, object) {
             if (object != null && object.parent_id == parent_id) {
-                res.json({status: 1, statuscode: constant.success_status, body: object});
+                res.json({status: 1, statuscode: constant.SUCCESS_STATUS, body: object});
             } else {
                 var body = ({parent_id: parent_id, type: type});
                 var headers = {APP_ID: config.APP_ID};
                 var url = '/category/categorylist/';
                 request_.request(body, headers, url, function (req, response, msg) {
-                    if (msg == constant.err) {
-                        res.json({status: 0, statuscode: constant.err_status, error: response});
-                    } else if (req.statusCode == constant.err_status) {
+                    if (msg == constant.ERROR) {
+                        res.json({status: 0, statuscode: constant.ERR_STATUS, error: response});
+                    } else if (req.statusCode == constant.ERR_STATUS) {
                         res.json({status: 0, statuscode: req.statusCode, body: response});
                     } else {
                         client.hmset('category_' + parent_id, {
@@ -68,7 +68,7 @@ router.all('/categorylist', function (req, res) {
                             "body": response,
                             "type": type
                         });
-                        client.expire('category_' + parent_id, config.category_expiresAt);
+                        client.expire('category_' + parent_id, config.CATEGORY_EXPIRESAT);
                         res.json({status: 1, statuscode: req.statusCode, body: response});
                     }
                 });
@@ -76,7 +76,7 @@ router.all('/categorylist', function (req, res) {
             }
         });
     } else {
-        res.json({status: 0, error: constant.err_status, body: constant.invalid});
+        res.json({status: 0, error: constant.ERR_STATUS, body: constant.INVALID});
     }
 });
 
