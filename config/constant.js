@@ -1,1 +1,7 @@
-Status ={'ERROR': 'error', "SUCCESS": "successfully", "	NOTFOUND": "not found", "INVALID": "Invalid Fields","ERR_STATUS":"500", "SUCCESS_STATUS":"200", "UNDEFINE":"undefined" }
+const ERROR = "error";
+const SUCCESS = "successfully";
+const NOTFOUND ="not found";
+const INVALID ="Invalid Fields";
+const ERR_STATUS ="500";
+const SUCCESS_STATUS = "200";
+const UNDEFINE ="undefined";

@@ -19,16 +19,16 @@ router.all('/cart', function (req, res) {
         var headers = {APP_ID: config.APP_ID, "Authorization": access_token};
         var url = '/cart/cart/';
         request_.request(body, headers, url, function (req, response, msg) {
-            if (msg == Status.ERROR) {
-                res.json({status: 0, statuscode: Status.ERR_STATUS, error: response});
-            } else if (req.statusCode == Status.ERR_STATUS) {
+            if (msg == ERROR) {
+                res.json({status: 0, statuscode: ERR_STATUS, error: response});
+            } else if (req.statusCode == ERR_STATUS) {
                 res.json({status: 0, statuscode: req.statusCode, body: response});
             } else {
                 res.json({status: 1, statuscode: req.statusCode, body: response});
             }
         });
     } else {
-        res.json({status: 0, error: Status.ERR_STATUS, body: Status.INVALID});
+        res.json({status: 0, error: ERR_STATUS, body: INVALID});
     }
 });
 module.exports = router;

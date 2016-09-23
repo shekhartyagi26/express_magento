@@ -14,24 +14,24 @@ router.post('/login', function (req, res) {
 
     var email = req.body.email;
     var password = req.body.password;
-    if (email == Status.UNDEFINE && password == Status.UNDEFINE) {
-        res.json({status: 0, msg: Status.UNDEFINE});
+    if (email == UNDEFINE && password == UNDEFINE) {
+        res.json({status: 0, msg: UNDEFINE});
     } else if (email.length > 0 && password.length > 0) {
 
         var body = ({email: email, password: password});
         var headers = {APP_ID: config.APP_ID};
         var url = '/customer/login/';
         request_.request(body, headers, url, function (req, response, msg) {
-            if (msg == Status.ERROR) {
-                res.json({status: 0, statuscode: Status.ERR_STATUS, error: response});
-            } else if (req.statusCode == Status.ERR_STATUS) {
+            if (msg == ERROR) {
+                res.json({status: 0, statuscode: ERR_STATUS, error: response});
+            } else if (req.statusCode == ERR_STATUS) {
                 res.json({status: 0, statuscode: req.statusCode, body: response});
             } else {
                 res.json({status: 1, statuscode: req.statusCode, body: response});
             }
         });
     } else {
-        res.json({status: 0, statuscode: Status.ERR_STATUS, body: Status.INVALID});
+        res.json({status: 0, statuscode: ERR_STATUS, body: INVALID});
     }
 });
 
@@ -46,16 +46,16 @@ router.post('/register', function (req, res) {
         var headers = {APP_ID: config.APP_ID};
         var url = '/customer/register/';
         request_.request(body, headers, url, function (req, response, msg) {
-            if (msg == Status.ERROR) {
-                res.json({status: 0, statuscode: Status.ERR_STATUS, error: response});
-            } else if (req.statusCode == Status.ERR_STATUS) {
+            if (msg == ERROR) {
+                res.json({status: 0, statuscode: ERR_STATUS, error: response});
+            } else if (req.statusCode == ERR_STATUS) {
                 res.json({status: 0, statuscode: req.statusCode, body: response});
             } else {
                 res.json({status: 1, statuscode: req.statusCode, body: response});
             }
         });
     } else {
-        res.json({status: 0, statuscode: Status.ERR_STATUS, body: Status.INVALID});
+        res.json({status: 0, statuscode: ERR_STATUS, body: INVALID});
     }
 });
 
@@ -66,16 +66,16 @@ router.post('/forgot', function (req, res) {
         var headers = {APP_ID: config.APP_ID};
         var url = '/customer/forget/';
         request_.request(body, headers, url, function (req, response, msg) {
-            if (msg == Status.ERROR) {
-                res.json({status: 0, statuscode: Status.ERR_STATUS, error: response});
-            } else if (req.statusCode == Status.ERR_STATUS) {
+            if (msg == ERROR) {
+                res.json({status: 0, statuscode: ERR_STATUS, error: response});
+            } else if (req.statusCode == ERR_STATUS) {
                 res.json({status: 0, statuscode: req.statusCode, body: response});
             } else {
                 res.json({status: 1, statuscode: req.statusCode, body: response});
             }
         });
     } else {
-        res.json({status: 0, statuscode: Status.ERR_STATUS, body: Status.INVALID});
+        res.json({status: 0, statuscode: ERR_STATUS, body: INVALID});
     }
 });
 
