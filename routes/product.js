@@ -4,47 +4,39 @@ var path = require('path');
 var request = require('request');
 require('node-import');
 imports('config/index');
+imports('config/constant');
 var redis = require("redis"),
         client = redis.createClient();
+const request_ = require('../service/request');
 
 router.post('/get', function (req, res) {
     var sku = req.body.sku;
     if (sku.length > 0) {
         client.hgetall('product_' + sku, function (err, object) {
             if (object != null && object.sku == sku) {
-                console.log({msg: "exist", statuscode: "200", data: object});
-                res.json({msg: "exist", statuscode: "200", data: object});
+                res.json({status: 1, statuscode: SUCCESS_STATUS, body: object});
             } else {
-                request({
-                    url: config.url + '/product/get/', //URL to hit
-                    method: 'POST',
-                    headers: {APP_ID: config.APP_ID},
-                    body: JSON.stringify({
-                        sku: sku
-                    })
-
-                }, function (error, response, body) {
-                    if (error) {
-                        console.log(error);
-                        res.json(error);
-                    }
-                    if (response.statusCode == 500) {
-                        console.log("not found");
-                        res.json({status: 0, msg: "not found"});
+                var body = ({sku: sku});
+                var headers = {APP_ID: config.APP_ID};
+                var url = '/product/get/';
+                request_.request(body, headers, url, function (req, response, msg) {
+                    if (msg == ERROR) {
+                        res.json({status: 0, statuscode: req.statusCode, body: response});
+                    } else if (req.statusCode == ERR_STATUS) {
+                        res.json({status: 0, statuscode: req.statusCode, body: response});
                     } else {
                         client.hmset('product_' + sku, {
                             'sku': sku,
-                            "body": body
+                            "data": response
                         });
-                        console.log({status: "doesnt exist", statuscode: response.statusCode, body: body});
-                        res.json({status: 1, body: body});
-                        client.expire('product_' + sku, config.product_expiresAt);
+                        client.expire('product_' + sku, config.PRODUCT_EXPIRESAT);
+                        res.json({status: 1, statuscode: req.statusCode, body: response});
                     }
                 });
             }
         });
     } else {
-        res.json({status: 0, msg: "Invalid Fields"});
+        res.json({status: 0, statuscode: ERR_STATUS, body: INVALID});
     }
 });
 

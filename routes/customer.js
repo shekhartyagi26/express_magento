@@ -3,38 +3,35 @@ var router = express.Router();
 var path = require('path');
 var request = require('request');
 var cors = require('cors');
+var bodyParser = require('body-parser');
 require('node-import');
 imports('config/index');
+imports('config/constant');
+
+const request_ = require('../service/request');
 
 router.post('/login', function (req, res) {
+
     var email = req.body.email;
     var password = req.body.password;
-    console.log({email: email, password: password});
+    if (email == UNDEFINE && password == UNDEFINE) {
+        res.json({status: 0, msg: UNDEFINE});
+    } else if (email.length > 0 && password.length > 0) {
 
-    if (email && password) {
-        request({
-            url: config.url + '/customer/login/', //URL to hit
-            method: 'post',
-            headers: {APP_ID: config.APP_ID},
-            body: JSON.stringify({
-                email: email,
-                password: password
-            })
-
-        }, function (error, result, body) {
-            if (error) {
-                console.log(error);
-                res.json({status: 0, error: error});
-            } else if (result.statusCode == 500) {
-                console.log("not found");
-                res.json({status: 0, error: result.statusCode, msg: "not found"});
+        var body = ({email: email, password: password});
+        var headers = {APP_ID: config.APP_ID};
+        var url = '/customer/login/';
+        request_.request(body, headers, url, function (req, response, msg) {
+            if (msg == ERROR) {
+                res.json({status: 0, statuscode: ERR_STATUS, error: response});
+            } else if (req.statusCode == ERR_STATUS) {
+                res.json({status: 0, statuscode: req.statusCode, body: response});
             } else {
-                console.log(result.statusCode, body);
-                res.json({status: 1, statuscode: result.statusCode, body: body});
+                res.json({status: 1, statuscode: req.statusCode, body: response});
             }
         });
     } else {
-        res.json({status: 0, error: "500", msg: "Invalid Fields"});
+        res.json({status: 0, statuscode: ERR_STATUS, body: INVALID});
     }
 });
 
@@ -45,65 +42,40 @@ router.post('/register', function (req, res) {
     var email = req.body.email;
     var password = req.body.password;
     if (firstname.length > 0 && lastname.length > 0 && email.length > 0 && password.length > 0) {
-        request({
-            url: config.url + '/customer/register/', //URL to hit
-            method: 'POST',
-            headers: {APP_ID: config.APP_ID},
-            body: JSON.stringify({
-                firstname: firstname,
-                lastname: lastname,
-                email: email,
-                password: password
-            })
-
-        }, function (error, response, body) {
-            if (error) {
-                console.log(error);
-                res.json(error);
-            }
-            console.log(response.statusCode);
-            if (response.statusCode == 500) {
-                console.log("exist");
-                console.log({status: 1, msg: "exist", body: body});
-                res.json({status: 0, msg: "the customer email id already exists", body: body});
+        var body = ({firstname: firstname, lastname: lastname, email: email, password: password});
+        var headers = {APP_ID: config.APP_ID};
+        var url = '/customer/register/';
+        request_.request(body, headers, url, function (req, response, msg) {
+            if (msg == ERROR) {
+                res.json({status: 0, statuscode: ERR_STATUS, error: response});
+            } else if (req.statusCode == ERR_STATUS) {
+                res.json({status: 0, statuscode: req.statusCode, body: response});
             } else {
-                console.log("registered successfully");
-                console.log(response.statusCode, body);
-                res.json({status: 1, msg: "registered successfully", body: body});
+                res.json({status: 1, statuscode: req.statusCode, body: response});
             }
         });
     } else {
-        res.json({status: 0, msg: "Invalid Fields"});
+        res.json({status: 0, statuscode: ERR_STATUS, body: INVALID});
     }
 });
 
 router.post('/forgot', function (req, res) {
     var email = req.body.email;
     if (email.length > 0) {
-        request({
-            url: config.url + '/customer/forgot/', //URL to hit
-            method: 'POST',
-            headers: {APP_ID: config.APP_ID},
-            body: JSON.stringify({
-                email: email
-            })
-
-        }, function (error, response, body) {
-            if (error) {
-                console.log(error);
-                res.json(error);
-            }
-            if (response.statusCode == 500) {
-                console.log("not found");
-                res.json({status: 0, msg: "not found"});
+        var body = ({email: email});
+        var headers = {APP_ID: config.APP_ID};
+        var url = '/customer/forget/';
+        request_.request(body, headers, url, function (req, response, msg) {
+            if (msg == ERROR) {
+                res.json({status: 0, statuscode: ERR_STATUS, error: response});
+            } else if (req.statusCode == ERR_STATUS) {
+                res.json({status: 0, statuscode: req.statusCode, body: response});
             } else {
-                console.log({status: "1", statuscode: response.statusCode, body: body});
-                res.json({status: 1, statuscode: response.statusCode, body: body});
+                res.json({status: 1, statuscode: req.statusCode, body: response});
             }
-
         });
     } else {
-        res.json({status: 0, msg: "Invalid Fields"});
+        res.json({status: 0, statuscode: ERR_STATUS, body: INVALID});
     }
 });
 

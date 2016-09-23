@@ -11,13 +11,18 @@ var category = require('./routes/category');
 var customer = require('./routes/customer');
 var product = require('./routes/product');
 var home = require('./routes/home');
+var account = require('./routes/account');
+var order = require('./routes/order');
+var address = require('./routes/address');
+var cart = require('./routes/cart');
+var redis = require('./routes/redis');
 var db = require('./mods/db.js');
 
 
 
 var app = express();
 
-cors = require('cors')
+var cors = require('cors');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -29,16 +34,18 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
+app.use(cors());
 app.use(db());
 app.use('/', routes);
 app.use('/category',category);
 app.use('/customer',customer);
 app.use('/product',product);
 app.use('/home',home);
-
-app.use(cors());
-
+app.use('/account',account);
+app.use('/order',order);
+app.use('/address',address);
+app.use('/cart',cart);
+app.use('/redis',redis);
 
 
 
