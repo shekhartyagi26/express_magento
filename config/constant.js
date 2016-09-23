@@ -1,0 +1,1 @@
+constant ={'err': 'error', "success": "successfully", "notfound": "not found", "invalid": "Invalid Fields","err_status":"500", "success_status":"200", "undefine":"undefined" }

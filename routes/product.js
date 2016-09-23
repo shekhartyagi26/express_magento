@@ -4,6 +4,7 @@ var path = require('path');
 var request = require('request');
 require('node-import');
 imports('config/index');
+imports('config/constant');
 var redis = require("redis"),
         client = redis.createClient();
 const request_ = require('../service/request');
@@ -13,16 +14,15 @@ router.post('/get', function (req, res) {
     if (sku.length > 0) {
         client.hgetall('product_' + sku, function (err, object) {
             if (object != null && object.sku == sku) {
-                console.log(object);
-                res.json(object);
+                res.json({status: 1, statuscode: constant.success_status, body: object});
             } else {
                 var body = ({sku: sku});
                 var headers = {APP_ID: config.APP_ID};
                 var url = '/product/get/';
                 request_.request(body, headers, url, function (req, response, msg) {
-                    if (msg == "error") {
-                        res.json({status: 0, statuscode: req.statusCode, body:response});
-                    } else if (req.statusCode == 500) {
+                    if (msg == constant.err) {
+                        res.json({status: 0, statuscode: req.statusCode, body: response});
+                    } else if (req.statusCode == constant.err_status) {
                         res.json({status: 0, statuscode: req.statusCode, body: response});
                     } else {
                         client.hmset('product_' + sku, {
@@ -36,7 +36,7 @@ router.post('/get', function (req, res) {
             }
         });
     } else {
-        res.json({status: 0, statuscode: "500", body: "Invalid Fields"});
+        res.json({status: 0, statuscode: constant.err_status, body: constant.invalid});
     }
 });
 

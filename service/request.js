@@ -1,9 +1,7 @@
 var request = require('request');
 require('node-import');
 imports('config/index');
-const err = "error";
-const success ="successfully";
-const notfound = "not found";
+imports('config/constant');
 
 exports.request = function (body, headers, url, callback) {
     request({
@@ -14,11 +12,11 @@ exports.request = function (body, headers, url, callback) {
         body: JSON.stringify(body)
     }, function (error, result, body) {
         if (error) {
-            callback(500, error, err);
+            callback(500, error, constant.err);
         } else if (result.statusCode == 500) {
-            callback(result, body, notfound)
+            callback(result, body, constant.notfound)
         } else {
-            callback(result, body, success);
+            callback(result, body, constant.success);
         }
     });
 } 

@@ -3,7 +3,6 @@ var router = express.Router();
 var redis = require("redis"),
         client = redis.createClient();
 
-
 router.post('/flush', function (req, res) {
     client.flushdb(function (err, succeeded) {
         if (err) {

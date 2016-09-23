@@ -5,6 +5,7 @@ var request = require('request');
 var cors = require('cors');
 require('node-import');
 imports('config/index');
+imports('config/constant');
 var redis = require("redis"),
         client = redis.createClient();
 const request_ = require('../service/request');
@@ -18,16 +19,16 @@ router.all('/cart', function (req, res) {
         var headers = {APP_ID: config.APP_ID, "Authorization": access_token};
         var url = '/cart/cart/';
         request_.request(body, headers, url, function (req, response, msg) {
-            if (msg == "error") {
-                res.json({status: 0, statuscode: "500", error: response});
-            } else if (req.statusCode == 500) {
-                res.json({status: 0, statuscode: req.statusCode, body:response});
+            if (msg == constant.err) {
+                res.json({status: 0, statuscode: constant.err_status, error: response});
+            } else if (req.statusCode == constant.err_status) {
+                res.json({status: 0, statuscode: req.statusCode, body: response});
             } else {
                 res.json({status: 1, statuscode: req.statusCode, body: response});
             }
         });
     } else {
-        res.json({status: 0, error: "500", body: "Invalid Fields"});
+        res.json({status: 0, error: constant.err_status, body: constant.invalid});
     }
 });
 module.exports = router;

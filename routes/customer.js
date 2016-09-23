@@ -6,30 +6,32 @@ var cors = require('cors');
 var bodyParser = require('body-parser');
 require('node-import');
 imports('config/index');
+imports('config/constant');
+
 const request_ = require('../service/request');
 
 router.post('/login', function (req, res) {
 
     var email = req.body.email;
     var password = req.body.password;
-    if (email == undefined && password == undefined) {
-        res.json({status: 0, msg: "undefined "});
+    if (email == constant.undefine && password == constant.undefine) {
+        res.json({status: 0, msg: constant.undefine});
     } else if (email.length > 0 && password.length > 0) {
 
         var body = ({email: email, password: password});
         var headers = {APP_ID: config.APP_ID};
         var url = '/customer/login/';
         request_.request(body, headers, url, function (req, response, msg) {
-            if (msg == "error") {
-                res.json({status: 0, statuscode: "500", error: response});
-            } else if (req.statusCode == 500) {
-                res.json({status: 0, statuscode: req.statusCode, body:response});
+            if (msg == constant.err) {
+                res.json({status: 0, statuscode: constant.err_status, error: response});
+            } else if (req.statusCode == constant.err_status) {
+                res.json({status: 0, statuscode: req.statusCode, body: response});
             } else {
                 res.json({status: 1, statuscode: req.statusCode, body: response});
             }
         });
     } else {
-        res.json({status: 0, statuscode: "500", body: "Invalid Fields"});
+        res.json({status: 0, statuscode: constant.err_status, body: constant.invalid});
     }
 });
 
@@ -44,16 +46,16 @@ router.post('/register', function (req, res) {
         var headers = {APP_ID: config.APP_ID};
         var url = '/customer/register/';
         request_.request(body, headers, url, function (req, response, msg) {
-            if (msg == "error") {
-                res.json({status: 0, statuscode: "500", error: response});
-            } else if (req.statusCode == 500) {
-                res.json({status: 0, statuscode: req.statusCode, body:response});
+            if (msg == constant.err) {
+                res.json({status: 0, statuscode: constant.err_status, error: response});
+            } else if (req.statusCode == constant.err_status) {
+                res.json({status: 0, statuscode: req.statusCode, body: response});
             } else {
                 res.json({status: 1, statuscode: req.statusCode, body: response});
             }
         });
     } else {
-        res.json({status: 0, statuscode: "500", body: "Invalid Fields"});
+        res.json({status: 0, statuscode: constant.err_status, body: constant.invalid});
     }
 });
 
@@ -64,16 +66,16 @@ router.post('/forgot', function (req, res) {
         var headers = {APP_ID: config.APP_ID};
         var url = '/customer/forget/';
         request_.request(body, headers, url, function (req, response, msg) {
-            if (msg == "error") {
-                res.json({status: 0, statuscode: "500", error: response});
-            } else if (req.statusCode == 500) {
-                res.json({status: 0, statuscode: req.statusCode, body:response});
+            if (msg == constant.err) {
+                res.json({status: 0, statuscode: constant.err_status, error: response});
+            } else if (req.statusCode == constant.err_status) {
+                res.json({status: 0, statuscode: req.statusCode, body: response});
             } else {
                 res.json({status: 1, statuscode: req.statusCode, body: response});
             }
         });
     } else {
-        res.json({status: 0, statuscode: "500", body: "Invalid Fields"});
+        res.json({status: 0, statuscode: constant.err_status, body: constant.invalid});
     }
 });
 

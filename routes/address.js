@@ -6,6 +6,8 @@ var cors = require('cors');
 var bodyParser = require('body-parser');
 require('node-import');
 imports('config/index');
+imports('config/constant');
+
 const request_ = require('../service/request');
 router.post('/edit', function (req, res) {
     var access_token = req.headers.authorization;
@@ -19,24 +21,23 @@ router.post('/edit', function (req, res) {
     var street = req.body.street;
     var firstname = req.body.firstname;
     var lastname = req.body.lastname;
-    if (countryid == undefined && zip == undefined && street == undefined && access_token == undefined) {
-        console.log("undefined ");
-        res.json({status: 0, msg: "undefined "});
+    if (countryid == constant.undefine && zip == constant.undefine && street == constant.undefine && access_token == constant.undefine) {
+        res.json({status: 0, msg: constant.undefine});
     } else if (countryid.length > 0 && zip.length > 0 && street.length > 0 && access_token.length > 0) {
         var body = ({countryid: countryid, zip: zip, city: city, teliphone: teliphone, fax: fax, company: company, street: street, firstname: firstname, lastname: lastname, secret: secret});
         var headers = {APP_ID: config.APP_ID, "Authorization": access_token};
         var url = '/address/edit/';
         request_.request(body, headers, url, function (req, response, msg) {
-            if (msg == "error") {
-                res.json({status: 0, statuscode: "500", error: response});
-            } else if (req.statusCode == 500) {
-                res.json({status: 0, statuscode: req.statusCode, body:response});
+            if (msg == constant.err) {
+                res.json({status: 0, statuscode: constant.err_status, error: response});
+            } else if (req.statusCode == constant.err_status) {
+                res.json({status: 0, statuscode: req.statusCode, body: response});
             } else {
                 res.json({status: 1, statuscode: req.statusCode, body: response});
             }
         });
     } else {
-        res.json({status: 0, error: "500", body: "Invalid Fields"});
+        res.json({status: 0, error: constant.err_status, body: constant.invalid});
     }
 });
 
