@@ -1,1 +1,1 @@
-constant ={'ERROR': 'error', "SUCCESS": "successfully", "	NOTFOUND": "not found", "INVALID": "Invalid Fields","ERR_STATUS":"500", "SUCCESS_STATUS":"200", "UNDEFINE":"undefined" }
+Status ={'ERROR': 'error', "SUCCESS": "successfully", "	NOTFOUND": "not found", "INVALID": "Invalid Fields","ERR_STATUS":"500", "SUCCESS_STATUS":"200", "UNDEFINE":"undefined" }
