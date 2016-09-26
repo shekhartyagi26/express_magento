@@ -5,6 +5,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose =require('mongoose');
+var db = require('./mods/db.js');
 
 var routes = require('./routes/index');
 var category = require('./routes/category');
@@ -16,7 +17,8 @@ var order = require('./routes/order');
 var address = require('./routes/address');
 var cart = require('./routes/cart');
 var redis = require('./routes/redis');
-var db = require('./mods/db.js');
+var web = require('./routes/web');
+
 
 
 
@@ -46,6 +48,7 @@ app.use('/order',order);
 app.use('/address',address);
 app.use('/cart',cart);
 app.use('/redis',redis);
+app.use('/web',web);
 
 
 

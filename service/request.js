@@ -2,10 +2,12 @@ var request = require('request');
 require('node-import');
 imports('config/index');
 imports('config/constant');
+var mongoose = require('mongoose');
+mongoose.Promise = require('bluebird');
 
-exports.request = function (body, headers, url_, callback) {
+exports.request = function (body, headers, url, callback) {
     request({
-        url: url_, //URL to hit
+        url: url, //URL to hit
         method: 'post',
         headers: headers,
         timeout: 10000,
@@ -16,25 +18,22 @@ exports.request = function (body, headers, url_, callback) {
         } else if (result.statusCode == 500) {
             callback(result, body, NOTFOUND)
         } else {
+            console.log(body)
             callback(result, body, SUCCESS);
         }
     });
 }
+
 exports.headerVerify = function (headers, verify, callback) {
-
-    if (headers.length > 0) {
-        verify.findOne({headers: headers}, function (error, user, body) {
-            if (error) {
-                callback(500, error, ERROR);
-            }
-            if (!user) {
-                callback(user, body, NOTFOUND)
-            }
-            var url = JSON.parse(JSON.stringify(user)).URL;
-            callback(headers, url, SUCCESS);
-
-        })
-    } else {
-        res.json({status: 0, msg: "Invalid Fields"});
-    }
+    var promise = verify.findOne({APP_ID: headers}).exec();
+    promise.then(function (verify) {
+        verify.url = JSON.parse(JSON.stringify(verify)).URL;
+        return verify.save(); // returns a promise
+    })
+            .then(function (verify) {
+                callback(headers, verify.url, SUCCESS);
+            })
+            .catch(function (err) {
+                callback(headers, err, ERROR);
+            });
 } 
