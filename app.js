@@ -10,12 +10,8 @@ var middle = require('./middleware/middle.js');
 
 var db = require('./mods/db.js');
 var app = express();
-var Schema = mongoose.Schema;
-var verifySchema = new Schema({
-    headers: String,
-    url: String,
-});
-var verify = mongoose.model('verify', verifySchema);
+
+
 var cors = require('cors');
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

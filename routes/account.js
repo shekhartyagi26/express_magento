@@ -1,6 +1,5 @@
 var express = require('express');
 var router = express.Router();
-var middleware = require('../middleware/middleware');
 var path = require('path');
 var request = require('request');
 var cors = require('cors');

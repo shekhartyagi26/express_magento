@@ -1,8 +1,16 @@
 var express = require('express');
 var app = express();
+var mongoose = require('mongoose');
+mongoose.Promise = require('bluebird');
+var Schema = mongoose.Schema;
+var verifySchema = new Schema({
+    headers: String,
+    url: String,
+});
+var verify = mongoose.model('verify', verifySchema);
 
 module.exports = function (req, res, next) {
-    var headers = "com.tethr";
+    var headers = req.headers.app_id;
     var verify = req.Collection;
     var promise = verify.findOne({APP_ID: headers}).exec();
     promise.then(function (verify) {
