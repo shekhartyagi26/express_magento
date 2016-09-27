@@ -1,7 +1,7 @@
-var ERROR = "error";
-var SUCCESS = "successfully";
-var NOTFOUND ="not found";
-var INVALID ="Invalid Fields";
-var ERR_STATUS ="500";
-var SUCCESS_STATUS = "200";
-var UNDEFINE ="undefined";
+const ERROR = "error";
+const SUCCESS = "successfully";
+const NOTFOUND ="not found";
+const INVALID ="Invalid Fields";
+const ERR_STATUS ="500";
+const SUCCESS_STATUS = "200";
+const UNDEFINE ="undefined";
