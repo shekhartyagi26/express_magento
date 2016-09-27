@@ -4,22 +4,23 @@ var favicon = require('static-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var mongoose =require('mongoose');
+var mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
+var middle = require('./middleware/middle.js');
+
 var db = require('./mods/db.js');
 var app = express();
 var Schema = mongoose.Schema;
 var verifySchema = new Schema({
-  headers: String,
-  url:String,
+    headers: String,
+    url: String,
 });
 var verify = mongoose.model('verify', verifySchema);
 var cors = require('cors');
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
-// var app = express();
-// app.set('view engine', 'jade');
+
 app.use(favicon());
 app.use(logger('dev'));
 app.use(bodyParser.json());
@@ -28,6 +29,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
 app.use(db());
+app.use(middle);
+
 
 var routes = require('./routes/index');
 var category = require('./routes/category');
@@ -41,38 +44,19 @@ var cart = require('./routes/cart');
 var redis = require('./routes/redis');
 var web = require('./routes/web');
 
-app.use(function (req, res, next) {
-    var headers = req.headers.app_id;
-    var verify = req.Collection;
-    var promise = verify.findOne({APP_ID: headers}).exec();
-    promise.then(function (verify) {
-        verify.url = JSON.parse(JSON.stringify(verify)).URL;
-        return verify.save(); // returns a promise
-    })
-            .then(function (verify) {
-                var URL = verify.url;
-                req.URL = URL;
-                next();
-            })
-            .catch(function (err) {
-               console.log(err)
-               next();
-            }); 
-});
-
 app.use('/', routes);
-app.use('/category',category);
-app.use('/customer',customer);
-app.use('/product',product);
-app.use('/home',home);
-app.use('/account',account);
-app.use('/order',order);
-app.use('/address',address);
-app.use('/cart',cart);
-app.use('/redis',redis);
-app.use('/web',web);
+app.use('/category', category);
+app.use('/customer', customer);
+app.use('/product', product);
+app.use('/home', home);
+app.use('/account', account);
+app.use('/order', order);
+app.use('/address', address);
+app.use('/cart', cart);
+app.use('/redis', redis);
+app.use('/web', web);
 
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
     var err = new Error('Not Found');
     err.status = 404;
     next(err);
@@ -81,7 +65,7 @@ app.use(function(req, res, next) {
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
-    app.use(function(err, req, res, next) {
+    app.use(function (err, req, res, next) {
         res.status(err.status || 500);
         res.render('error', {
             message: err.message,
@@ -92,7 +76,7 @@ if (app.get('env') === 'development') {
 
 // production error handler
 // no stacktraces leaked to user
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
     res.status(err.status || 500);
     res.render('error', {
         message: err.message,
