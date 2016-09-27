@@ -11,14 +11,16 @@ const request_ = require('../service/request');
 
 router.post('/get', function (req, res) {
     var sku = req.body.sku;
+    var APP_id = req.headers.app_id;
     var URL = req.URL;
+    if(URL.length > 0){
     if (sku.length > 0) {
         client.hgetall(headers + 'product_' + sku, function (err, object) {
             if (object != null && object.sku == sku) {
                 res.json({status: 1, statuscode: SUCCESS_STATUS, body: object});
             } else {
                 var body = ({sku: sku});
-                var headers = {APP_ID: config.APP_ID};
+                var headers = {APP_ID: APP_id};
                 var url = URL + '/product/get/';
                 request_.request(body, headers, url, function (req, response, msg) {
                     if (msg == ERROR) {
@@ -39,6 +41,9 @@ router.post('/get', function (req, res) {
     } else {
         res.json({status: 0, statuscode: ERR_STATUS, body: INVALID});
     }
+     }else{
+    res.json({status: 0, statuscode: ERR_STATUS, body: "header is not found in database"});
+}
 });
 
 

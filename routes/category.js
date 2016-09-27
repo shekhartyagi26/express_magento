@@ -14,14 +14,16 @@ router.all('/products', function (req, res) {
     var id = req.body.id;
     var page = req.body.page;
     var limit = req.body.limit;
+    var APP_id = req.headers.app_id;
     var URL = req.URL;
+     if(URL.length > 0){
     if (id > 0) {
         client.hgetall(headers + 'category_' + id, function (err, object) {
             if (object != null && object.id == id) {
                 res.json({status: 1, statuscode: SUCCESS_STATUS, body: object});
             } else {
                 var body = ({id: id, page: page, limit: limit});
-                var headers = {APP_ID: config.APP_ID};
+                var headers = {APP_ID: APP_id};
                 var url = URL + '/category/products/';
                 request_.request(body, headers, url, function (req, response, msg) {
                     if (msg == ERROR) {
@@ -44,6 +46,9 @@ router.all('/products', function (req, res) {
     } else {
         res.json({status: 0, statuscode: ERR_STATUS, body: INVALID});
     }
+       }else{
+    res.json({status: 0, statuscode: ERR_STATUS, body: "header is not found in database"});
+}
 });
 
 
@@ -51,14 +56,16 @@ router.all('/categorylist', function (req, res) {
     var parent_id = req.body.parent_id;
     var type = req.body.type;
     var store_id = req.body.store_id;
+    var APP_id = req.headers.app_id;
     var URL = req.URL;
+     if(URL.length > 0){
     if (parent_id > 0) {
         client.hgetall(headers + 'category_' + parent_id, function (err, object) {
             if (object != null && object.parent_id == parent_id) {
                 res.json({status: 1, statuscode: SUCCESS_STATUS, body: object});
             } else {
                 var body = ({parent_id: parent_id, type: type, store_id: store_id});
-                var headers = {APP_ID: config.APP_ID};
+                var headers = {APP_ID: APP_id};
                 var url = URL + '/category/categorylist/';
                 request_.request(body, headers, url, function (req, response, msg) {
                     if (msg == ERROR) {
@@ -81,6 +88,9 @@ router.all('/categorylist', function (req, res) {
     } else {
         res.json({status: 0, error: ERR_STATUS, body: INVALID});
     }
+       }else{
+    res.json({status: 0, statuscode: ERR_STATUS, body: "header is not found in database"});
+}
 });
 
 module.exports = router;

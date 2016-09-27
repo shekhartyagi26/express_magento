@@ -4,9 +4,8 @@ var favicon = require('static-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var mongoose = require('mongoose');
-mongoose.Promise = require('bluebird');
-var middle = require('./middleware/middle.js');
+
+var verify = require('./middleware/verify.js');
 
 var db = require('./mods/db.js');
 var app = express();
@@ -15,7 +14,7 @@ var app = express();
 var cors = require('cors');
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+app.set('view engine');
 
 app.use(favicon());
 app.use(logger('dev'));
@@ -25,7 +24,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
 app.use(db());
-app.use(middle);
+app.use(verify);
 
 
 var routes = require('./routes/index');

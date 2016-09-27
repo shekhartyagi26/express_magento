@@ -15,10 +15,12 @@ router.all('/cart', function (req, res) {
     var secret = req.body.secret;
     var access_token = req.headers.authorization;
     var store_id = req.body.store_id;
+    var APP_id = req.headers.app_id;
     var URL = req.URL;
+    if(URL.length > 0){
     if (productid > 0) {
         var body = ({productid: productid, secret: secret, store_id: store_id});
-        var headers = {APP_ID: config.APP_ID, "Authorization": access_token};
+        var headers = {APP_ID: APP_id, "Authorization": access_token};
         var url = URL + '/cart/cart/';
         request_.request(body, headers, url, function (req, response, msg) {
             if (msg == ERROR) {
@@ -32,6 +34,9 @@ router.all('/cart', function (req, res) {
     } else {
         res.json({status: 0, error: ERR_STATUS, body: INVALID});
     }
+       }else{
+    res.json({status: 0, statuscode: ERR_STATUS, body: "header is not found in database"});
+}
 
 });
 module.exports = router;
