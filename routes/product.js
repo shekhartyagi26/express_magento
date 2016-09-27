@@ -13,37 +13,37 @@ router.post('/get', function (req, res) {
     var sku = req.body.sku;
     var APP_id = req.headers.app_id;
     var URL = req.URL;
-    if(URL.length > 0){
-    if (sku.length > 0) {
-        client.hgetall(headers + 'product_' + sku, function (err, object) {
-            if (object != null && object.sku == sku) {
-                res.json({status: 1, statuscode: SUCCESS_STATUS, body: object});
-            } else {
-                var body = ({sku: sku});
-                var headers = {APP_ID: APP_id};
-                var url = URL + '/product/get/';
-                request_.request(body, headers, url, function (req, response, msg) {
-                    if (msg == ERROR) {
-                        res.json({status: 0, statuscode: req.statusCode, body: response});
-                    } else if (req.statusCode == ERR_STATUS) {
-                        res.json({status: 0, statuscode: req.statusCode, body: response});
-                    } else {
-                        client.hmset(headers + 'product_' + sku, {
-                            'sku': sku,
-                            "data": response
-                        });
-                        client.expire('product_' + sku, config.PRODUCT_EXPIRESAT);
-                        res.json({status: 1, statuscode: req.statusCode, body: response});
-                    }
-                });
-            }
-        });
+    if (URL.length > 0) {
+        if (sku.length > 0) {
+            client.hgetall(headers + 'product_' + sku, function (err, object) {
+                if (object != null && object.sku == sku) {
+                    res.json({status: 1, statuscode: SUCCESS_STATUS, body: object});
+                } else {
+                    var body = ({sku: sku});
+                    var headers = {APP_ID: APP_id};
+                    var url = URL + '/product/get/';
+                    request_.request(body, headers, url, function (req, response, msg) {
+                        if (msg == ERROR) {
+                            res.json({status: 0, statuscode: req.statusCode, body: response});
+                        } else if (req.statusCode == ERR_STATUS) {
+                            res.json({status: 0, statuscode: req.statusCode, body: response});
+                        } else {
+                            client.hmset(headers + 'product_' + sku, {
+                                'sku': sku,
+                                "data": response
+                            });
+                            client.expire('product_' + sku, config.PRODUCT_EXPIRESAT);
+                            res.json({status: 1, statuscode: req.statusCode, body: response});
+                        }
+                    });
+                }
+            });
+        } else {
+            res.json({status: 0, statuscode: ERR_STATUS, body: INVALID});
+        }
     } else {
-        res.json({status: 0, statuscode: ERR_STATUS, body: INVALID});
+        res.json({status: 0, statuscode: ERR_STATUS, body: "header is not found in database"});
     }
-     }else{
-    res.json({status: 0, statuscode: ERR_STATUS, body: "header is not found in database"});
-}
 });
 
 

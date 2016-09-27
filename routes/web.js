@@ -19,21 +19,21 @@ router.post('/config', function (req, res) {
     var headers = {APP_ID: config.APP_ID, store_id: store_id};
     var URL = req.URL;
     console.log(URL.length);
-    if(URL.length > 0){
-    var url = URL + '/web/config';
-    request_.request(body, headers, url, function (req, response, msg) {
-        if (msg == ERROR) {
-            console.log(response);
-            res.json({status: 0, statuscode: ERR_STATUS, error: response});
-        } else if (req.statusCode == ERR_STATUS) {
-            res.json({status: 0, statuscode: req.statusCode, body: response});
-        } else {
-            res.json({status: 1, statuscode: req.statusCode, body: response});
-        }
-    });
-}else{
-    res.json({status: 0, statuscode: ERR_STATUS, body: "header is not found in database"});
-}
+    if (URL.length > 0) {
+        var url = URL + '/web/config';
+        request_.request(body, headers, url, function (req, response, msg) {
+            if (msg == ERROR) {
+                console.log(response);
+                res.json({status: 0, statuscode: ERR_STATUS, error: response});
+            } else if (req.statusCode == ERR_STATUS) {
+                res.json({status: 0, statuscode: req.statusCode, body: response});
+            } else {
+                res.json({status: 1, statuscode: req.statusCode, body: response});
+            }
+        });
+    } else {
+        res.json({status: 0, statuscode: ERR_STATUS, body: "header is not found in database"});
+    }
 
 
 });

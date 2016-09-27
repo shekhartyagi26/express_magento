@@ -17,26 +17,26 @@ router.all('/cart', function (req, res) {
     var store_id = req.body.store_id;
     var APP_id = req.headers.app_id;
     var URL = req.URL;
-    if(URL.length > 0){
-    if (productid > 0) {
-        var body = ({productid: productid, secret: secret, store_id: store_id});
-        var headers = {APP_ID: APP_id, "Authorization": access_token};
-        var url = URL + '/cart/cart/';
-        request_.request(body, headers, url, function (req, response, msg) {
-            if (msg == ERROR) {
-                res.json({status: 0, statuscode: ERR_STATUS, error: response});
-            } else if (req.statusCode == ERR_STATUS) {
-                res.json({status: 0, statuscode: req.statusCode, body: response});
-            } else {
-                res.json({status: 1, statuscode: req.statusCode, body: response});
-            }
-        });
+    if (URL.length > 0) {
+        if (productid > 0) {
+            var body = ({productid: productid, secret: secret, store_id: store_id});
+            var headers = {APP_ID: APP_id, "Authorization": access_token};
+            var url = URL + '/cart/cart/';
+            request_.request(body, headers, url, function (req, response, msg) {
+                if (msg == ERROR) {
+                    res.json({status: 0, statuscode: ERR_STATUS, error: response});
+                } else if (req.statusCode == ERR_STATUS) {
+                    res.json({status: 0, statuscode: req.statusCode, body: response});
+                } else {
+                    res.json({status: 1, statuscode: req.statusCode, body: response});
+                }
+            });
+        } else {
+            res.json({status: 0, error: ERR_STATUS, body: INVALID});
+        }
     } else {
-        res.json({status: 0, error: ERR_STATUS, body: INVALID});
+        res.json({status: 0, statuscode: ERR_STATUS, body: "header is not found in database"});
     }
-       }else{
-    res.json({status: 0, statuscode: ERR_STATUS, body: "header is not found in database"});
-}
 
 });
 module.exports = router;
