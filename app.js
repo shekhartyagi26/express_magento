@@ -5,7 +5,29 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose =require('mongoose');
+mongoose.Promise = require('bluebird');
 var db = require('./mods/db.js');
+var app = express();
+var Schema = mongoose.Schema;
+var verifySchema = new Schema({
+  headers: String,
+  url:String,
+});
+var verify = mongoose.model('verify', verifySchema);
+var cors = require('cors');
+// view engine setup
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'jade');
+// var app = express();
+// app.set('view engine', 'jade');
+app.use(favicon());
+app.use(logger('dev'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded());
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(cors());
+app.use(db());
 
 var routes = require('./routes/index');
 var category = require('./routes/category');
@@ -19,25 +41,25 @@ var cart = require('./routes/cart');
 var redis = require('./routes/redis');
 var web = require('./routes/web');
 
+app.use(function (req, res, next) {
+    var headers = req.headers.app_id;
+    var verify = req.Collection;
+    var promise = verify.findOne({APP_ID: headers}).exec();
+    promise.then(function (verify) {
+        verify.url = JSON.parse(JSON.stringify(verify)).URL;
+        return verify.save(); // returns a promise
+    })
+            .then(function (verify) {
+                var URL = verify.url;
+                req.URL = URL;
+                next();
+            })
+            .catch(function (err) {
+               console.log(err)
+               next();
+            }); 
+});
 
-
-
-var app = express();
-
-var cors = require('cors');
-
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
-
-app.use(favicon());
-app.use(logger('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded());
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
-app.use(cors());
-app.use(db());
 app.use('/', routes);
 app.use('/category',category);
 app.use('/customer',customer);
@@ -50,16 +72,11 @@ app.use('/cart',cart);
 app.use('/redis',redis);
 app.use('/web',web);
 
-
-
-/// catch 404 and forwarding to error handler
 app.use(function(req, res, next) {
     var err = new Error('Not Found');
     err.status = 404;
     next(err);
 });
-
-/// error handlers
 
 // development error handler
 // will print stacktrace
@@ -82,7 +99,5 @@ app.use(function(err, req, res, next) {
         error: {}
     });
 });
-
-
 
 module.exports = app;
