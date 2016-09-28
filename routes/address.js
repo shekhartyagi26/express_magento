@@ -7,8 +7,8 @@ var bodyParser = require('body-parser');
 require('node-import');
 imports('config/index');
 imports('config/constant');
-
 const request_ = require('../service/request');
+
 router.post('/edit', function (req, res) {
     var access_token = req.headers.authorization;
     var secret = req.body.secret;
@@ -21,12 +21,14 @@ router.post('/edit', function (req, res) {
     var street = req.body.street;
     var firstname = req.body.firstname;
     var lastname = req.body.lastname;
+    var URL = req.URL;
+    var APP_ID = req.headers.app_id;
     if (countryid == UNDEFINE && zip == UNDEFINE && street == UNDEFINE && access_token == UNDEFINE) {
         res.json({status: 0, msg: UNDEFINE});
     } else if (countryid.length > 0 && zip.length > 0 && street.length > 0 && access_token.length > 0) {
         var body = ({countryid: countryid, zip: zip, city: city, teliphone: teliphone, fax: fax, company: company, street: street, firstname: firstname, lastname: lastname, secret: secret});
-        var headers = {APP_ID: config.APP_ID, "Authorization": access_token};
-        var url = '/address/edit/';
+        var headers = {APP_ID: APP_ID, "Authorization": access_token};
+        var url = URL + '/address/edit/';
         request_.request(body, headers, url, function (req, response, msg) {
             if (msg == ERROR) {
                 res.json({status: 0, statuscode: ERR_STATUS, error: response});

@@ -4,8 +4,9 @@ imports('config/index');
 imports('config/constant');
 
 exports.request = function (body, headers, url, callback) {
+
     request({
-        url: config.URL + url, //URL to hit
+        url: url, //URL to hit
         method: 'post',
         headers: headers,
         timeout: 10000,
@@ -19,4 +20,4 @@ exports.request = function (body, headers, url, callback) {
             callback(result, body, SUCCESS);
         }
     });
-} 
+}

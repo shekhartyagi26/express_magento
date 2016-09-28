@@ -1,28 +1,28 @@
+
 var express = require('express');
+var app = express();
 var router = express.Router();
-var path = require('path');
 var request = require('request');
 var cors = require('cors');
+var bodyParser = require('body-parser');
+var app = express();
 require('node-import');
 imports('config/index');
 imports('config/constant');
-var redis = require("redis"),
-        client = redis.createClient();
+
 const request_ = require('../service/request');
 
-router.all('/cart', function (req, res) {
-    var productid = req.body.productid;
-    var secret = req.body.secret;
-    var access_token = req.headers.authorization;
+
+router.post('/config', function (req, res) {
     var store_id = req.body.store_id;
     var APP_ID = req.headers.app_id;
     var URL = req.URL;
-    if (secret == UNDEFINE && APP_ID == UNDEFINE && URL == UNDEFINE && access_token == UNDEFINE && store_id == UNDEFINE) {
+    if (store_id == UNDEFINE && APP_ID == UNDEFINE && URL == UNDEFINE && access_token == UNDEFINE) {
         res.json({status: 0, statuscode: ERR_STATUS, body: UNDEFINE});
-    } else if (productid.length > 0 && secret.length > 0 && access_token.length > 0 && store_id.length > 0 && APP_ID.length > 0 && URL.length > 0) {
-        var body = ({productid: productid, secret: secret, store_id: store_id});
-        var headers = {APP_ID: APP_ID, "Authorization": access_token};
-        var url = URL + '/cart/cart/';
+    } else if (store_id.length > 0 && APP_ID.length > 0 && URL.length > 0 && access_token.length > 0) {
+        var body = ({});
+        var url = URL + '/web/config';
+        var headers = {APP_ID: APP_ID, store_id: store_id};
         request_.request(body, headers, url, function (req, response, msg) {
             if (msg == ERROR) {
                 res.json({status: 0, statuscode: ERR_STATUS, error: response});
@@ -33,8 +33,9 @@ router.all('/cart', function (req, res) {
             }
         });
     } else {
-        res.json({status: 0, error: ERR_STATUS, body: INVALID});
+        res.json({status: 0, statuscode: ERR_STATUS, msg: INVALID});
     }
-
 });
+
+
 module.exports = router;

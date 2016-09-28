@@ -1,30 +1,30 @@
 // the middleware function
+require('node-import');
+imports('config/index');
+
 module.exports = function () {
     var mongoose = require('mongoose');
-    mongoose.connect('mongodb://127.0.0.1/obi');
- 
+    mongoose.connect(config.DbUrl);
+    var Schema = mongoose.Schema;
     var conn = mongoose.connection;
+
+    var Grid = require('gridfs-stream');
+    Grid.mongo = mongoose.mongo;
+    var gfs = Grid(conn.db);
  
-    // incase you need gridfs
-    //var Grid = require('gridfs-stream');
-    //Grid.mongo = mongoose.mongo;
-    //var gfs = Grid(conn.db);
- 
-    var model_schema = mongoose.Schema({}, {
-        strict: false,
-        collection: 'sample'
+    var app_url_schema = new Schema({
+        headers: {type: String, required: true, unique: true},
+        url: {type: String, required: true, unique: true}
     });
-    var CollectionModel = conn.model('sample', model_schema);
- 
+    var AppUrls = mongoose.model('AppUrls', app_url_schema);
     conn.on('error', function (err) {
-        console.log(err);
         process.exit();
     })
     return function (req, res, next) {
         req.mongo = conn;
-        //req.gfs = gfs;
-        req.Collection = CollectionModel;
+        req.gfs = gfs;
+        req.app = AppUrls;
         next();
     }
- 
+
 };
