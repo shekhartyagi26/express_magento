@@ -11,7 +11,7 @@ var dtabase = mongoose.model('dtabase', verifySchema);
 
 
 module.exports = function (req, res, next) {
-    var headers = "com.tethr";
+    var headers = req.headers.app_id;
     var dtabase = req.app;
     var promise = dtabase.findOne({APP_ID: headers}).exec();
     if (headers.length > 0) {

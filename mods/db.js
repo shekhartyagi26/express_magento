@@ -16,7 +16,6 @@ module.exports = function () {
     });
     var CollectionModel = mongoose.model('sample', model_schema);
     conn.on('error', function (err) {
-        console.log(err);
         process.exit();
     })
     return function (req, res, next) {
