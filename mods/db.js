@@ -9,7 +9,7 @@ module.exports = function () {
         headers: {type: String, required: true, unique: true},
         url: {type: String, required: true, unique: true}
     });
-    var CollectionModel = mongoose.model('sample', model_schema);
+    var CollectionModel = mongoose.model('MagentoData', model_schema);
     conn.on('error', function (err) {
         process.exit();
     })
