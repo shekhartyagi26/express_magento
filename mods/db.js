@@ -1,7 +1,9 @@
 // the middleware function
+require('node-import');
+imports('config/index');
 module.exports = function () {
     var mongoose = require('mongoose');
-    mongoose.connect('mongodb://127.0.0.1/obi');
+    mongoose.connect(config.DbUrl);
     var Schema = mongoose.Schema;
     var conn = mongoose.connection;
 

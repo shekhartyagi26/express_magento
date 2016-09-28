@@ -1,2 +1,2 @@
-config ={'APP_ID': 'com.tethr', "URL": "http://144.76.34.244:8080/magento/1.9/web/index.php/excellence/mobile/api/v1", "CATEGORY_EXPIRESAT": "216000", "PRODUCT_EXPIRESAT": "216000","ACCOUNT_EXPIRESAT":"21600" }
+config ={'APP_ID': 'com.tethr',"DbUrl":"mongodb://127.0.0.1/obi" , "URL": "http://144.76.34.244:8080/magento/1.9/web/index.php/excellence/mobile/api/v1", "CATEGORY_EXPIRESAT": "216000", "PRODUCT_EXPIRESAT": "216000","ACCOUNT_EXPIRESAT":"21600" }
  
