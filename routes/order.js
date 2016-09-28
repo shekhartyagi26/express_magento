@@ -16,14 +16,14 @@ router.post('/alllist', function (req, res) {
     var from = req.body.from;
     var limit = req.body.limit;
     var secret = req.body.secret;
-    var APP_id = req.headers.app_id;
+    var APP_ID = req.headers.app_id;
     var URL = req.URL;
     if (URL.length > 0) {
         if (to == UNDEFINE && from == UNDEFINE && limit == UNDEFINE && secret == UNDEFINE && access_token == UNDEFINE) {
-            res.json({status: 0, msg: UNDEFINE});
+            res.json({status: 0, statuscode: ERR_STATUS, body: UNDEFINE});
         } else if (to.length > 0 && from.length > 0 && limit.length > 0 && secret.length > 0 && access_token.length > 0) {
             var body = ({to: to, from: from, limit: limit, secret: secret});
-            var headers = {APP_ID: APP_id, "Authorization": access_token};
+            var headers = {APP_ID: APP_ID, "Authorization": access_token};
             var url = URL + '/order/alllist/';
             request_.request(body, headers, url, function (req, response, msg) {
                 if (msg == ERROR) {
@@ -45,58 +45,51 @@ router.post('/alllist', function (req, res) {
 router.post('/totalorder', function (req, res) {
     var access_token = req.headers.authorization;
     var secret = req.body.secret;
-    var APP_id = req.headers.app_id;
+    var APP_ID = req.headers.app_id;
     var URL = req.URL;
-    if (URL.length > 0) {
-        if (access_token == UNDEFINE) {
-            res.json({status: 0, msg: UNDEFINE});
-        } else if (access_token.length > 0) {
-            var body = ({secret: secret});
-            var headers = {APP_ID: APP_id, "Authorization": access_token};
-            var url = URL + '/order/totalorder/';
-            request_.request(body, headers, url, function (req, response, msg) {
-                if (msg == ERROR) {
-                    res.json({status: 0, statuscode: ERR_STATUS, error: response});
-                } else if (req.statusCode == ERR_STATUS) {
-                    res.json({status: 0, statuscode: req.statusCode, body: response});
-                } else {
-                    res.json({status: 1, statuscode: req.statusCode, body: response});
-                }
-            });
-        } else {
-            res.json({status: 0, statuscode: ERR_STATUS, body: INVALID});
-        }
+    if (access_token == UNDEFINE) {
+        res.json({status: 0, statuscode: ERR_STATUS, body: UNDEFINE});
+    } else if (access_token.length > 0 && secret.length > 0 && APP_ID.length > 0 && URL.length > 0) {
+        var body = ({secret: secret});
+        var headers = {APP_ID: APP_ID, "Authorization": access_token};
+        var url = URL + '/order/totalorder/';
+        request_.request(body, headers, url, function (req, response, msg) {
+            if (msg == ERROR) {
+                res.json({status: 0, statuscode: ERR_STATUS, error: response});
+            } else if (req.statusCode == ERR_STATUS) {
+                res.json({status: 0, statuscode: req.statusCode, body: response});
+            } else {
+                res.json({status: 1, statuscode: req.statusCode, body: response});
+            }
+        });
     } else {
-        res.json({status: 0, statuscode: ERR_STATUS, body: "header is not found in database"});
+        res.json({status: 0, statuscode: ERR_STATUS, body: INVALID});
     }
 });
 
 router.post('/get', function (req, res) {
     var secret = req.body.secret;
     var order_no = req.body.order_no;
-    var APP_id = req.headers.app_id;
+    var APP_ID = req.headers.app_id;
     var URL = req.URL;
-    if (URL.length > 0) {
-        if (secret == UNDEFINE) {
-            res.json({status: 0, msg: UNDEFINE});
-        } else if (secret.length > 0) {
-            var body = ({secret: secret, order_no: order_no});
-            var headers = {APP_ID: APP_id};
-            var url = URL + '/order/get';
-            request_.request(body, headers, url, function (req, response, msg) {
-                if (msg == ERROR) {
-                    res.json({status: 0, statuscode: ERR_STATUS, error: response});
-                } else if (req.statusCode == ERR_STATUS) {
-                    res.json({status: 0, statuscode: req.statusCode, body: response});
-                } else {
-                    res.json({status: 1, statuscode: req.statusCode, body: response});
-                }
-            });
-        } else {
-            res.json({status: 0, statuscode: ERR_STATUS, body: INVALID});
-        }
+    if (secret == UNDEFINE && order_no == UNDEFINE && APP_ID == UNDEFINE) {
+        res.json({status: 0, statuscode: ERR_STATUS, body: UNDEFINE});
+        ;
+    } else if (secret.length > 0 && order_no.length > 0 && APP_ID.length > 0 && URL.length > 0) {
+        var body = ({secret: secret, order_no: order_no});
+        var headers = {APP_ID: APP_ID};
+        var url = URL + '/order/get';
+        request_.request(body, headers, url, function (req, response, msg) {
+            if (msg == ERROR) {
+                res.json({status: 0, statuscode: ERR_STATUS, error: response});
+            } else if (req.statusCode == ERR_STATUS) {
+                res.json({status: 0, statuscode: req.statusCode, body: response});
+            } else {
+                res.json({status: 1, statuscode: req.statusCode, body: response});
+            }
+        });
     } else {
-        res.json({status: 0, statuscode: ERR_STATUS, body: "header is not found in database"});
+        res.json({status: 0, statuscode: ERR_STATUS, body: INVALID});
     }
 });
 

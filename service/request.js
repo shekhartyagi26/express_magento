@@ -3,10 +3,10 @@ require('node-import');
 imports('config/index');
 imports('config/constant');
 
-exports.request = function (body, headers, url,  callback) {
+exports.request = function (body, headers, url, callback) {
 
     request({
-        url:url, //URL to hit
+        url: url, //URL to hit
         method: 'post',
         headers: headers,
         timeout: 10000,
@@ -17,7 +17,6 @@ exports.request = function (body, headers, url,  callback) {
         } else if (result.statusCode == 500) {
             callback(result, body, NOTFOUND)
         } else {
-            console.log(body)
             callback(result, body, SUCCESS);
         }
     });

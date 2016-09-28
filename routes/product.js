@@ -8,19 +8,19 @@ imports('config/constant');
 var redis = require("redis"),
         client = redis.createClient();
 const request_ = require('../service/request');
-
-router.post('/get', function (req, res) {
-    var sku = req.body.sku;
-    var APP_id = req.headers.app_id;
-    var URL = req.URL;
-    if (URL.length > 0) {
-        if (sku.length > 0) {
+        router.post('/get', function (req, res) {
+            var sku = req.body.sku;
+            var APP_ID = req.headers.app_id;
+            var URL = req.URL;
+            if (sku == UNDEFINE && APP_ID == UNDEFINE && URL == UNDEFINE) {
+            res.json({status: 0, statuscode: ERR_STATUS, body: UNDEFINE});
+            } else if (sku.length > 0 && APP_ID.length > 0 && URL.length > 0) {
             client.hgetall(headers + 'product_' + sku, function (err, object) {
                 if (object != null && object.sku == sku) {
                     res.json({status: 1, statuscode: SUCCESS_STATUS, body: object});
                 } else {
                     var body = ({sku: sku});
-                    var headers = {APP_ID: APP_id};
+                    var headers = {APP_ID: APP_ID};
                     var url = URL + '/product/get/';
                     request_.request(body, headers, url, function (req, response, msg) {
                         if (msg == ERROR) {
@@ -38,13 +38,10 @@ router.post('/get', function (req, res) {
                     });
                 }
             });
-        } else {
+            } else {
             res.json({status: 0, statuscode: ERR_STATUS, body: INVALID});
-        }
-    } else {
-        res.json({status: 0, statuscode: ERR_STATUS, body: "header is not found in database"});
-    }
-});
+            }
+        });
 
 
 module.exports = router;

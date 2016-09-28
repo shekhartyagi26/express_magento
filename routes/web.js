@@ -12,18 +12,19 @@ imports('config/constant');
 
 const request_ = require('../service/request');
 
+
 router.post('/config', function (req, res) {
     var store_id = req.body.store_id;
-    var body = ({});
-    var APP_id = req.headers.app_id;
-    var headers = {APP_ID: config.APP_ID, store_id: store_id};
+    var APP_ID = req.headers.app_id;
     var URL = req.URL;
-    console.log(URL.length);
-    if (URL.length > 0) {
+    if (store_id == UNDEFINE && APP_ID == UNDEFINE && URL == UNDEFINE && access_token == UNDEFINE) {
+        res.json({status: 0, statuscode: ERR_STATUS, body: UNDEFINE});
+    } else if (store_id.length > 0 && APP_ID.length > 0 && URL.length > 0 && access_token.length > 0) {
+        var body = ({});
         var url = URL + '/web/config';
+        var headers = {APP_ID: APP_ID, store_id: store_id};
         request_.request(body, headers, url, function (req, response, msg) {
             if (msg == ERROR) {
-                console.log(response);
                 res.json({status: 0, statuscode: ERR_STATUS, error: response});
             } else if (req.statusCode == ERR_STATUS) {
                 res.json({status: 0, statuscode: req.statusCode, body: response});
@@ -32,10 +33,8 @@ router.post('/config', function (req, res) {
             }
         });
     } else {
-        res.json({status: 0, statuscode: ERR_STATUS, body: "header is not found in database"});
+        res.json({status: 0, statuscode: ERR_STATUS, msg: INVALID});
     }
-
-
 });
 
 
