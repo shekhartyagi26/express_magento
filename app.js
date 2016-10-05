@@ -6,6 +6,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var verify = require('./middleware/verify.js');
+var redis = require('./middleware/redis.js');
 
 var db = require('./mods/db.js');
 var app = express();
@@ -25,6 +26,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
 app.use(db());
 app.use(verify);
+app.use(redis);
+
+
 
 
 var routes = require('./routes/index');
