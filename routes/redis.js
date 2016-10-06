@@ -4,7 +4,10 @@ var redis = require("redis"),
         client = redis.createClient();
 
 router.post('/flush', function (req, res) {
-//FLUSHDB - Removes data from your connection's CURRENT database.//
+    var HeaderId_ = req.HeaderId;
+    client.select(HeaderId_, function (err, res) {
+        client.set('key', 'string');
+    });
     client.flushdb(function (err, succeeded) {
         if (err) {
             res.json({err: err, msg: "the redis data is not deleted successfully"});

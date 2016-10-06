@@ -12,6 +12,7 @@ module.exports = function (req, res, next) {
             HeaderId = redis.get('HeaderId');
             client.select(HeaderId, function (err, res) {
                 client.set('key', 'string');
+                req.HeaderId = HeaderId;
                 next();
             });
         })
