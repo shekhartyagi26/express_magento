@@ -17,7 +17,7 @@ router.post('/get', function (req, res) {
     } else if (sku.length > 0 && APP_ID.length > 0 && URL.length > 0) {
         client.hgetall(headers + 'product_' + sku, function (err, object) {
             if (object != null && object.sku == sku) {
-                res.json({status: 1, statuscode: SUCCESS_STATUS, body: object});
+                res.json(object);
             } else {
                 var body = ({sku: sku});
                 var headers = {APP_ID: APP_ID};
@@ -30,7 +30,9 @@ router.post('/get', function (req, res) {
                     } else {
                         client.hmset(headers + 'product_' + sku, {
                             'sku': sku,
-                            "data": response
+                            "data": response,
+                            "status": 1, 
+                            "statuscode": req.statusCode
                         });
                         client.expire('product_' + sku, config.PRODUCT_EXPIRESAT);
                         res.json({status: 1, statuscode: req.statusCode, body: response});

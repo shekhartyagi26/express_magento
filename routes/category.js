@@ -22,7 +22,7 @@ router.all('/products', function (req, res) {
         } else if (id > 0) {
             client.hgetall(headers + 'category_' + id, function (err, object) {
                 if (object != null && object.id == id) {
-                    res.json({status: 1, statuscode: SUCCESS_STATUS, body: object});
+                    res.json(object);
                 } else {
                     var body = ({id: id, page: page, limit: limit});
                     var headers = {APP_ID: APP_ID};
@@ -37,7 +37,9 @@ router.all('/products', function (req, res) {
                                 'id': id,
                                 "page": page,
                                 "limit": limit,
-                                "body": response
+                                "body": response,
+                                "status": 1, 
+                                "statuscode": req.statusCode
                             });
                             client.expire('category_' + id, config.CATEGORY_EXPIRESAT);
                             res.json({status: 1, statuscode: req.statusCode, body: response});
@@ -65,7 +67,7 @@ router.all('/categorylist', function (req, res) {
     } else if (parent_id.length > 0 && type.length > 0 && store_id.length > 0 && APP_ID.length > 0) {
         client.hgetall(headers + 'category_' + parent_id, function (err, object) {
             if (object != null && object.parent_id == parent_id) {
-                res.json({status: 1, statuscode: SUCCESS_STATUS, body: object});
+                res.json(object);
             } else {
                 var body = ({parent_id: parent_id, type: type, store_id: store_id});
                 var headers = {APP_ID: APP_ID};
@@ -79,7 +81,9 @@ router.all('/categorylist', function (req, res) {
                         client.hmset(headers + 'category_' + parent_id, {
                             'parent_id': parent_id,
                             "body": response,
-                            "type": type
+                            "type": type,
+                            "status": 1, 
+                            "statuscode": req.statusCode
                         });
                         client.expire('category_' + parent_id, config.CATEGORY_EXPIRESAT);
                         res.json({status: 1, statuscode: req.statusCode, body: response});
