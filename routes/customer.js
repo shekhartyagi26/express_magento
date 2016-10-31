@@ -89,4 +89,30 @@ router.post('/forgot', function (req, res) {
     }
 });
 
+router.post('/social_account', function (req, res) {
+    var email = req.body.email;
+    var website_id = req.body.website_id;
+    var firstname = req.body.firstname;
+    var lastname = req.body.lastname;
+    var APP_ID = req.headers.app_id;
+    var social_id = req.body.social_id;
+    var URL = req.URL;
+    if (email.length > 0) {
+        var body = ({email: email, website_id: website_id, firstname: firstname, lastname: lastname, social_id: social_id});
+        var headers = {APP_ID: APP_ID};
+        var url = URL + '/customer/social_account/';
+        request_.request(body, headers, url, function (req, response, msg) {
+            if (msg == ERROR) {
+                res.json({status: 0, statuscode: ERR_STATUS, error: response});
+            } else if (req.statusCode == ERR_STATUS) {
+                res.json({status: 0, statuscode: req.statusCode, body: response});
+            } else {
+                res.json({status: 1, statuscode: req.statusCode, body: response});
+            }
+        });
+    } else {
+        res.json({status: 0, statuscode: ERR_STATUS, body: INVALID});
+    }
+});
+
 module.exports = router;
