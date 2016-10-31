@@ -17,7 +17,7 @@ router.all('/address', function (req, res) {
     var APP_ID = req.headers.app_id;
     if (secret == UNDEFINE && APP_ID == UNDEFINE && URL == UNDEFINE && access_token == UNDEFINE) {
         res.json({status: 0, statuscode: ERR_STATUS, body: UNDEFINE});
-    } else if (secret.length > 0 && access_token.length > 0 && URL.length > 0) {
+    } else if (APP_ID.length > 0 && URL.length > 0) {
         var body = ({secret: secret});
         var headers = {APP_ID: APP_ID, "Authorization": access_token};
         var url = URL + '/account/address/';
@@ -44,10 +44,9 @@ router.post('/changepassword', function (req, res) {
     var URL = req.URL;
     if (secret == UNDEFINE && APP_ID == UNDEFINE && URL == UNDEFINE && access_token == UNDEFINE && password == UNDEFINE && newPassword == UNDEFINE) {
         res.json({status: 0, statuscode: ERR_STATUS, body: UNDEFINE});
-    } else if (password.length > 0 && newPassword.length > 0) {
+    } else if (APP_ID.length > 0 && URL.length > 0) {
         var body = ({password: password, newPassword: newPassword, secret: secret});
         var headers = {APP_ID: APP_ID, "Authorization": access_token};
-
         var url = URL + '/account/changepassword/';
         request_.request(body, headers, url, function (req, response, msg) {
             if (msg == ERROR) {
