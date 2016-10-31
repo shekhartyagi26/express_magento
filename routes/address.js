@@ -15,18 +15,19 @@ router.post('/edit', function (req, res) {
     var countryid = req.body.countryid;
     var zip = req.body.zip;
     var city = req.body.city;
-    var teliphone = req.body.teliphone;
+    var telephone = req.body.telephone;
     var fax = req.body.fax;
     var company = req.body.company;
     var street = req.body.street;
     var firstname = req.body.firstname;
     var lastname = req.body.lastname;
+    var entity_id = req.body.entity_id;
     var URL = req.URL;
     var APP_ID = req.headers.app_id;
     if (countryid == UNDEFINE && zip == UNDEFINE && street == UNDEFINE && access_token == UNDEFINE) {
         res.json({status: 0, msg: UNDEFINE});
-    } else if (countryid.length > 0 && zip.length > 0 && street.length > 0 && access_token.length > 0) {
-        var body = ({countryid: countryid, zip: zip, city: city, teliphone: teliphone, fax: fax, company: company, street: street, firstname: firstname, lastname: lastname, secret: secret});
+    } else if (APP_ID.length > 0 && URL.length > 0) {
+        var body = ({countryid: countryid, zip: zip, city: city, telephone: telephone, fax: fax, company: company, street: street, firstname: firstname, lastname: lastname, secret: secret, entity_id: entity_id});
         var headers = {APP_ID: APP_ID, "Authorization": access_token};
         var url = URL + '/address/edit/';
         request_.request(body, headers, url, function (req, response, msg) {

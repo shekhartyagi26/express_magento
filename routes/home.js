@@ -116,4 +116,4 @@ router.post('/slider', function (req, res) {
     }
 });
 
-module.exports = router;
+module.exports = router;s

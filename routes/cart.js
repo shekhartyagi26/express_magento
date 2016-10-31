@@ -19,7 +19,7 @@ router.all('/cart', function (req, res) {
     var URL = req.URL;
     if (secret == UNDEFINE && APP_ID == UNDEFINE && URL == UNDEFINE && access_token == UNDEFINE && store_id == UNDEFINE) {
         res.json({status: 0, statuscode: ERR_STATUS, body: UNDEFINE});
-    } else if (productid.length > 0 && secret.length > 0 && access_token.length > 0 && store_id.length > 0 && APP_ID.length > 0 && URL.length > 0) {
+    } else if (APP_ID.length > 0 && URL.length > 0) {
         var body = ({productid: productid, secret: secret, store_id: store_id});
         var headers = {APP_ID: APP_ID, "Authorization": access_token};
         var url = URL + '/cart/cart/';
@@ -35,6 +35,6 @@ router.all('/cart', function (req, res) {
     } else {
         res.json({status: 0, error: ERR_STATUS, body: INVALID});
     }
-
 });
+
 module.exports = router;
