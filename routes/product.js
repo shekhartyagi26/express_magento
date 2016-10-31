@@ -8,13 +8,14 @@ imports('config/constant');
 var redis = require("redis"),
         client = redis.createClient();
 const request_ = require('../service/request');
-
 router.post('/get', function (req, res) {
     var sku = req.body.sku;
     var APP_ID = req.headers.app_id;
     var URL = req.URL;
-    if (sku.length > 0) {
-        client.hgetall('product_' + sku, function (err, object) {
+    if (sku == UNDEFINE && APP_ID == UNDEFINE && URL == UNDEFINE) {
+        res.json({status: 0, statuscode: ERR_STATUS, body: UNDEFINE});
+    } else if (sku.length > 0 && APP_ID.length > 0 && URL.length > 0) {
+        client.hgetall(headers + 'product_' + sku, function (err, object) {
             if (object != null && object.sku == sku) {
                 res.json(object);
             } else {
@@ -27,9 +28,11 @@ router.post('/get', function (req, res) {
                     } else if (req.statusCode == ERR_STATUS) {
                         res.json({status: 0, statuscode: req.statusCode, body: response});
                     } else {
-                        client.hmset('product_' + sku, {
+                        client.hmset(headers + 'product_' + sku, {
                             'sku': sku,
-                            "body": response
+                            "data": response,
+                            "status": 1, 
+                            "statuscode": req.statusCode
                         });
                         client.expire('product_' + sku, config.PRODUCT_EXPIRESAT);
                         res.json({status: 1, statuscode: req.statusCode, body: response});
