@@ -29,7 +29,9 @@ router.post('/get', function (req, res) {
                     } else {
                         client.hmset('product_' + sku, {
                             'sku': sku,
-                            "body": response
+                            "data": response,
+                            "status": 1, 
+                            "statuscode": req.statusCode
                         });
                         client.expire('product_' + sku, config.PRODUCT_EXPIRESAT);
                         res.json({status: 1, statuscode: req.statusCode, body: response});
@@ -64,7 +66,9 @@ router.post('/review', function (req, res) {
                     } else {
                         client.hmset('product_' + sku, {
                             'sku': sku,
-                            "data": response
+                            "data": response,
+                            "status": 1, 
+                            "statuscode": req.statusCode
                         });
                         client.expire('product_' + sku, config.PRODUCT_EXPIRESAT);
                         res.json({status: 1, statuscode: req.statusCode, body: response});
