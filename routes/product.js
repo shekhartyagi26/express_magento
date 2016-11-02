@@ -93,4 +93,35 @@ router.post('/submitreview', function (req, res) {
     }
 });
 
+router.post('/getrating', function (req, res) {
+    var APP_ID = req.headers.app_id;
+    var URL = req.URL;
+    if (URL.length > 0) {
+        client.hgetall('product_', function (err, object) {
+            if (object != null) {
+                res.json(object);
+            } else {
+                var body = ({});
+                var headers = {APP_ID: APP_ID};
+                var url = URL + '/product/getrating/';
+                request_.request(body, headers, url, function (req, response, msg) {
+                    if (msg == ERROR) {
+                        res.json({status: 0, statuscode: req.statusCode, body: response});
+                    } else if (req.statusCode == ERR_STATUS) {
+                        res.json({status: 0, statuscode: req.statusCode, body: response});
+                    } else {
+                        client.hmset('product_', {
+                            "body": response
+                        });
+                        client.expire('product_', config.PRODUCT_EXPIRESAT);
+                        res.json({status: 1, statuscode: req.statusCode, body: response});
+                    }
+                });
+            }
+        });
+    } else {
+        res.json({status: 0, statuscode: ERR_STATUS, body: INVALID});
+    }
+});
+
 module.exports = router;
