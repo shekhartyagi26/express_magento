@@ -29,9 +29,7 @@ router.post('/get', function (req, res) {
                     } else {
                         client.hmset('product_' + sku, {
                             'sku': sku,
-                            "data": response,
-                            "status": 1, 
-                            "statuscode": req.statusCode
+                            "body": response
                         });
                         client.expire('product_' + sku, config.PRODUCT_EXPIRESAT);
                         res.json({status: 1, statuscode: req.statusCode, body: response});
@@ -51,29 +49,16 @@ router.post('/review', function (req, res) {
     var pagesize = req.body.pagesize;
     var pageno = req.body.pageno;
     if (sku.length > 0) {
-        client.hgetall('product_' + sku, function (err, object) {
-            if (object != null && object.sku == sku) {
-                res.json({status: 1, statuscode: SUCCESS_STATUS, body: object});
+        var body = ({sku: sku, pagesize: pagesize, pageno: pageno});
+        var headers = {APP_ID: APP_ID};
+        var url = URL + '/product/review/';
+        request_.request(body, headers, url, function (req, response, msg) {
+            if (msg == ERROR) {
+                res.json({status: 0, statuscode: req.statusCode, body: response});
+            } else if (req.statusCode == ERR_STATUS) {
+                res.json({status: 0, statuscode: req.statusCode, body: response});
             } else {
-                var body = ({sku: sku, pagesize: pagesize, pageno: pageno});
-                var headers = {APP_ID: APP_ID};
-                var url = URL + '/product/review/';
-                request_.request(body, headers, url, function (req, response, msg) {
-                    if (msg == ERROR) {
-                        res.json({status: 0, statuscode: req.statusCode, body: response});
-                    } else if (req.statusCode == ERR_STATUS) {
-                        res.json({status: 0, statuscode: req.statusCode, body: response});
-                    } else {
-                        client.hmset('product_' + sku, {
-                            'sku': sku,
-                            "data": response,
-                            "status": 1, 
-                            "statuscode": req.statusCode
-                        });
-                        client.expire('product_' + sku, config.PRODUCT_EXPIRESAT);
-                        res.json({status: 1, statuscode: req.statusCode, body: response});
-                    }
-                });
+                res.json({status: 1, statuscode: req.statusCode, body: response});
             }
         });
     } else {
