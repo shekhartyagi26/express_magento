@@ -93,4 +93,25 @@ router.post('/submitreview', function (req, res) {
     }
 });
 
+router.post('/getrating', function (req, res) {
+    var APP_ID = req.headers.app_id;
+    var URL = req.URL;
+    if (APP_ID.length > 0 && URL.length > 0) {
+        var body = ({});
+        var headers = {APP_ID: APP_ID};
+        var url = URL + '/product/getrating/';
+        request_.request(body, headers, url, function (req, response, msg) {
+            if (msg == ERROR) {
+                res.json({status: 0, statuscode: ERR_STATUS, error: response});
+            } else if (req.statusCode == ERR_STATUS) {
+                res.json({status: 0, statuscode: req.statusCode, body: response});
+            } else {
+                res.json({status: 1, statuscode: req.statusCode, body: response});
+            }
+        });
+    } else {
+        res.json({status: 0, statuscode: ERR_STATUS, body: INVALID});
+    }
+});
+
 module.exports = router;
