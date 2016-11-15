@@ -48,17 +48,30 @@ router.post('/review', function (req, res) {
     var URL = req.URL;
     var pagesize = req.body.pagesize;
     var pageno = req.body.pageno;
-    if (sku.length > 0) {
-        var body = ({sku: sku, pagesize: pagesize, pageno: pageno});
-        var headers = {APP_ID: APP_ID};
-        var url = URL + '/product/review/';
-        request_.request(body, headers, url, function (req, response, msg) {
-            if (msg == ERROR) {
-                res.json({status: 0, statuscode: req.statusCode, body: response});
-            } else if (req.statusCode == ERR_STATUS) {
-                res.json({status: 0, statuscode: req.statusCode, body: response});
+    if (pagesize.length > 0) {
+        client.hgetall('product_' + pagesize, function (err, object) {
+            if (object != null && object.pagesize == pagesize) {
+                res.json(object);
             } else {
-                res.json({status: 1, statuscode: req.statusCode, body: response});
+                var body = ({sku: sku, pagesize: pagesize, pageno: pageno});
+                var headers = {APP_ID: APP_ID};
+                var url = URL + '/product/review/';
+                request_.request(body, headers, url, function (req, response, msg) {
+                    if (msg == ERROR) {
+                        res.json({status: 0, statuscode: req.statusCode, body: response});
+                    } else if (req.statusCode == ERR_STATUS) {
+                        res.json({status: 0, statuscode: req.statusCode, body: response});
+                    } else {
+                        client.hmset('product_' + pagesize, {
+                            'pagesize': pagesize,
+                            'body': response,
+                            'sku': sku,
+                            'pageno': pageno
+                        });
+                        client.expire('product_' + pagesize, config.PRODUCT_EXPIRESAT);
+                        res.json({status: 1, statuscode: req.statusCode, body: response});
+                    }
+                });
             }
         });
     } else {
