@@ -10,9 +10,11 @@ module.exports = function (req, res, next) {
     if (headers.length > 0) {
         promise.then(function (redis) {
             HeaderId = redis.get('HeaderId');
+            status = redis.get('status');
             client.select(HeaderId, function (err, res) {
                 client.set('key', 'string');
                 req.HeaderId = HeaderId;
+                req.status = status;
                 next();
             });
         })

@@ -13,9 +13,10 @@ router.post('/get', function (req, res) {
     var sku = req.body.sku;
     var APP_ID = req.headers.app_id;
     var URL = req.URL;
+    var status = req.status;
     if (sku.length > 0) {
         client.hgetall('product_' + sku, function (err, object) {
-            if (object != null && object.sku == sku) {
+            if (object != null && object.sku == sku && status == 'enabled') {
                 res.json(object);
             } else {
                 var body = ({sku: sku});
