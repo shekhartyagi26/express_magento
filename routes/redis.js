@@ -20,39 +20,23 @@ router.post('/flush', function (req, res) {
 router.post('/set_status', function (req, res) {
     var dtabase = req.app;
     var APP_ID = req.headers.app_id;
+    var status = req.body.status;
 
     dtabase.find({APP_ID: APP_ID}, function (err, result) {
         if (err) {
             res.json({status: '0', msg: err});
-        } else {
-            if (result.length == 0) {
-                res.json({status: '0', msg: "the data is not found in database"});
-            } else {
-                result = result[0];
-                if (result.status == 'enabled') {
-                    dtabase.update({APP_ID: APP_ID}, {
-                        status: "disabled",
-                    }, function (err, result) {
-                        if (err) {
-                            res.json({status: '0', msg: err});
-                        } else {
-                            res.json({status: '1', msg: "the status is successfully changed to disabled"});
-                        }
-                    });
-                } else if (result.status == 'disabled') {
-                    dtabase.update({APP_ID: APP_ID}, {
-                        status: "enabled",
-                    }, function (err, result) {
-                        if (err) {
-                            res.json({status: '0', msg: err});
-                        } else {
-                            res.json({status: '1', msg: "the status is successfully changed to enabled"});
-                        }
-                    });
+        } else if (status == 'enabled' || status == 'disabled') {
+            dtabase.update({APP_ID: APP_ID}, {
+                status: status,
+            }, function (err, result) {
+                if (err) {
+                    res.json({status: '0', msg: err});
                 } else {
-                    res.json({status: '0', msg: "the status is not chnaged successfully"});
+                    res.json({status: '1', msg: 'the status is successfully changed to ' + status});
                 }
-            }
+            });
+        } else {
+            res.json({status: '0', msg: "the status is not changed successfully,  you have to set status enabled or disabled"});
         }
     });
 });
