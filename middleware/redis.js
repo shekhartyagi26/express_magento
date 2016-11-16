@@ -8,11 +8,13 @@ module.exports = function (req, res, next) {
     var dtabase = req.app;
     var promise = dtabase.findOne({APP_ID: headers}).exec();
     if (headers.length > 0) {
-        promise.then(function (redis) {
-            HeaderId = redis.get('HeaderId');
+        promise.then(function (mongo_db) {
+            HeaderId = mongo_db.get('HeaderId');
+            status = mongo_db.get('status');
             client.select(HeaderId, function (err, res) {
                 client.set('key', 'string');
                 req.HeaderId = HeaderId;
+                req.status = status;
                 next();
             });
         })

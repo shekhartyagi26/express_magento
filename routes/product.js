@@ -13,9 +13,10 @@ router.post('/get', function (req, res) {
     var sku = req.body.sku;
     var APP_ID = req.headers.app_id;
     var URL = req.URL;
+    var status = req.status;
     if (sku.length > 0) {
         client.hgetall('product_' + sku, function (err, object) {
-            if (object != null && object.sku == sku) {
+            if (object != null && object.sku == sku && status == 'enabled') {
                 res.json(object);
             } else {
                 var body = ({sku: sku});
@@ -48,17 +49,31 @@ router.post('/review', function (req, res) {
     var URL = req.URL;
     var pagesize = req.body.pagesize;
     var pageno = req.body.pageno;
-    if (sku.length > 0) {
-        var body = ({sku: sku, pagesize: pagesize, pageno: pageno});
-        var headers = {APP_ID: APP_ID};
-        var url = URL + '/product/review/';
-        request_.request(body, headers, url, function (req, response, msg) {
-            if (msg == ERROR) {
-                res.json({status: 0, statuscode: req.statusCode, body: response});
-            } else if (req.statusCode == ERR_STATUS) {
-                res.json({status: 0, statuscode: req.statusCode, body: response});
+    var status = req.status;
+    if (pagesize.length > 0) {
+        client.hgetall('product_' + pagesize, function (err, object) {
+            if (object != null && object.pagesize == pagesize && status == 'enabled') {
+                res.json(object);
             } else {
-                res.json({status: 1, statuscode: req.statusCode, body: response});
+                var body = ({sku: sku, pagesize: pagesize, pageno: pageno});
+                var headers = {APP_ID: APP_ID};
+                var url = URL + '/product/review/';
+                request_.request(body, headers, url, function (req, response, msg) {
+                    if (msg == ERROR) {
+                        res.json({status: 0, statuscode: req.statusCode, body: response});
+                    } else if (req.statusCode == ERR_STATUS) {
+                        res.json({status: 0, statuscode: req.statusCode, body: response});
+                    } else {
+                        client.hmset('product_' + pagesize, {
+                            'pagesize': pagesize,
+                            'body': response,
+                            'sku': sku,
+                            'pageno': pageno
+                        });
+                        client.expire('product_' + pagesize, config.PRODUCT_EXPIRESAT);
+                        res.json({status: 1, statuscode: req.statusCode, body: response});
+                    }
+                });
             }
         });
     } else {
@@ -96,9 +111,10 @@ router.post('/submitreview', function (req, res) {
 router.post('/getrating', function (req, res) {
     var APP_ID = req.headers.app_id;
     var URL = req.URL;
+    var status = req.status;
     if (URL.length > 0) {
         client.hgetall('product_', function (err, object) {
-            if (object != null) {
+            if (object != null && status == 'enabled') {
                 res.json(object);
             } else {
                 var body = ({});

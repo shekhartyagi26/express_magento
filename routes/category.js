@@ -16,12 +16,13 @@ router.all('/products', function (req, res) {
     var limit = req.body.limit;
     var APP_ID = req.headers.app_id;
     var URL = req.URL;
+    var status = req.status;
     if (URL.length > 0) {
         if (limit == UNDEFINE && APP_ID == UNDEFINE && URL == UNDEFINE && page == UNDEFINE && id == UNDEFINE) {
             res.json({status: 0, statuscode: ERR_STATUS, body: UNDEFINE});
         } else if (id > 0) {
             client.hgetall(headers + 'category_' + id, function (err, object) {
-                if (object != null && object.id == id) {
+                if (object != null && object.id == id && status == 'enabled') {
                     res.json(object);
                 } else {
                     var body = ({id: id, page: page, limit: limit});
@@ -38,7 +39,7 @@ router.all('/products', function (req, res) {
                                 "page": page,
                                 "limit": limit,
                                 "body": response,
-                                "status": 1, 
+                                "status": 1,
                                 "statuscode": req.statusCode
                             });
                             client.expire('category_' + id, config.CATEGORY_EXPIRESAT);
@@ -62,11 +63,12 @@ router.all('/categorylist', function (req, res) {
     var store_id = req.body.store_id;
     var APP_ID = req.headers.app_id;
     var URL = req.URL;
+    var status = req.status;
     if (parent_id == UNDEFINE && APP_ID == UNDEFINE && URL == UNDEFINE && store_id == UNDEFINE && type == UNDEFINE) {
         res.json({status: 0, statuscode: ERR_STATUS, body: UNDEFINE});
     } else if (parent_id.length > 0 && type.length > 0 && store_id.length > 0 && APP_ID.length > 0) {
         client.hgetall(headers + 'category_' + parent_id, function (err, object) {
-            if (object != null && object.parent_id == parent_id) {
+            if (object != null && object.parent_id == parent_id && status == 'enabled') {
                 res.json(object);
             } else {
                 var body = ({parent_id: parent_id, type: type, store_id: store_id});
@@ -82,7 +84,7 @@ router.all('/categorylist', function (req, res) {
                             'parent_id': parent_id,
                             "body": response,
                             "type": type,
-                            "status": 1, 
+                            "status": 1,
                             "statuscode": req.statusCode
                         });
                         client.expire('category_' + parent_id, config.CATEGORY_EXPIRESAT);

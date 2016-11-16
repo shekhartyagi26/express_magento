@@ -44,4 +44,30 @@ router.post('/edit', function (req, res) {
     }
 });
 
+router.post('/delete', function (req, res) {
+    var access_token = req.headers.authorization;
+    var secret = req.body.secret;
+    var entity_id = req.body.entity_id;
+    var URL = req.URL;
+    var APP_ID = req.headers.app_id;
+    if (entity_id == UNDEFINE) {
+        res.json({status: 0, msg: UNDEFINE});
+    } else if (APP_ID.length > 0 && URL.length > 0) {
+        var body = ({secret: secret, entity_id: entity_id});
+        var headers = {APP_ID: APP_ID, "Authorization": access_token};
+        var url = URL + '/address/delete/';
+        request_.request(body, headers, url, function (req, response, msg) {
+            if (msg == ERROR) {
+                res.json({status: 0, statuscode: ERR_STATUS, error: response});
+            } else if (req.statusCode == ERR_STATUS) {
+                res.json({status: 0, statuscode: req.statusCode, body: response});
+            } else {
+                res.json({status: 1, statuscode: req.statusCode, body: response});
+            }
+        });
+    } else {
+        res.json({status: 0, error: ERR_STATUS, body: INVALID});
+    }
+});
+
 module.exports = router;

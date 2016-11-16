@@ -13,11 +13,12 @@ router.post('/products', function (req, res) {
     var type = req.body.type;
     var APP_ID = req.headers.app_id;
     var URL = req.URL;
+    var status = req.status;
     if (type == UNDEFINE && APP_ID == UNDEFINE && URL == UNDEFINE) {
         res.json({status: 0, statuscode: ERR_STATUS, body: UNDEFINE});
     } else if (type.length > 0 && APP_ID.length > 0 && URL.length > 0) {
         client.hgetall(headers + 'products_' + type, function (err, object) {
-            if (object != null && object.type == type) {
+            if (object != null && object.type == type && status == 'enabled') {
                 res.json(object);
             } else {
                 var body = ({type: type});
@@ -33,7 +34,7 @@ router.post('/products', function (req, res) {
                         client.hmset(headers + 'products_' + type, {
                             'type': type,
                             "data": response,
-                            "status": 1, 
+                            "status": 1,
                             "statuscode": req.statusCode
                         });
                         client.expire('products_' + type, config.PRODUCT_EXPIRESAT);
@@ -49,11 +50,12 @@ router.post('/products', function (req, res) {
 router.post('/categories', function (req, res) {
     var APP_ID = req.headers.app_id;
     var URL = req.URL;
+    var status = req.status;
     if (APP_ID == UNDEFINE && URL == UNDEFINE) {
         res.json({status: 0, statuscode: ERR_STATUS, body: UNDEFINE});
     } else if (APP_ID.length > 0 && URL.length > 0) {
         client.hgetall(headers + 'categories', function (err, object) {
-            if (object != null && object == object) {
+            if (object != null && object == object && status == 'enabled') {
                 res.json(object);
             } else {
                 var body = ({});
@@ -68,7 +70,7 @@ router.post('/categories', function (req, res) {
                         res.json({status: 1, statuscode: req.statusCode, body: response});
                         client.hmset(headers + 'categories', {
                             "body": response,
-                            "status": 1, 
+                            "status": 1,
                             "statuscode": req.statusCode
                         });
                         client.expire('categories', config.PRODUCT_EXPIRESAT);
@@ -84,11 +86,12 @@ router.post('/categories', function (req, res) {
 router.post('/slider', function (req, res) {
     var APP_ID = req.headers.app_id;
     var URL = req.URL;
+    var status = req.status;
     if (APP_ID == UNDEFINE && URL == UNDEFINE) {
         res.json({status: 0, statuscode: ERR_STATUS, body: UNDEFINE});
     } else if (APP_ID.length > 0 && URL.length > 0) {
         client.hgetall(headers + 'slider', function (err, object) {
-            if (object != null && object == object) {
+            if (object != null && object == object && status == 'enabled') {
                 res.json(object);
             } else {
                 var body = ({});
@@ -102,7 +105,7 @@ router.post('/slider', function (req, res) {
                     } else {
                         client.hmset(headers + 'slider', {
                             "body": response,
-                            "status": 1, 
+                            "status": 1,
                             "statuscode": req.statusCode
                         });
                         client.expire('categories', config.PRODUCT_EXPIRESAT);
@@ -116,4 +119,4 @@ router.post('/slider', function (req, res) {
     }
 });
 
-module.exports = router;s
+module.exports = router;
