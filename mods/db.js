@@ -14,7 +14,8 @@ module.exports = function () {
  
     var app_url_schema = new Schema({
         headers: {type: String, required: true, unique: true},
-        url: {type: String, required: true, unique: true}
+        url: {type: String, required: true, unique: true},
+        status: {type: String, required: true, unique: true},
     });
     var AppUrls = mongoose.model('AppUrls', app_url_schema);
     conn.on('error', function (err) {
