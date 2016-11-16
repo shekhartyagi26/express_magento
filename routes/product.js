@@ -49,9 +49,10 @@ router.post('/review', function (req, res) {
     var URL = req.URL;
     var pagesize = req.body.pagesize;
     var pageno = req.body.pageno;
+    var status = req.status;
     if (pagesize.length > 0) {
         client.hgetall('product_' + pagesize, function (err, object) {
-            if (object != null && object.pagesize == pagesize) {
+            if (object != null && object.pagesize == pagesize && status == 'enabled') {
                 res.json(object);
             } else {
                 var body = ({sku: sku, pagesize: pagesize, pageno: pageno});
@@ -110,9 +111,10 @@ router.post('/submitreview', function (req, res) {
 router.post('/getrating', function (req, res) {
     var APP_ID = req.headers.app_id;
     var URL = req.URL;
+    var status = req.status;
     if (URL.length > 0) {
         client.hgetall('product_', function (err, object) {
-            if (object != null) {
+            if (object != null && status == 'enabled') {
                 res.json(object);
             } else {
                 var body = ({});

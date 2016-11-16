@@ -35,7 +35,6 @@ router.post('/login', function (req, res) {
     }
 });
 
-
 router.post('/register', function (req, res) {
     var firstname = req.body.firstname;
     var lastname = req.body.lastname;

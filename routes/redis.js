@@ -41,5 +41,16 @@ router.post('/set_status', function (req, res) {
     });
 });
 
+router.post('/check_status', function (req, res) {
+    var dtabase = req.app;
+    var APP_ID = req.headers.app_id;
+    dtabase.find({APP_ID: APP_ID}, function (err, result) {
+        if (err) {
+            res.json({status: '0', msg: err});
+        } else {
+            res.json({status: '1', current_status: result[0].status});
+        }
+    });
+});
 
 module.exports = router;
