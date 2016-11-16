@@ -87,7 +87,7 @@ router.post('/slider', function (req, res) {
     var APP_ID = req.headers.app_id;
     var URL = req.URL;
     var status = req.status;
-    if (APP_ID ==  && URL == UNDEFINE) {
+    if (APP_ID == UNDEFINE && URL == UNDEFINE) {
         res.json({status: 0, statuscode: ERR_STATUS, body: UNDEFINE});
     } else if (APP_ID.length > 0 && URL.length > 0) {
         client.hgetall(headers + 'slider', function (err, object) {
