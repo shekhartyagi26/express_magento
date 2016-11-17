@@ -25,21 +25,23 @@ exports.request = function (body, headers, url, callback) {
 }
 
 exports.resize = function (url, callback) {
-    var file = fs.createWriteStream("public/file12.png");
-    var request = http.get("http://144.76.34.244:8080/magento/1.9/web/media/app_bg/default/2_5.png", function (response) {
-        response.pipe(file);
+    var n = url.lastIndexOf('/');
+    var image_name = url.substring(n + 1);
+    var file = fs.createWriteStream("public/" + image_name);
+    var request = http.get(url, function (response) {
+        sresponse.pipe(file);
         response.on('end', function () {
-            sharp('public/file12.png')
+            sharp('public/' + image_name)
                     .resize(300, 200)
-                    .toFile('public/resize/output.png', function (err) {
+                    .toFile('public/resize/' + 'S' + image_name, function (err) {
                         if (err) {
-                            callback(500 , err)
-                        }else if(err == null){
-                        callback(200 ,"done")
-                    }else{
-                        callback(500 , "oops! some error occured")
-                    }
-                    });
+                            callback(500, err)
+                        } else if (err == null) {
+                            callback(200, "done")
+                        } else {
+                            callback(500, "oops! some error occured")
+                        }
+                    })
         })
     })
 }
