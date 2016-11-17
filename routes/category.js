@@ -34,7 +34,7 @@ router.all('/products', function (req, res) {
                         var resp = JSON.parse(response);
                         for (i = 0; i < resp.data[0].data.media_images.length; i++) {
                             var url = resp.data[0].data.media_images[i];
-                            request_.resize(url, function (status, response_) {
+                            request_.resize(url,APP_ID, function (status, response_,image_name) {
                                 if (status == '200') {
                                     client.hmset('category_' + id, {
                                         'id': id,

@@ -24,20 +24,25 @@ exports.request = function (body, headers, url, callback) {
     });
 }
 
-exports.resize = function (url, callback) {
+exports.resize = function (url, APP_ID, callback) {
+    mystring = APP_ID.replace('.', '');
+    var n = url.lastIndexOf(':');
+    var image_ = url.substring(n + 5);
+    var image_url = mystring + image_;
     var n = url.lastIndexOf('/');
     var image_name = url.substring(n + 1);
-    var file = fs.createWriteStream("public/" + image_name);
+    var file = fs.createWriteStream("public/" + image_url);
     var request = http.get(url, function (response) {
         response.pipe(file);
         response.on('end', function () {
             sharp('public/' + image_name)
                     .resize(300, 200)
-                    .toFile('public/resize/' + 'S' + image_name, function (err) {
+                    .toFile('public/' + image_url, function (err) {
                         if (err) {
                             callback(500, err)
                         } else if (err == null) {
-                            callback(200, "done")
+                            console.log('done')
+                            callback(200, "done", image_url)
                         } else {
                             callback(500, "oops! some error occured")
                         }
