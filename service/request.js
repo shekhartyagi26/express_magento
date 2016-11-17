@@ -1,10 +1,12 @@
 var request = require('request');
+var sharp = require('sharp');
+var http = require('http');
+var fs = require('fs');
 require('node-import');
 imports('config/index');
 imports('config/constant');
 
 exports.request = function (body, headers, url, callback) {
-
     request({
         url: url, //URL to hit
         method: 'post',

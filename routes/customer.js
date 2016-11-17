@@ -35,6 +35,7 @@ router.post('/login', function (req, res) {
     }
 });
 
+
 router.post('/register', function (req, res) {
     var firstname = req.body.firstname;
     var lastname = req.body.lastname;
@@ -87,6 +88,7 @@ router.post('/forgot', function (req, res) {
         res.json({status: 0, statuscode: ERR_STATUS, body: INVALID});
     }
 });
+
 router.post('/social_account', function (req, res) {
     var email = req.body.email;
     var website_id = req.body.website_id;
@@ -94,9 +96,10 @@ router.post('/social_account', function (req, res) {
     var lastname = req.body.lastname;
     var APP_ID = req.headers.app_id;
     var social_id = req.body.social_id;
+    var social = req.body.social;
     var URL = req.URL;
     if (email.length > 0) {
-        var body = ({email: email, website_id: website_id, firstname: firstname, lastname: lastname, social_id: social_id});
+        var body = ({email: email, website_id: website_id, firstname: firstname, lastname: lastname, social_id: social_id, social: social});
         var headers = {APP_ID: APP_ID};
         var url = URL + '/customer/social_account/';
         request_.request(body, headers, url, function (req, response, msg) {
@@ -112,5 +115,6 @@ router.post('/social_account', function (req, res) {
         res.json({status: 0, statuscode: ERR_STATUS, body: INVALID});
     }
 });
+
 
 module.exports = router;
