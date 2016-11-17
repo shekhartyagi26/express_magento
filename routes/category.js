@@ -25,9 +25,7 @@ router.all('/products', function (req, res) {
                 var body = ({id: id, page: page, limit: limit});
                 var headers = {APP_ID: APP_ID};
                 var url = URL + '/category/products/';
-
                 request_.request(body, headers, url, function (req, response, msg) {
-
                     if (msg == ERROR) {
                         res.json({status: 0, statuscode: ERR_STATUS, error: response});
                     } else if (req.statusCode == ERR_STATUS) {
@@ -36,18 +34,21 @@ router.all('/products', function (req, res) {
                         var resp = JSON.parse(response);
                         for (i = 0; i < resp.data[0].data.media_images.length; i++) {
                             var url = resp.data[0].data.media_images[i];
-                            request_.resize(url, function (status, response) {
-                                console.log(status, response)
+                            request_.resize(url, function (status, response_) {
+                                if (status == '200') {
+                                    client.hmset('category_' + id, {
+                                        'id': id,
+                                        "page": page,
+                                        "limit": limit,
+                                        "body": response
+                                    });
+                                    client.expire('category_' + id, config.CATEGORY_EXPIRESAT);
+                                    res.json({status: 1, statuscode: req.statusCode, body: response});
+                                } else {
+                                    res.json({status: 0, statuscode: status, body: response_});
+                                }
                             });
                         }
-                        client.hmset('category_' + id, {
-                            'id': id,
-                            "page": page,
-                            "limit": limit,
-                            "body": response
-                        });
-                        client.expire('category_' + id, config.CATEGORY_EXPIRESAT);
-                        res.json({status: 1, statuscode: req.statusCode, body: response});
                     }
                 });
             }
@@ -63,9 +64,10 @@ router.all('/categorylist', function (req, res) {
     var store_id = req.body.store_id;
     var APP_ID = req.headers.app_id;
     var URL = req.URL;
+    var status = req.status;
     if (parent_id > 0) {
         client.hgetall('category_' + parent_id, function (err, object) {
-            if (object != null && object.parent_id == parent_id) {
+            if (object != null && object.parent_id == parent_id && status == "enabled") {
                 res.json({status: 1, statuscode: SUCCESS_STATUS, body: object});
             } else {
                 var body = ({parent_id: parent_id, type: type, store_id: store_id});
@@ -85,14 +87,12 @@ router.all('/categorylist', function (req, res) {
                         client.expire('category_' + parent_id, config.CATEGORY_EXPIRESAT);
                         res.json({status: 1, statuscode: req.statusCode, body: response});
                     }
-                });
-
+                });s
             }
         });
     } else {
         res.json({status: 0, error: ERR_STATUS, body: INVALID});
     }
 });
-
 
 module.exports = router;

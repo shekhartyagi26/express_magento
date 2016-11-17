@@ -29,7 +29,7 @@ exports.resize = function (url, callback) {
     var image_name = url.substring(n + 1);
     var file = fs.createWriteStream("public/" + image_name);
     var request = http.get(url, function (response) {
-        sresponse.pipe(file);
+        response.pipe(file);
         response.on('end', function () {
             sharp('public/' + image_name)
                     .resize(300, 200)
