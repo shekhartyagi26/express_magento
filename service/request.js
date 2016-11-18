@@ -2,6 +2,7 @@ var request = require('request');
 var sharp = require('sharp');
 var http = require('http');
 var fs = require('fs');
+var URL_ = require('url');
 require('node-import');
 imports('config/index');
 imports('config/constant');
@@ -25,14 +26,13 @@ exports.request = function (body, headers, url, callback) {
 };
 
 exports.resize = function (url, APP_ID, callback) {
+    var image_url = URL_.parse(url).path;
     var app_id = APP_ID.replace(/[^a-zA-Z0-9 ]/g, "");
-    var url_last_index_length = url.lastIndexOf(':');
-    var image_url = url.substring(url_last_index_length + 5);
     var image_stored_url = app_id + image_url;
 
     var url_last_index_length = url.lastIndexOf('/');
     var image_name = url.substring(url_last_index_length + 1);
-    var file = fs.createWriteStream("public/" + image_stored_url);
+    var file = fs.createWriteStream("public/" + image_name);
 
     http.get(url, function (response) {
         response.pipe(file);
