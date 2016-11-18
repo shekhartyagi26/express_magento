@@ -16,37 +16,39 @@ exports.request = function (body, headers, url, callback) {
     }, function (error, result, body) {
         if (error) {
             callback(500, error, ERROR);
-        } else if (result.statusCode == 500) {
+        } else if (result.statusCode === 500) {
             callback(result, body, NOTFOUND)
         } else {
             callback(result, body, SUCCESS);
         }
     });
-}
+};
 
 exports.resize = function (url, APP_ID, callback) {
-    mystring = APP_ID.replace('.', '');
-    var n = url.lastIndexOf(':');
-    var image_ = url.substring(n + 5);
-    var image_url = mystring + image_;
-    var n = url.lastIndexOf('/');
-    var image_name = url.substring(n + 1);
-    var file = fs.createWriteStream("public/" + image_url);
-    var request = http.get(url, function (response) {
+    var app_id = APP_ID.replace(/[^a-zA-Z0-9 ]/g, "");
+    var url_last_index_length = url.lastIndexOf(':');
+    var image_url = url.substring(url_last_index_length + 5);
+    var image_stored_url = app_id + image_url;
+
+    var url_last_index_length = url.lastIndexOf('/');
+    var image_name = url.substring(url_last_index_length + 1);
+    var file = fs.createWriteStream("public/" + image_stored_url);
+
+    http.get(url, function (response) {
         response.pipe(file);
         response.on('end', function () {
             sharp('public/' + image_name)
                     .resize(300, 200)
-                    .toFile('public/' + image_url, function (err) {
+                    .toFile('public/' + image_stored_url, function (err) {
                         if (err) {
-                            callback(500, err)
-                        } else if (err == null) {
-                            console.log('done')
-                            callback(200, "done", image_url)
+                            callback(500, err);
+                        } else if (err === null) {
+                            console.log('done');
+                            callback(200, "done", image_stored_url);
                         } else {
-                            callback(500, "oops! some error occured")
+                            callback(500, "oops! some error occured");
                         }
-                    })
-        })
-    })
-}
+                    });
+        });
+    });
+};
