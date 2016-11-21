@@ -9,7 +9,7 @@ imports('config/constant');
 const request_ = require('../service/request');
 var redis = require("redis"),
         client = redis.createClient();
-
+        
 router.all('/products', function (req, res) {
     var id = req.body.id;
     var page = req.body.page;
