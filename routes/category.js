@@ -87,7 +87,7 @@ router.all('/categorylist', function (req, res) {
                         client.expire('category_' + parent_id, config.CATEGORY_EXPIRESAT);
                         res.json({status: 1, statuscode: req.statusCode, body: response});
                     }
-                });s
+                });
             }
         });
     } else {
