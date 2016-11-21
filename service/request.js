@@ -6,6 +6,7 @@ var imageminMozjpeg = require('imagemin-mozjpeg');
 var imageminPngquant = require('imagemin-pngquant');
 var fs = require('fs');
 var URL_ = require('url');
+var mkdirp = require('mkdirp');
 require('node-import');
 imports('config/index');
 imports('config/constant');
@@ -29,12 +30,14 @@ exports.request = function (body, headers, url, callback) {
 };
 
 exports.resize = function (url, APP_ID, callback) {
+    
     if (url.length > 0 && APP_ID.length > 0) {
         var image_url = URL_.parse(url).path;
         var app_id = APP_ID.replace(/[^a-zA-Z0-9 ]/g, "");
         var image_stored_url = app_id + image_url;
         var url_last_index_length = url.lastIndexOf('/');
         var image_name = url.substring(url_last_index_length + 1);
+
         fs.readFile('public/resize/' + image_name, function (err, data) {
             if (err) {
                 var file = fs.createWriteStream("public/" + image_name);
