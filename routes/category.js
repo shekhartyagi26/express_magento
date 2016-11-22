@@ -31,7 +31,7 @@ router.all('/products', function (req, res) {
                     } else {
                         var resp = JSON.parse(response);
                         var image_u = resp.data;
-
+                        var optmized_response = [];
                         async.eachOfLimit(image_u, 5, processData, function (err) {
                                 // if (err) {
                             //     res.json({status: 0, msg: "OOPS! How is this possible?"});
@@ -39,12 +39,29 @@ router.all('/products', function (req, res) {
                             //     res.json("Series Processing Done");
 
                             // }
+                                
+                                
+                                
+                                client.hmset('category_' + id, {
+                                    'id': id,
+                                    "page": page,
+                                    "limit": limit,
+                                    "body": optmized_response
+                                });
+                                client.expire('category_' + id, config.CATEGORY_EXPIRESAT);
+                                res.json({status: 1, statuscode: req.statusCode, body: optmized_response});
+                                
+                                
+                                
+                                
                         })
 
                         function processData(item, key, callback) {
                             var image_url = item.data.media_images[0];
                             request_.resize(image_url, APP_ID, function (status, response_, image_name) {
                                 image_url = image_name;
+                                 item.data.media_images[0] = image_url;
+                                 optmized_response[key] = item;
                                 callback(null);
                             });
                         }
