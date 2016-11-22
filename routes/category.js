@@ -32,21 +32,20 @@ router.all('/products', function (req, res) {
                         var resp = JSON.parse(response);
                         var image_u = resp.data;
 
-                        async.eachOfLimit(image_u, 5, processData, function (err ) {
-                            if (err) {
-                                res.json({status: 0, msg: "OOPS! How is this possible?"});
-                            } else {
-                                res.json("Series Processing Done");
+                        async.eachOfLimit(image_u, 5, processData, function (err) {
+                                // if (err) {
+                            //     res.json({status: 0, msg: "OOPS! How is this possible?"});
+                            // } else {
+                            //     res.json("Series Processing Done");
 
-                            }
+                            // }
                         })
 
-                        function processData(item, callback) {
+                        function processData(item, key, callback) {
                             var image_url = item.data.media_images[0];
                             request_.resize(image_url, APP_ID, function (status, response_, image_name) {
                                 image_url = image_name;
                                 callback(null);
-                                // callback(image_url);
                             });
                         }
 
