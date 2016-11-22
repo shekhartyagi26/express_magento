@@ -39,7 +39,7 @@ exports.resize = function (url, APP_ID, callback) {
         var image_name = url.substring(url_last_index_length + 1);
         var filename = image_stored_url.substring(0, image_stored_url.lastIndexOf("/"));
 
-        fs.readFile('public/resize/' + image_name, function (err, data) {
+        fs.readFile('public/' + image_name, function (err, data) {
             if (err) {
                 mkdirp('public/' + filename, function (err) {
                     if (err) {
