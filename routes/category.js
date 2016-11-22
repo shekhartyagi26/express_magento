@@ -1,9 +1,5 @@
 var express = require('express');
 var router = express.Router();
-var path = require('path');
-var request = require('request');
-var cors = require('cors');
-var async = require('async');
 require('node-import');
 imports('config/index');
 imports('config/constant');
@@ -18,7 +14,6 @@ router.all('/products', function (req, res) {
     var APP_ID = req.headers.app_id;
     var URL = req.URL;
     var status = req.status;
-    var image_url = [];
     if (id > 0) {
         client.hgetall('category_' + id, function (err, object) {
             if (object != null && object.id == id && status == "enabled") {
@@ -34,16 +29,21 @@ router.all('/products', function (req, res) {
                         res.json({status: 0, statuscode: req.statusCode, body: response});
                     } else {
                         var resp = JSON.parse(response);
-                        for (i = 0; i < resp.data[0].data.media_images.length; i++) {
-                            var url = resp.data[0].data.media_images[i];
-                            image_url.push(url);
-                        }
-                        async.eachSeries(image_url, APP_ID, request_.resize, function (err) {
-                            if (err) {
-                                res.json({status: 0, msg: "OOPS! How is this possible?"});
+                        var image_url = resp.data[0].data.media_images[0];
+                        request_.resize(image_url, APP_ID, function (status, response_, image_name) {
+                            if (status == '200') {
+                                client.hmset('category_' + id, {
+                                    'id': id,
+                                    "page": page,
+                                    "limit": limit,
+                                    "body": response
+                                });
+                                client.expire('category_' + id, config.CATEGORY_EXPIRESAT);
+                                res.json({status: 1, statuscode: req.statusCode, body: response});
+                            } else {
+                                res.json({status: 0, statuscode: status, body: response_});
                             }
-                            res.json("Series Processing Done");
-                        })
+                        });
                     }
                 });
             }
