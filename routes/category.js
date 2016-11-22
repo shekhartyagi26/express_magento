@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var async = require('async');
 require('node-import');
 imports('config/index');
 imports('config/constant');
@@ -16,34 +17,52 @@ router.all('/products', function (req, res) {
     var status = req.status;
     if (id > 0) {
         client.hgetall('category_' + id, function (err, object) {
-            if (object != null && object.id == id && status == "enabled") {
+            if (object !== null && object.id === id && status === "enabled") {
                 res.json(object);
             } else {
                 var body = ({id: id, page: page, limit: limit});
                 var headers = {APP_ID: APP_ID};
                 var url = URL + '/category/products/';
                 request_.request(body, headers, url, function (req, response, msg) {
-                    if (msg == ERROR) {
+                    if (msg === ERROR) {
                         res.json({status: 0, statuscode: ERR_STATUS, error: response});
-                    } else if (req.statusCode == ERR_STATUS) {
+                    } else if (req.statusCode === ERR_STATUS) {
                         res.json({status: 0, statuscode: req.statusCode, body: response});
                     } else {
                         var resp = JSON.parse(response);
-                        var image_url = resp.data[0].data.media_images[0];
-                        request_.resize(image_url, APP_ID, function (status, response_, image_name) {
-                            if (status == '200') {
-                                client.hmset('category_' + id, {
-                                    'id': id,
-                                    "page": page,
-                                    "limit": limit,
-                                    "body": response
-                                });
-                                client.expire('category_' + id, config.CATEGORY_EXPIRESAT);
-                                res.json({status: 1, statuscode: req.statusCode, body: response});
+                        var image_u = resp.data;
+                        async.eachSeries(image_u, processData, function (err) {
+                            if (err) {
+                                res.json({status: 0, msg: "OOPS! How is this possible?"});
                             } else {
-                                res.json({status: 0, statuscode: status, body: response_});
+                                res.json("Series Processing Done");
+
                             }
-                        });
+                        })
+
+                        function processData(item, callback) {
+                            var image_url = item.data.media_images[0];
+                            request_.resize(image_url, APP_ID, function (status, response_, image_name) {
+                                image_url = image_name;
+                                callback(null);
+                                // callback(response_, response_ , image_name);
+                            });
+                        }
+
+                        // request_.resize(image_url, APP_ID, function (status, response_, image_name) {
+                        //     if (status == '200') {
+                        //         client.hmset('category_' + id, {
+                        //             'id': id,
+                        //             "page": page,
+                        //             "limit": limit,
+                        //             "body": response
+                        //         });
+                        //         client.expire('category_' + id, config.CATEGORY_EXPIRESAT);
+                        //         res.json({status: 1, statuscode: req.statusCode, body: response});
+                        //     } else {
+                        //         res.json({status: 0, statuscode: status, body: response_});
+                        //     }
+                        // });
                     }
                 });
             }
