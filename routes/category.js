@@ -10,7 +10,6 @@ var redis = require("redis"),
 
 router.all('/products', function (req, res) {
     var id = req.body.id;
-    var page = req.body.page;
     var limit = req.body.limit;
     var APP_ID = req.headers.app_id;
     var URL = req.URL;
@@ -20,7 +19,7 @@ router.all('/products', function (req, res) {
             if (object !== null && object.id === id && status === "enabled") {
                 res.json(object);
             } else {
-                var body = ({id: id, page: page, limit: limit});
+                var body = ({id: id, limit: limit});
                 var headers = {APP_ID: APP_ID};
                 var url = URL + '/category/products/';
                 request_.request(body, headers, url, function (req, response, msg) {
@@ -31,55 +30,34 @@ router.all('/products', function (req, res) {
                     } else {
                         var resp = JSON.parse(response);
                         var image_u = resp.data;
-                        var optmized_response = [];
-                        async.eachOfLimit(image_u, 5, processData, function (err) {
-                                // if (err) {
-                            //     res.json({status: 0, msg: "OOPS! How is this possible?"});
-                            // } else {
-                            //     res.json("Series Processing Done");
-
-                            // }
-                                
-                                
-                                
-                                client.hmset('category_' + id, {
-                                    'id': id,
-                                    "page": page,
-                                    "limit": limit,
-                                    "body": optmized_response
-                                });
-                                client.expire('category_' + id, config.CATEGORY_EXPIRESAT);
-                                res.json({status: 1, statuscode: req.statusCode, body: optmized_response});
-                                
-                                
-                                
-                                
-                        })
+                        if (image_u !== undefined) {
+                            var optmized_response = [];
+                            async.eachOfLimit(image_u, 5, processData, function (err) {
+                                if (err) {
+                                    res.json({status: 0, msg: "OOPS! How is this possible?"});
+                                } else {
+                                    client.hmset('category_' + id, {
+                                        'id': id,
+                                        "limit": limit,
+                                        "body": optmized_response
+                                    });
+                                    client.expire('category_' + id, config.CATEGORY_EXPIRESAT);
+                                    res.json({status: 1, statuscode: req.statusCode, body: optmized_response});
+                                }
+                            });
+                        } else {
+                            res.json({status: 0, statuscode: '500', body: ERROR});
+                        }
 
                         function processData(item, key, callback) {
                             var image_url = item.data.media_images[0];
                             request_.resize(image_url, APP_ID, function (status, response_, image_name) {
                                 image_url = image_name;
-                                 item.data.media_images[0] = image_url;
-                                 optmized_response[key] = item;
+                                item.data.media_images[0] = image_url;
+                                optmized_response[key] = item;
                                 callback(null);
                             });
                         }
-
-                        // request_.resize(image_url, APP_ID, function (status, response_, image_name) {
-                        //     if (status == '200') {
-                        //         client.hmset('category_' + id, {
-                        //             'id': id,
-                        //             "page": page,
-                        //             "limit": limit,
-                        //             "body": response
-                        //         });
-                        //         client.expire('category_' + id, config.CATEGORY_EXPIRESAT);
-                        //         res.json({status: 1, statuscode: req.statusCode, body: response});
-                        //     } else {
-                        //         res.json({status: 0, statuscode: status, body: response_});
-                        //     }
-                        // });
                     }
                 });
             }
