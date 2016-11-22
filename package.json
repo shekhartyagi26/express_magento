@@ -6,6 +6,7 @@
     "start": "nodejs ./bin/www"
   },
   "dependencies": {
+    "async": "^2.1.2",
     "body-parser": "~1.0.0",
     "cookie-parser": "~1.0.1",
     "cors": "^2.8.1",

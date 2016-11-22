@@ -31,7 +31,8 @@ router.all('/products', function (req, res) {
                     } else {
                         var resp = JSON.parse(response);
                         var image_u = resp.data;
-                        async.eachSeries(image_u, processData, function (err) {
+
+                        async.eachOfLimit(image_u, 5, processData, function (err ) {
                             if (err) {
                                 res.json({status: 0, msg: "OOPS! How is this possible?"});
                             } else {
@@ -45,7 +46,7 @@ router.all('/products', function (req, res) {
                             request_.resize(image_url, APP_ID, function (status, response_, image_name) {
                                 image_url = image_name;
                                 callback(null);
-                                // callback(response_, response_ , image_name);
+                                // callback(image_url);
                             });
                         }
 
