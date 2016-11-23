@@ -15,21 +15,18 @@ var app = express();
 var cors = require('cors');
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+app.set('view engine', 'pug');
 
 app.use(favicon());
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public ')));
 app.use(cors());
 app.use(db());
 app.use(verify);
 app.use(redis);
-
-
-
 
 var routes = require('./routes/index');
 var category = require('./routes/category');
@@ -42,7 +39,6 @@ var address = require('./routes/address');
 var cart = require('./routes/cart');
 var redis = require('./routes/redis');
 var web = require('./routes/web');
-// var sharp = require('./routes/sharp');
 
 app.use('/', routes);
 app.use('/category', category);
@@ -55,7 +51,6 @@ app.use('/address', address);
 app.use('/cart', cart);
 app.use('/redis', redis);
 app.use('/web', web);
-// app.use('/sharp', sharp);
 
 app.use(function (req, res, next) {
     var err = new Error('Not Found');

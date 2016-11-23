@@ -1,8 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var path = require('path');
-var request = require('request');
-var cors = require('cors');
+var async = require('async');
 require('node-import');
 imports('config/index');
 imports('config/constant');
@@ -12,50 +10,62 @@ var redis = require("redis"),
 
 router.all('/products', function (req, res) {
     var id = req.body.id;
-    var page = req.body.page;
     var limit = req.body.limit;
     var APP_ID = req.headers.app_id;
     var URL = req.URL;
     var status = req.status;
-    if (URL.length > 0) {
-        if (limit == UNDEFINE && APP_ID == UNDEFINE && URL == UNDEFINE && page == UNDEFINE && id == UNDEFINE) {
-            res.json({status: 0, statuscode: ERR_STATUS, body: UNDEFINE});
-        } else if (id > 0) {
-            client.hgetall(headers + 'category_' + id, function (err, object) {
-                if (object != null && object.id == id && status == 'enabled') {
-                    res.json(object);
-                } else {
-                    var body = ({id: id, page: page, limit: limit});
-                    var headers = {APP_ID: APP_ID};
-                    var url = URL + '/category/products/';
-                    request_.request(body, headers, url, function (req, response, msg) {
-                        if (msg == ERROR) {
-                            res.json({status: 0, statuscode: ERR_STATUS, error: response});
-                        } else if (req.statusCode == ERR_STATUS) {
-                            res.json({status: 0, statuscode: req.statusCode, body: response});
-                        } else {
-                            client.hmset(headers + 'category_' + id, {
-                                'id': id,
-                                "page": page,
-                                "limit": limit,
-                                "body": response,
-                                "status": 1,
-                                "statuscode": req.statusCode
+    if (id > 0) {
+        client.hgetall('category_' + id, function (err, object) {
+            if (object !== null && object.id === id && status === "enabled") {
+                res.json(object);
+            } else {
+                var body = ({id: id, limit: limit});
+                var headers = {APP_ID: APP_ID};
+                var url = URL + '/category/products/';
+                request_.request(body, headers, url, function (req, response, msg) {
+                    if (msg === ERROR) {
+                        res.json({status: 0, statuscode: ERR_STATUS, error: response});
+                    } else if (req.statusCode === ERR_STATUS) {
+                        res.json({status: 0, statuscode: req.statusCode, body: response});
+                    } else {
+                        var resp = JSON.parse(response);
+                        var categoryData = resp.data;
+                        if (categoryData !== undefined) {
+                            var optmized_response = [];
+                            async.eachOfLimit(categoryData, 5, processData, function (err) {
+                                if (err) {
+                                    res.json({status: 0, msg: "OOPS! How is this possible?"});
+                                } else {
+                                    client.hmset('category_' + id, {
+                                        'id': id,
+                                        "limit": limit,
+                                        "body": JSON.stringify(optmized_response)
+                                    });
+                                    client.expire('category_' + id, config.CATEGORY_EXPIRESAT);
+                                    res.json({status: 1, statuscode: req.statusCode, body: JSON.stringify(optmized_response)});
+                                }
                             });
-                            client.expire('category_' + id, config.CATEGORY_EXPIRESAT);
-                            res.json({status: 1, statuscode: req.statusCode, body: response});
+                        } else {
+                            res.json({status: 0, statuscode: '500', body: ERROR});
                         }
-                    });
-                }
-            });
-        } else {
-            res.json({status: 0, statuscode: ERR_STATUS, body: INVALID});
-        }
+
+                        function processData(item, key, callback) {
+                            var image_url = item.data.small_image;
+                            request_.resize(image_url, APP_ID, function (status, response_, image_name) {
+                                image_url = image_name;
+                                item.data.small_image = image_url;
+                                optmized_response[key] = item;
+                                callback(null);
+                            });
+                        }
+                    }
+                });
+            }
+        });
     } else {
-        res.json({status: 0, statuscode: ERR_STATUS, body: "header is not found in database"});
+        res.json({status: 0, statuscode: ERR_STATUS, body: INVALID});
     }
 });
-
 
 router.all('/categorylist', function (req, res) {
     var parent_id = req.body.parent_id;
@@ -64,12 +74,10 @@ router.all('/categorylist', function (req, res) {
     var APP_ID = req.headers.app_id;
     var URL = req.URL;
     var status = req.status;
-    if (parent_id == UNDEFINE && APP_ID == UNDEFINE && URL == UNDEFINE && store_id == UNDEFINE && type == UNDEFINE) {
-        res.json({status: 0, statuscode: ERR_STATUS, body: UNDEFINE});
-    } else if (parent_id.length > 0 && type.length > 0 && store_id.length > 0 && APP_ID.length > 0) {
-        client.hgetall(headers + 'category_' + parent_id, function (err, object) {
-            if (object != null && object.parent_id == parent_id && status == 'enabled') {
-                res.json(object);
+    if (parent_id > 0) {
+        client.hgetall('category_' + parent_id, function (err, object) {
+            if (object != null && object.parent_id == parent_id && status == "enabled") {
+                res.json({status: 1, statuscode: SUCCESS_STATUS, body: object});
             } else {
                 var body = ({parent_id: parent_id, type: type, store_id: store_id});
                 var headers = {APP_ID: APP_ID};
@@ -80,18 +88,15 @@ router.all('/categorylist', function (req, res) {
                     } else if (req.statusCode == ERR_STATUS) {
                         res.json({status: 0, statuscode: req.statusCode, body: response});
                     } else {
-                        client.hmset(headers + 'category_' + parent_id, {
+                        client.hmset('category_' + parent_id, {
                             'parent_id': parent_id,
                             "body": response,
-                            "type": type,
-                            "status": 1,
-                            "statuscode": req.statusCode
+                            "type": type
                         });
                         client.expire('category_' + parent_id, config.CATEGORY_EXPIRESAT);
                         res.json({status: 1, statuscode: req.statusCode, body: response});
                     }
                 });
-
             }
         });
     } else {

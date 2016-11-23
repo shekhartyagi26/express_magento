@@ -13,9 +13,10 @@ router.post('/get', function (req, res) {
     var sku = req.body.sku;
     var APP_ID = req.headers.app_id;
     var URL = req.URL;
+    var status = req.status;
     if (sku.length > 0) {
         client.hgetall('product_' + sku, function (err, object) {
-            if (object != null && object.sku == sku) {
+            if (object != null && object.sku == sku && status == 'enabled') {
                 res.json(object);
             } else {
                 var body = ({sku: sku});
@@ -48,9 +49,10 @@ router.post('/review', function (req, res) {
     var URL = req.URL;
     var pagesize = req.body.pagesize;
     var pageno = req.body.pageno;
+    var status = req.status;
     if (sku.length > 0) {
         client.hgetall('product_' + sku, function (err, object) {
-            if (object != null && object.sku == sku) {
+            if (object != null && object.sku == sku && status == 'enabled') {
                 res.json({status: 1, statuscode: SUCCESS_STATUS, body: object});
             } else {
                 var body = ({sku: sku, pagesize: pagesize, pageno: pageno});
@@ -64,7 +66,7 @@ router.post('/review', function (req, res) {
                     } else {
                         client.hmset('product_' + sku, {
                             'sku': sku,
-                            "data": response
+                            "body": response
                         });
                         client.expire('product_' + sku, config.PRODUCT_EXPIRESAT);
                         res.json({status: 1, statuscode: req.statusCode, body: response});
