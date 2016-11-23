@@ -66,7 +66,7 @@ exports.resize = function (url, APP_ID, callback) {
                     });
                 });
             } else {
-                callback(200, "done", image_name);
+                callback(200, "done", 'http://144.76.34.244:8080/shekhar_works/Eexpress_magento/public/'+image_stored_url);
             }
         })
     } else {

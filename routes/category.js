@@ -39,10 +39,10 @@ router.all('/products', function (req, res) {
                                     client.hmset('category_' + id, {
                                         'id': id,
                                         "limit": limit,
-                                        "body": optmized_response
+                                        "body": JSON.stringify(optmized_response)
                                     });
                                     client.expire('category_' + id, config.CATEGORY_EXPIRESAT);
-                                    res.json({status: 1, statuscode: req.statusCode, body: optmized_response});
+                                    res.json({status: 1, statuscode: req.statusCode, body: JSON.stringify(optmized_response)});
                                 }
                             });
                         } else {
