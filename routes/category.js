@@ -29,10 +29,10 @@ router.all('/products', function (req, res) {
                         res.json({status: 0, statuscode: req.statusCode, body: response});
                     } else {
                         var resp = JSON.parse(response);
-                        var image_u = resp.data;
-                        if (image_u !== undefined) {
+                        var categoryData = resp.data;
+                        if (categoryData !== undefined) {
                             var optmized_response = [];
-                            async.eachOfLimit(image_u, 5, processData, function (err) {
+                            async.eachOfLimit(categoryData, 5, processData, function (err) {
                                 if (err) {
                                     res.json({status: 0, msg: "OOPS! How is this possible?"});
                                 } else {

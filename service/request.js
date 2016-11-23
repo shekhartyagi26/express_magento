@@ -58,7 +58,7 @@ exports.resize = function (url, APP_ID, callback) {
                                     if (err) {
                                         callback(500, err);
                                     } else if (err === null) {
-                                        callback(200, "done", 'http://144.76.34.244:8080/shekhar_works/Eexpress_magento/public/'+image_stored_url);
+                                        callback(200, "done", config.IMAGE_URL+image_stored_url);
                                     } else {
                                         callback(500, "oops! some error occured");
                                     }
@@ -66,7 +66,7 @@ exports.resize = function (url, APP_ID, callback) {
                     });
                 });
             } else {
-                callback(200, "done", 'http://144.76.34.244:8080/shekhar_works/Eexpress_magento/public/'+image_stored_url);
+                callback(200, "done", config.IMAGE_URL+image_stored_url);
             }
         })
     } else {

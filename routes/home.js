@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var path = require('path');
 var request = require('request');
+var async = require('async');
 require('node-import');
 imports('config/index');
 imports('config/constant');
@@ -29,19 +30,32 @@ router.post('/products', function (req, res) {
                         res.json({status: 0, statuscode: req.statusCode, body: response});
                     } else {
                         var resp = JSON.parse(response);
-                        for (i = 0; i < resp.data[0].data.media_images.length; i++) {
-                            var url = resp.data[0].data.media_images[i];
-                            request_.resize(url, APP_ID, function (status, response_, image_name) {
-                                if (status == '200') {
+                        var categoryData = resp.data;
+                        if (categoryData !== undefined) {
+                            var optmized_response = [];
+                            async.eachOfLimit(categoryData, 5, processData, function (err) {
+                                if (err) {
+                                    res.json({status: 0, msg: "OOPS! How is this possible?"});
+                                } else {
                                     client.hmset('products_' + type, {
                                         'type': type,
                                         'body': response
                                     });
                                     client.expire('products_' + type, config.PRODUCT_EXPIRESAT);
-                                    res.json({status: 1, statuscode: req.statusCode, body: response});
-                                } else {
-                                    res.json({status: 0, statuscode: status, body: response_});
+                                    res.json({status: 1, statuscode: req.statusCode, body: JSON.stringify(optmized_response)});
                                 }
+                            });
+                        } else {
+                            res.json({status: 0, statuscode: '500', body: ERROR});
+                        }
+
+                        function processData(item, key, callback) {
+                            var image_url = item.data.small_image;
+                            request_.resize(image_url, APP_ID, function (status, response_, image_name) {
+                                image_url = image_name;
+                                item.data.small_image = image_url;
+                                optmized_response[key] = item;
+                                callback(null);
                             });
                         }
                     }
@@ -98,13 +112,36 @@ router.post('/slider', function (req, res) {
                 } else if (req.statusCode == ERR_STATUS) {
                     res.json({status: 0, statuscode: req.statusCode, msg: msg});
                 } else {
-                    client.hmset('slider', {
-                        "body": response,
-                        "status": 1,
-                        "statuscode": req.statusCode
-                    });
-                    client.expire('categories', config.PRODUCT_EXPIRESAT);
-                    res.json({status: 1, statuscode: req.statusCode, body: response});
+                    var resp = JSON.parse(response);
+                    var categoryData = resp.data.url;
+                    if (categoryData !== undefined) {
+                        var optmized_response = [];
+                        async.eachOfLimit(categoryData, 5, processData, function (err) {
+                            if (err) {
+                                res.json({status: 0, msg: "OOPS! How is this possible?"});
+                            } else {
+                                client.hmset('slider', {
+                                    "body": response,
+                                    "status": 1,
+                                    "statuscode": req.statusCode
+                                });
+                                client.expire('categories', config.PRODUCT_EXPIRESAT);
+                                res.json({status: 1, statuscode: req.statusCode, body: JSON.stringify(optmized_response)});
+                            }
+                        });
+                    } else {
+                        res.json({status: 0, statuscode: '500', body: ERROR});
+                    }
+
+                    function processData(item, key, callback) {
+                        var image_url = item;
+                        request_.resize(image_url, APP_ID, function (status, response_, image_name) {
+                            image_url = image_name;
+                            item = image_url;
+                            optmized_response[key] = item;
+                            callback(null);
+                        });
+                    }
                 }
             });
         }
