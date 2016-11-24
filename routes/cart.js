@@ -14,8 +14,7 @@ router.all('/cart', function (req, res) {
         res.json({status: 0, statuscode: ERR_STATUS, body: UNDEFINE});
     } else {
         var body = ({productid: productid, secret: secret, store_id: store_id});
-        var url = '/cart/cart/';
-        request_.request(req, body, url, function (req, response, msg) {
+        request_.request(req, body, '/cart/cart/', function (req, response, msg) {
             if (msg == ERROR) {
                 res.json({status: 0, statuscode: ERR_STATUS, error: response});
             } else if (req.statusCode == ERR_STATUS) {

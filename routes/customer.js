@@ -13,8 +13,7 @@ router.post('/login', function (req, res) {
         res.json({status: 0, statuscode: ERR_STATUS, body: UNDEFINE});
     } else {
         var body = ({email: email, password: password, website_id: website_id});
-        var url = '/customer/login/';
-        request_.request(req, body, url, function (req, response, msg) {
+        request_.request(req, body, '/customer/login/', function (req, response, msg) {
             if (msg == ERROR) {
                 res.json({status: 0, statuscode: ERR_STATUS, error: response});
             } else if (req.statusCode == ERR_STATUS) {
@@ -26,7 +25,6 @@ router.post('/login', function (req, res) {
     }
 });
 
-
 router.post('/register', function (req, res) {
     var firstname = req.body.firstname;
     var lastname = req.body.lastname;
@@ -37,8 +35,7 @@ router.post('/register', function (req, res) {
         res.json({status: 0, statuscode: ERR_STATUS, body: UNDEFINE});
     } else {
         var body = ({firstname: firstname, lastname: lastname, email: email, password: password, website_id: website_id});
-        var url = '/customer/register/';
-        request_.request(req, body, url, function (req, response, msg) {
+        request_.request(req, body, '/customer/register/', function (req, response, msg) {
             if (msg == ERROR) {
                 res.json({status: 0, statuscode: ERR_STATUS, error: response});
             } else if (req.statusCode == ERR_STATUS) {
@@ -57,8 +54,7 @@ router.post('/forgot', function (req, res) {
         res.json({status: 0, statuscode: ERR_STATUS, body: UNDEFINE});
     } else if (email.length > 0) {
         var body = ({email: email, website_id: website_id});
-        var url = '/customer/forgot/';
-        request_.request(req, body, url, function (req, response, msg) {
+        request_.request(req, body, '/customer/forgot/', function (req, response, msg) {
             if (msg == ERROR) {
                 res.json({status: 0, statuscode: ERR_STATUS, error: response});
             } else if (req.statusCode == ERR_STATUS) {
@@ -81,8 +77,7 @@ router.post('/social_account', function (req, res) {
     var social = req.body.social;
     if (email.length > 0) {
         var body = ({email: email, website_id: website_id, firstname: firstname, lastname: lastname, social_id: social_id, social: social});
-        var url = '/customer/social_account/';
-        request_.request(req, body, url, function (req, response, msg) {
+        request_.request(req, body, '/customer/social_account/', function (req, response, msg) {
             if (msg == ERROR) {
                 res.json({status: 0, statuscode: ERR_STATUS, error: response});
             } else if (req.statusCode == ERR_STATUS) {

@@ -8,8 +8,7 @@ var request_ = require('../service/request');
 router.post('/config', function (req, res) {
     var store_id = req.body.store_id;
     var body = ({store_id: store_id});
-    var url = '/web/config';
-    request_.request(req, body, url, function (req, response, msg) {
+    request_.request(req, body, '/web/config', function (req, response, msg) {
         if (msg == ERROR) {
             res.json({status: 0, statuscode: ERR_STATUS, error: response});
         } else if (req.statusCode == ERR_STATUS) {
@@ -23,8 +22,7 @@ router.post('/config', function (req, res) {
 router.post('/getAllowedCountries', function (req, res) {
     var store_id = req.body.store_id;
     var body = ({store_id: store_id});
-    var url = '/web/getAllowedCountries';
-    request_.request(req, body, url, function (req, response, msg) {
+    request_.request(req, body, '/web/getAllowedCountries', function (req, response, msg) {
         if (msg == ERROR) {
             res.json({status: 0, statuscode: ERR_STATUS, error: response});
         } else if (req.statusCode == ERR_STATUS) {

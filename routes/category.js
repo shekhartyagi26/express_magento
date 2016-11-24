@@ -19,8 +19,7 @@ router.all('/products', function (req, res) {
                 res.json(object);
             } else {
                 var body = ({id: id, limit: limit});
-                var url = '/category/products/';
-                request_.request(req, body, url, function (req, response, msg) {
+                request_.request(req, body, '/category/products/', function (req, response, msg) {
                     if (msg === ERROR) {
                         res.json({status: 0, statuscode: ERR_STATUS, error: response});
                     } else if (req.statusCode === ERR_STATUS) {
@@ -46,7 +45,6 @@ router.all('/products', function (req, res) {
                         } else {
                             res.json({status: 0, statuscode: '500', body: ERROR});
                         }
-
                         function processData(item, key, callback) {
                             var image_url = item.data.small_image;
                             request_.resize(image_url, APP_ID, function (status, response_, image_name) {
@@ -84,8 +82,7 @@ router.all('/categorylist', function (req, res) {
                 res.json({status: 1, statuscode: SUCCESS_STATUS, body: object});
             } else {
                 var body = ({parent_id: parent_id, type: type, store_id: store_id});
-                var url = '/category/categorylist/';
-                request_.request(req, body, url, function (req, response, msg) {
+                request_.request(req, body, '/category/categorylist/', function (req, response, msg) {
                     if (msg == ERROR) {
                         res.json({status: 0, statuscode: ERR_STATUS, error: response});
                     } else if (req.statusCode == ERR_STATUS) {

@@ -22,8 +22,7 @@ router.post('/edit', function (req, res) {
         res.json({status: 0, msg: UNDEFINE});
     } else {
         var body = ({countryid: countryid, zip: zip, city: city, telephone: telephone, fax: fax, company: company, street: street, firstname: firstname, lastname: lastname, secret: secret, entity_id: entity_id});
-        var url = '/address/edit/';
-        request_.request(req, body, url, function (req, response, msg) {
+        request_.request(req, body, '/address/edit/', function (req, response, msg) {
             if (msg == ERROR) {
                 res.json({status: 0, statuscode: ERR_STATUS, error: response});
             } else if (req.statusCode == ERR_STATUS) {
@@ -43,8 +42,7 @@ router.post('/delete', function (req, res) {
         res.json({status: 0, msg: UNDEFINE});
     } else {
         var body = ({secret: secret, entity_id: entity_id});
-        var url = '/address/delete/';
-        request_.request(req, body, url, function (req, response, msg) {
+        request_.request(req, body, '/address/delete/', function (req, response, msg) {
             if (msg == ERROR) {
                 res.json({status: 0, statuscode: ERR_STATUS, error: response});
             } else if (req.statusCode == ERR_STATUS) {

@@ -10,8 +10,7 @@ router.post('/alllist', function (req, res) {
     var secret = req.body.secret;
     if (secret.length > 0 && access_token.length > 0) {
         var body = ({secret: secret});
-        var url = '/order/alllist/';
-        request_.request(req, body, url, function (req, response, msg) {
+        request_.request(req, body, '/order/alllist/', function (req, response, msg) {
             if (msg == ERROR) {
                 res.json({status: 0, statuscode: ERR_STATUS, error: response});
             } else if (req.statusCode == ERR_STATUS) {
@@ -32,8 +31,7 @@ router.post('/totalorder', function (req, res) {
         res.json({status: 0, msg: UNDEFINE});
     } else if (access_token.length > 0) {
         var body = ({secret: secret});
-        var url = '/order/totalorder/';
-        request_.request(req, body, url, function (req, response, msg) {
+        request_.request(req, body, '/order/totalorder/', function (req, response, msg) {
             if (msg == ERROR) {
                 res.json({status: 0, statuscode: ERR_STATUS, error: response});
             } else if (req.statusCode == ERR_STATUS) {
@@ -55,8 +53,7 @@ router.post('/get', function (req, res) {
         res.json({status: 0, msg: UNDEFINE});
     } else if (secret.length > 0) {
         var body = ({secret: secret, order_id: order_id});
-        var url = '/order/get';
-        request_.request(req, body, url, function (req, response, msg) {
+        request_.request(req, body, '/order/get', function (req, response, msg) {
             if (msg == ERROR) {
                 res.json({status: 0, statuscode: ERR_STATUS, error: response});
             } else if (req.statusCode == ERR_STATUS) {
