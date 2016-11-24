@@ -1,14 +1,9 @@
-var express = require('express');
-var app = express();
-var router = express.Router();
-var request = require('request');
-var cors = require('cors');
-var bodyParser = require('body-parser');
-var app = express();
 require('node-import');
 imports('config/index');
 imports('config/constant');
-const request_ = require('../service/request');
+var express = require('express');
+var router = express.Router();
+var request_ = require('../service/request');
 
 router.post('/config', function (req, res) {
     var store_id = req.body.store_id;

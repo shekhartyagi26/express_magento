@@ -1,13 +1,11 @@
-var express = require('express');
-var router = express.Router();
-var path = require('path');
-var request = require('request');
 require('node-import');
 imports('config/index');
 imports('config/constant');
+var express = require('express');
+var router = express.Router();
 var redis = require("redis"),
         client = redis.createClient();
-const request_ = require('../service/request');
+var request_ = require('../service/request');
 
 router.post('/get', function (req, res) {
     var sku = req.body.sku;

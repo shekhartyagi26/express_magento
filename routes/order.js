@@ -1,14 +1,9 @@
-var express = require('express');
-var router = express.Router();
-var path = require('path');
-var request = require('request');
-var cors = require('cors');
 require('node-import');
 imports('config/index');
 imports('config/constant');
-var redis = require("redis"),
-        client = redis.createClient();
-const request_ = require('../service/request');
+var express = require('express');
+var router = express.Router();
+var request_ = require('../service/request');
 
 router.post('/alllist', function (req, res) {
     var access_token = req.headers.authorization;

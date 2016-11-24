@@ -1,13 +1,9 @@
-var express = require('express');
-var router = express.Router();
-var path = require('path');
-var request = require('request');
-var cors = require('cors');
-var bodyParser = require('body-parser');
 require('node-import');
 imports('config/index');
 imports('config/constant');
-const request_ = require('../service/request');
+var express = require('express');
+var router = express.Router();
+var request_ = require('../service/request');
 
 router.post('/edit', function (req, res) {
     var access_token = req.headers.authorization;
@@ -26,7 +22,7 @@ router.post('/edit', function (req, res) {
     var APP_ID = req.headers.app_id;
     if (countryid == UNDEFINE && zip == UNDEFINE && street == UNDEFINE && access_token == UNDEFINE) {
         res.json({status: 0, msg: UNDEFINE});
-    } else if (APP_ID.length > 0 && URL.length > 0) {
+    } else {
         var body = ({countryid: countryid, zip: zip, city: city, telephone: telephone, fax: fax, company: company, street: street, firstname: firstname, lastname: lastname, secret: secret, entity_id: entity_id});
         var headers = {APP_ID: APP_ID, "Authorization": access_token};
         var url = URL + '/address/edit/';
@@ -39,8 +35,6 @@ router.post('/edit', function (req, res) {
                 res.json({status: 1, statuscode: req.statusCode, body: response});
             }
         });
-    } else {
-        res.json({status: 0, error: ERR_STATUS, body: INVALID});
     }
 });
 
@@ -52,7 +46,7 @@ router.post('/delete', function (req, res) {
     var APP_ID = req.headers.app_id;
     if (entity_id == UNDEFINE) {
         res.json({status: 0, msg: UNDEFINE});
-    } else if (APP_ID.length > 0 && URL.length > 0) {
+    } else {
         var body = ({secret: secret, entity_id: entity_id});
         var headers = {APP_ID: APP_ID, "Authorization": access_token};
         var url = URL + '/address/delete/';
@@ -65,8 +59,6 @@ router.post('/delete', function (req, res) {
                 res.json({status: 1, statuscode: req.statusCode, body: response});
             }
         });
-    } else {
-        res.json({status: 0, error: ERR_STATUS, body: INVALID});
     }
 });
 
