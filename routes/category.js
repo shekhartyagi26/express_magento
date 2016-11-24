@@ -1,10 +1,10 @@
-var express = require('express');
-var router = express.Router();
-var async = require('async');
 require('node-import');
 imports('config/index');
 imports('config/constant');
-const request_ = require('../service/request');
+var express = require('express');
+var router = express.Router();
+var async = require('async');
+var request_ = require('../service/request');
 var redis = require("redis"),
         client = redis.createClient();
 
