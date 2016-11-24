@@ -3,7 +3,7 @@ imports('config/index');
 imports('config/constant');
 var request = require('request');
 
-exports.request = function (req, body, url, callback) {
+API = function (req, body, url, callback) {
     request({
         url: req.URL + url, //URL to hit
         method: 'post',

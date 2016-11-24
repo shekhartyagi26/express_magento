@@ -3,7 +3,6 @@ imports('config/index');
 imports('config/constant');
 var express = require('express');
 var router = express.Router();
-var request_ = require('../service/request');
 
 router.post('/edit', function (req, res) {
     var access_token = req.headers.authorization;
@@ -22,7 +21,7 @@ router.post('/edit', function (req, res) {
         res.json({status: 0, msg: UNDEFINE});
     } else {
         var body = ({countryid: countryid, zip: zip, city: city, telephone: telephone, fax: fax, company: company, street: street, firstname: firstname, lastname: lastname, secret: secret, entity_id: entity_id});
-        request_.request(req, body, '/address/edit/', function (req, response, msg) {
+        API(req, body, '/address/edit/', function (req, response, msg) {
             if (msg == ERROR) {
                 res.json({status: 0, statuscode: ERR_STATUS, error: response});
             } else if (req.statusCode == ERR_STATUS) {
@@ -42,7 +41,7 @@ router.post('/delete', function (req, res) {
         res.json({status: 0, msg: UNDEFINE});
     } else {
         var body = ({secret: secret, entity_id: entity_id});
-        request_.request(req, body, '/address/delete/', function (req, response, msg) {
+        API(req, body, '/address/delete/', function (req, response, msg) {
             if (msg == ERROR) {
                 res.json({status: 0, statuscode: ERR_STATUS, error: response});
             } else if (req.statusCode == ERR_STATUS) {

@@ -3,7 +3,6 @@ imports('config/index');
 imports('config/constant');
 var express = require('express');
 var router = express.Router();
-var request_ = require('../service/request');
 
 router.post('/login', function (req, res) {
     var email = req.body.email;
@@ -13,7 +12,7 @@ router.post('/login', function (req, res) {
         res.json({status: 0, statuscode: ERR_STATUS, body: UNDEFINE});
     } else {
         var body = ({email: email, password: password, website_id: website_id});
-        request_.request(req, body, '/customer/login/', function (req, response, msg) {
+        API(req, body, '/customer/login/', function (req, response, msg) {
             if (msg == ERROR) {
                 res.json({status: 0, statuscode: ERR_STATUS, error: response});
             } else if (req.statusCode == ERR_STATUS) {
@@ -35,7 +34,7 @@ router.post('/register', function (req, res) {
         res.json({status: 0, statuscode: ERR_STATUS, body: UNDEFINE});
     } else {
         var body = ({firstname: firstname, lastname: lastname, email: email, password: password, website_id: website_id});
-        request_.request(req, body, '/customer/register/', function (req, response, msg) {
+        API(req, body, '/customer/register/', function (req, response, msg) {
             if (msg == ERROR) {
                 res.json({status: 0, statuscode: ERR_STATUS, error: response});
             } else if (req.statusCode == ERR_STATUS) {
@@ -54,7 +53,7 @@ router.post('/forgot', function (req, res) {
         res.json({status: 0, statuscode: ERR_STATUS, body: UNDEFINE});
     } else if (email.length > 0) {
         var body = ({email: email, website_id: website_id});
-        request_.request(req, body, '/customer/forgot/', function (req, response, msg) {
+        API(req, body, '/customer/forgot/', function (req, response, msg) {
             if (msg == ERROR) {
                 res.json({status: 0, statuscode: ERR_STATUS, error: response});
             } else if (req.statusCode == ERR_STATUS) {
@@ -77,7 +76,7 @@ router.post('/social_account', function (req, res) {
     var social = req.body.social;
     if (email.length > 0) {
         var body = ({email: email, website_id: website_id, firstname: firstname, lastname: lastname, social_id: social_id, social: social});
-        request_.request(req, body, '/customer/social_account/', function (req, response, msg) {
+        API(req, body, '/customer/social_account/', function (req, response, msg) {
             if (msg == ERROR) {
                 res.json({status: 0, statuscode: ERR_STATUS, error: response});
             } else if (req.statusCode == ERR_STATUS) {
