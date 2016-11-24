@@ -52,12 +52,18 @@ router.all('/products', function (req, res) {
                         function processData(item, key, callback) {
                             var image_url = item.data.small_image;
                             request_.resize(image_url, APP_ID, function (status, response_, image_name) {
-                                request_.minify(image_name, APP_ID, function (status, response_, image_name) {
-                                    image_url = image_name;
+                                if (status == '200') {
+                                    request_.minify(image_name, APP_ID, function (status, response_, image_name) {
+                                        image_url = image_name;
+                                        item.data.small_image = image_url;
+                                        optmized_response[key] = item;
+                                        callback(null);
+                                    });
+                                } else {
                                     item.data.small_image = image_url;
                                     optmized_response[key] = item;
                                     callback(null);
-                                });
+                                }
                             });
                         }
                     }
