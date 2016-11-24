@@ -19,7 +19,7 @@ router.all('/products', function (req, res) {
                 res.json(object);
             } else {
                 var body = ({id: id, limit: limit});
-                request_.api(req, body, '/category/products/', function (req, response, msg) {
+                API(req, body, '/category/products/', function (req, response, msg) {
                     if (msg === ERROR) {
                         res.json({status: 0, statuscode: ERR_STATUS, error: response});
                     } else if (req.statusCode === ERR_STATUS) {
@@ -82,7 +82,7 @@ router.all('/categorylist', function (req, res) {
                 res.json({status: 1, statuscode: SUCCESS_STATUS, body: object});
             } else {
                 var body = ({parent_id: parent_id, type: type, store_id: store_id});
-                request_.request(req, body, '/category/categorylist/', function (req, response, msg) {
+                API(req, body, '/category/categorylist/', function (req, response, msg) {
                     if (msg == ERROR) {
                         res.json({status: 0, statuscode: ERR_STATUS, error: response});
                     } else if (req.statusCode == ERR_STATUS) {

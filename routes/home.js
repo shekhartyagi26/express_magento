@@ -18,7 +18,7 @@ router.post('/products', function (req, res) {
                 res.json(object);
             } else {
                 var body = ({type: type});
-                request_.request(req, body, '/home/products/', function (req, response, msg) {
+                API(req, body, '/home/products/', function (req, response, msg) {
                     if (msg == ERROR) {
                         res.json({status: 0, statuscode: ERR_STATUS, error: response});
                     } else if (req.statusCode == ERR_STATUS) {
@@ -77,7 +77,7 @@ router.post('/categories', function (req, res) {
             res.json(object);
         } else {
             var body = ({});
-            request_.request(req, body, '/home/categories/', function (req, response, msg) {
+            API(req, body, '/home/categories/', function (req, response, msg) {
                 if (msg == ERROR) {
                     res.json({status: 0, statuscode: ERR_STATUS, error: response});
                 } else if (req.statusCode == ERR_STATUS) {
@@ -102,7 +102,7 @@ router.post('/slider', function (req, res) {
             res.json(object);
         } else {
             var body = ({});
-            request_.request(req, body, '/home/slider/', function (req, response, msg) {
+            API(req, body, '/home/slider/', function (req, response, msg) {
                 if (msg == ERROR) {
                     res.json({status: 0, statuscode: ERR_STATUS, error: response});
                 } else if (req.statusCode == ERR_STATUS) {

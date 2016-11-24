@@ -11,8 +11,7 @@ var fs = require('fs');
 var URL_ = require('url');
 var mkdirp = require('mkdirp');
 
-exports.api = function (req, body, url, callback) {
-    console.log('peeyush')
+API = function (req, body, url, callback) {
     request({
         url: req.URL + url, //URL to hit
         method: 'post',

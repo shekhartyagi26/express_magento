@@ -18,7 +18,7 @@ router.post('/get', function (req, res) {
                 res.json(object);
             } else {
                 var body = ({sku: sku});
-                request_.request(req, body, '/product/get/', function (req, response, msg) {
+                API(req, body, '/product/get/', function (req, response, msg) {
                     if (msg == ERROR) {
                         res.json({status: 0, statuscode: req.statusCode, body: response});
                     } else if (req.statusCode == ERR_STATUS) {
@@ -80,7 +80,7 @@ router.post('/review', function (req, res) {
                 res.json({status: 1, statuscode: SUCCESS_STATUS, body: object});
             } else {
                 var body = ({sku: sku, pagesize: pagesize, pageno: pageno});
-                request_.request(req, body, '/product/review/', function (req, response, msg) {
+                API(req, body, '/product/review/', function (req, response, msg) {
                     if (msg == ERROR) {
                         res.json({status: 0, statuscode: req.statusCode, body: response});
                     } else if (req.statusCode == ERR_STATUS) {
@@ -109,7 +109,7 @@ router.post('/getrating', function (req, res) {
                 res.json(object);
             } else {
                 var body = ({});
-                request_.request(req, body, '/product/getrating/', function (req, response, msg) {
+                API(req, body, '/product/getrating/', function (req, response, msg) {
                     if (msg == ERROR) {
                         res.json({status: 0, statuscode: req.statusCode, body: response});
                     } else if (req.statusCode == ERR_STATUS) {
@@ -138,7 +138,7 @@ router.post('/submitreview', function (req, res) {
     var rating_options = req.body.rating_options;
     if (req.headers.app_id.length > 0 && req.URL.length > 0) {
         var body = ({sku: sku, store_id: store_id, title: title, details: details, nickname: nickname, rating_options: rating_options});
-        request_.request(req, body, '/product/submitreview/', function (req, response, msg) {
+        API(req, body, '/product/submitreview/', function (req, response, msg) {
             if (msg == ERROR) {
                 res.json({status: 0, statuscode: ERR_STATUS, error: response});
             } else if (req.statusCode == ERR_STATUS) {
