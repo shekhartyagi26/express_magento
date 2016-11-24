@@ -4,13 +4,13 @@ imports('config/constant');
 var express = require('express');
 var router = express.Router();
 var async = require('async');
-var path = require('path'); 
+var path = require('path');
 var request_ = require('../service/request');
 var image_ = require('../service/image');
 var fs = require('fs');
 var redis = require("redis"),
         client = redis.createClient();
- 
+
 router.all('/products', function (req, res) {
     var id = req.body.id;
     var limit = req.body.limit;
@@ -58,7 +58,7 @@ router.all('/products', function (req, res) {
                                         item.data.small_image = image_url;
                                         optmized_response[key] = item;
                                         callback(null);
-                                    });
+                                    })
                                 } else {
                                     item.data.small_image = image_url;
                                     optmized_response[key] = item;
