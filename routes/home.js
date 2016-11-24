@@ -7,12 +7,14 @@ var async = require('async');
 var redis = require("redis"),
         client = redis.createClient();
 var request_ = require('../service/request');
+var image_ = require('../service/image');
 
 router.post('/products', function (req, res) {
     var type = req.body.type;
     var APP_ID = req.headers.app_id;
     var URL = req.URL;
     var status = req.status;
+    var mobile_width = req.body.mobile_width;
     if (type.length > 0) {
         client.hgetall('products_' + type, function (err, object) {
             if (object != null && object.type == type && status == "enabled") {
@@ -49,9 +51,9 @@ router.post('/products', function (req, res) {
 
                         function processData(item, key, callback) {
                             var image_url = item.data.small_image;
-                            request_.resize(image_url, APP_ID, function (status, response_, image_name) {
+                            image_.resize(image_url, APP_ID, function (status, response_, image_name) {
                                 if (status == '200') {
-                                    request_.minify(image_name, APP_ID, function (status, response_, image_name) {
+                                    image_.minify(image_name, APP_ID, mobile_width, function (status, response_, image_name) {
                                         image_url = image_name;
                                         item.data.small_image = image_url;
                                         optmized_response[key] = item;
@@ -105,6 +107,7 @@ router.post('/slider', function (req, res) {
     var APP_ID = req.headers.app_id;
     var URL = req.URL;
     var status = req.status;
+    var mobile_width = req.body.mobile_width;
     client.hgetall('slider', function (err, object) {
         if (object != null && object == object && status == "enabled") {
             res.json(object);
@@ -141,9 +144,9 @@ router.post('/slider', function (req, res) {
 
                     function processData(item, key, callback) {
                         var image_url = item;
-                        request_.resize(image_url, APP_ID, function (status, response_, image_name) {
+                        image_.resize(image_url, APP_ID, mobile_width, function (status, response_, image_name) {
                             if (status == '200') {
-                                request_.minify(image_name, APP_ID, function (status, response_, image_name) {
+                                image_.minify(image_name, APP_ID, function (status, response_, image_name) {
                                     image_url = image_name;
                                     item = image_url;
                                     optmized_response[key] = item;
