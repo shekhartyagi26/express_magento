@@ -3,7 +3,6 @@ imports('config/index');
 imports('config/constant');
 var express = require('express');
 var router = express.Router();
-var request_ = require('../service/request');
 
 router.all('/cart', function (req, res) {
     var productid = req.body.productid;
@@ -14,7 +13,7 @@ router.all('/cart', function (req, res) {
         res.json({status: 0, statuscode: ERR_STATUS, body: UNDEFINE});
     } else {
         var body = ({productid: productid, secret: secret, store_id: store_id});
-        request_.request(req, body, '/cart/cart/', function (req, response, msg) {
+        API(req, body, '/cart/cart/', function (req, response, msg) {
             if (msg == ERROR) {
                 res.json({status: 0, statuscode: ERR_STATUS, error: response});
             } else if (req.statusCode == ERR_STATUS) {

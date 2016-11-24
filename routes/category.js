@@ -19,7 +19,7 @@ router.all('/products', function (req, res) {
                 res.json(object);
             } else {
                 var body = ({id: id, limit: limit});
-                request_.request(req, body, '/category/products/', function (req, response, msg) {
+                request_.api(req, body, '/category/products/', function (req, response, msg) {
                     if (msg === ERROR) {
                         res.json({status: 0, statuscode: ERR_STATUS, error: response});
                     } else if (req.statusCode === ERR_STATUS) {
