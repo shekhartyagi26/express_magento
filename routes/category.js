@@ -15,7 +15,6 @@ router.all('/products', function (req, res) {
     var id = req.body.id;
     var limit = req.body.limit;
     var APP_ID = req.headers.app_id;
-    var URL = req.URL;
     var status = req.status;
     var mobile_width = req.body.mobile_width;
     if (id > 0) {
@@ -24,9 +23,7 @@ router.all('/products', function (req, res) {
                 res.json(object);
             } else {
                 var body = ({id: id, limit: limit});
-                var headers = {APP_ID: APP_ID};
-                var url = URL + '/category/products/';
-                request_.request(body, headers, url, function (req, response, msg) {
+                request_.request(req, body, '/category/products/', function (req, response, msg) {
                     if (msg === ERROR) {
                         res.json({status: 0, statuscode: ERR_STATUS, error: response});
                     } else if (req.statusCode === ERR_STATUS) {
@@ -52,7 +49,6 @@ router.all('/products', function (req, res) {
                         } else {
                             res.json({status: 0, statuscode: '500', body: ERROR});
                         }
-
                         function processData(item, key, callback) {
                             var image_url = item.data.small_image;
                             image_.resize(image_url, APP_ID, mobile_width, function (status, response_, image_name) {
@@ -83,8 +79,6 @@ router.all('/categorylist', function (req, res) {
     var parent_id = req.body.parent_id;
     var type = req.body.type;
     var store_id = req.body.store_id;
-    var APP_ID = req.headers.app_id;
-    var URL = req.URL;
     var status = req.status;
     if (parent_id > 0) {
         client.hgetall('category_' + parent_id, function (err, object) {
@@ -92,9 +86,7 @@ router.all('/categorylist', function (req, res) {
                 res.json({status: 1, statuscode: SUCCESS_STATUS, body: object});
             } else {
                 var body = ({parent_id: parent_id, type: type, store_id: store_id});
-                var headers = {APP_ID: APP_ID};
-                var url = URL + '/category/categorylist/';
-                request_.request(body, headers, url, function (req, response, msg) {
+                request_.request(req, body, '/category/categorylist/', function (req, response, msg) {
                     if (msg == ERROR) {
                         res.json({status: 0, statuscode: ERR_STATUS, error: response});
                     } else if (req.statusCode == ERR_STATUS) {

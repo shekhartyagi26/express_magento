@@ -3,7 +3,6 @@ imports('config/index');
 imports('config/constant');
 var express = require('express');
 var router = express.Router();
-var request = require('request');
 var async = require('async');
 var redis = require("redis"),
         client = redis.createClient();
@@ -13,7 +12,6 @@ var image_ = require('../service/image');
 router.post('/get', function (req, res) {
     var sku = req.body.sku;
     var APP_ID = req.headers.app_id;
-    var URL = req.URL;
     var status = req.status;
     var mobile_width = req.body.mobile_width;
     if (sku.length > 0) {
@@ -22,9 +20,7 @@ router.post('/get', function (req, res) {
                 res.json(object);
             } else {
                 var body = ({sku: sku});
-                var headers = {APP_ID: APP_ID};
-                var url = URL + '/product/get/';
-                request_.request(body, headers, url, function (req, response, msg) {
+                request_.request(req, body, '/product/get/', function (req, response, msg) {
                     if (msg == ERROR) {
                         res.json({status: 0, statuscode: req.statusCode, body: response});
                     } else if (req.statusCode == ERR_STATUS) {
@@ -77,8 +73,6 @@ router.post('/get', function (req, res) {
 
 router.post('/review', function (req, res) {
     var sku = req.body.sku;
-    var APP_ID = req.headers.app_id;
-    var URL = req.URL;
     var pagesize = req.body.pagesize;
     var pageno = req.body.pageno;
     var status = req.status;
@@ -88,9 +82,7 @@ router.post('/review', function (req, res) {
                 res.json({status: 1, statuscode: SUCCESS_STATUS, body: object});
             } else {
                 var body = ({sku: sku, pagesize: pagesize, pageno: pageno});
-                var headers = {APP_ID: APP_ID};
-                var url = URL + '/product/review/';
-                request_.request(body, headers, url, function (req, response, msg) {
+                request_.request(req, body, '/product/review/', function (req, response, msg) {
                     if (msg == ERROR) {
                         res.json({status: 0, statuscode: req.statusCode, body: response});
                     } else if (req.statusCode == ERR_STATUS) {
@@ -112,18 +104,14 @@ router.post('/review', function (req, res) {
 });
 
 router.post('/getrating', function (req, res) {
-    var APP_ID = req.headers.app_id;
-    var URL = req.URL;
     var status = req.status;
-    if (URL.length > 0) {
+    if (req.URL.length > 0) {
         client.hgetall('product_', function (err, object) {
             if (object != null && status == 'enabled') {
                 res.json(object);
             } else {
                 var body = ({});
-                var headers = {APP_ID: APP_ID};
-                var url = URL + '/product/getrating/';
-                request_.request(body, headers, url, function (req, response, msg) {
+                request_.request(req, body, '/product/getrating/', function (req, response, msg) {
                     if (msg == ERROR) {
                         res.json({status: 0, statuscode: req.statusCode, body: response});
                     } else if (req.statusCode == ERR_STATUS) {
@@ -150,13 +138,9 @@ router.post('/submitreview', function (req, res) {
     var details = req.body.details;
     var nickname = req.body.nickname;
     var rating_options = req.body.rating_options;
-    var APP_ID = req.headers.app_id;
-    var URL = req.URL;
-    if (APP_ID.length > 0 && URL.length > 0) {
+    if (req.headers.app_id.length > 0 && req.URL.length > 0) {
         var body = ({sku: sku, store_id: store_id, title: title, details: details, nickname: nickname, rating_options: rating_options});
-        var headers = {APP_ID: APP_ID};
-        var url = URL + '/product/submitreview/';
-        request_.request(body, headers, url, function (req, response, msg) {
+        request_.request(req, body, '/product/submitreview/', function (req, response, msg) {
             if (msg == ERROR) {
                 res.json({status: 0, statuscode: ERR_STATUS, error: response});
             } else if (req.statusCode == ERR_STATUS) {

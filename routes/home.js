@@ -12,7 +12,6 @@ var image_ = require('../service/image');
 router.post('/products', function (req, res) {
     var type = req.body.type;
     var APP_ID = req.headers.app_id;
-    var URL = req.URL;
     var status = req.status;
     var mobile_width = req.body.mobile_width;
     if (type.length > 0) {
@@ -21,9 +20,7 @@ router.post('/products', function (req, res) {
                 res.json(object);
             } else {
                 var body = ({type: type});
-                var headers = {APP_ID: APP_ID};
-                var url = URL + '/home/products/';
-                request_.request(body, headers, url, function (req, response, msg) {
+                request_.request(req, body, '/home/products/', function (req, response, msg) {
                     if (msg == ERROR) {
                         res.json({status: 0, statuscode: ERR_STATUS, error: response});
                     } else if (req.statusCode == ERR_STATUS) {
@@ -76,17 +73,13 @@ router.post('/products', function (req, res) {
 });
 
 router.post('/categories', function (req, res) {
-    var APP_ID = req.headers.app_id;
-    var URL = req.URL;
     var status = req.status;
     client.hgetall('categories', function (err, object) {
         if (object != null && object == object && status == "enabled") {
             res.json(object);
         } else {
             var body = ({});
-            var headers = {APP_ID: APP_ID};
-            var url = URL + '/home/categories/';
-            request_.request(body, headers, url, function (req, response, msg) {
+            request_.request(req, body, '/home/categories/', function (req, response, msg) {
                 if (msg == ERROR) {
                     res.json({status: 0, statuscode: ERR_STATUS, error: response});
                 } else if (req.statusCode == ERR_STATUS) {
@@ -105,7 +98,6 @@ router.post('/categories', function (req, res) {
 
 router.post('/slider', function (req, res) {
     var APP_ID = req.headers.app_id;
-    var URL = req.URL;
     var status = req.status;
     var mobile_width = req.body.mobile_width;
     client.hgetall('slider', function (err, object) {
@@ -113,9 +105,7 @@ router.post('/slider', function (req, res) {
             res.json(object);
         } else {
             var body = ({});
-            var headers = {APP_ID: APP_ID};
-            var url = URL + '/home/slider/';
-            request_.request(body, headers, url, function (req, response, msg) {
+            request_.request(req, body, '/home/slider/', function (req, response, msg) {
                 if (msg == ERROR) {
                     res.json({status: 0, statuscode: ERR_STATUS, error: response});
                 } else if (req.statusCode == ERR_STATUS) {
@@ -141,7 +131,6 @@ router.post('/slider', function (req, res) {
                     } else {
                         res.json({status: 0, statuscode: '500', body: ERROR});
                     }
-
                     function processData(item, key, callback) {
                         var image_url = item;
                         image_.resize(image_url, APP_ID, mobile_width, function (status, response_, image_name) {

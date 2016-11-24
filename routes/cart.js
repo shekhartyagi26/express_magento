@@ -10,15 +10,11 @@ router.all('/cart', function (req, res) {
     var secret = req.body.secret;
     var access_token = req.headers.authorization;
     var store_id = req.body.store_id;
-    var APP_ID = req.headers.app_id;
-    var URL = req.URL;
     if (secret == UNDEFINE && access_token == UNDEFINE && store_id == UNDEFINE) {
         res.json({status: 0, statuscode: ERR_STATUS, body: UNDEFINE});
     } else {
         var body = ({productid: productid, secret: secret, store_id: store_id});
-        var headers = {APP_ID: APP_ID, "Authorization": access_token};
-        var url = URL + '/cart/cart/';
-        request_.request(body, headers, url, function (req, response, msg) {
+        request_.request(req, body, '/cart/cart/', function (req, response, msg) {
             if (msg == ERROR) {
                 res.json({status: 0, statuscode: ERR_STATUS, error: response});
             } else if (req.statusCode == ERR_STATUS) {
