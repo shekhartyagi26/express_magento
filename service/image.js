@@ -12,7 +12,7 @@ var fs = require('fs');
 var URL_ = require('url');
 var mkdirp = require('mkdirp');
 
-exports.resize = function (url, APP_ID, mobile_width, callback) {
+resize = function (url, APP_ID, mobile_width, callback) {
     if (url.length > 0 && APP_ID.length > 0 && mobile_width > 0) {
         var image_url = URL_.parse(url).path;
         var app_id = APP_ID.replace(/[^a-zA-Z0-9 ]/g, "");
@@ -56,7 +56,7 @@ exports.resize = function (url, APP_ID, mobile_width, callback) {
     }
 };
 
- exports.minify = function (url, APP_ID, callback) {
+minify = function (url, APP_ID, callback) {
      if (url.length > 0 && APP_ID.length > 0) {
          var image_url = URL_.parse(url).path;        
          var image_fetch_url = image_url.replace("/shekhar_works/Eexpress_magento/public/","");

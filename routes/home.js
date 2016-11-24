@@ -48,9 +48,9 @@ router.post('/products', function (req, res) {
 
                         function processData(item, key, callback) {
                             var image_url = item.data.small_image;
-                            image_.resize(image_url, APP_ID, function (status, response_, image_name) {
+                            resize(image_url, APP_ID, function (status, response_, image_name) {
                                 if (status == '200') {
-                                    image_.minify(image_name, APP_ID, mobile_width, function (status, response_, image_name) {
+                                    minify(image_name, APP_ID, mobile_width, function (status, response_, image_name) {
                                         image_url = image_name;
                                         item.data.small_image = image_url;
                                         optmized_response[key] = item;
@@ -133,9 +133,9 @@ router.post('/slider', function (req, res) {
                     }
                     function processData(item, key, callback) {
                         var image_url = item;
-                        image_.resize(image_url, APP_ID, mobile_width, function (status, response_, image_name) {
+                        resize(image_url, APP_ID, mobile_width, function (status, response_, image_name) {
                             if (status == '200') {
-                                image_.minify(image_name, APP_ID, function (status, response_, image_name) {
+                                minify(image_name, APP_ID, function (status, response_, image_name) {
                                     image_url = image_name;
                                     item = image_url;
                                     optmized_response[key] = item;
