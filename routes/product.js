@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var path = require('path');
 var request = require('request');
+var async = require('async');
 require('node-import');
 imports('config/index');
 imports('config/constant');
@@ -28,12 +29,36 @@ router.post('/get', function (req, res) {
                     } else if (req.statusCode == ERR_STATUS) {
                         res.json({status: 0, statuscode: req.statusCode, body: response});
                     } else {
-                        client.hmset('product_' + sku, {
-                            'sku': sku,
-                            "body": response
-                        });
-                        client.expire('product_' + sku, config.PRODUCT_EXPIRESAT);
-                        res.json({status: 1, statuscode: req.statusCode, body: response});
+                        var resp = JSON.parse(response);
+                        var categoryData = resp.data;
+                        if (categoryData !== undefined) {
+                            var optmized_response = [];
+                            async.eachOfLimit(categoryData, 1, processData, function (err) {
+                                if (err) {
+                                    res.json({status: 0, msg: "OOPS! How is this possible?"});
+                                } else {
+                                    client.hmset('product_' + sku, {
+                                        'sku': sku,
+                                        "body": JSON.stringify(optmized_response)
+                                    });
+                                    client.expire('product_' + sku, config.PRODUCT_EXPIRESAT);
+                                    res.json({status: 1, statuscode: req.statusCode, body: JSON.stringify(optmized_response)});
+                                }
+                            });
+                        } else {
+                            res.json({status: 0, statuscode: '500', body: ERROR});
+                        }
+                        function processData(item, key, callback) {
+                            var image_url = item.small_image;
+                            request_.resize(image_url, APP_ID, function (status, response_, image_name) {
+                                request_.minify(image_name, APP_ID, function (status, response_, image_name) {
+                                    image_url = image_name;
+                                    item.small_image = image_url;
+                                    optmized_response[key] = item;
+                                    callback(null);
+                                });
+                            });
+                        }
                     }
                 });
             }

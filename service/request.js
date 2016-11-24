@@ -53,7 +53,7 @@ exports.resize = function (url, APP_ID, callback) {
                     response.pipe(file);
                     response.on('end', function () {
                         sharp('public/' + image_name)
-                                .resize(300, 200)
+                                .resize(300)
                                 .toFile('public/' + image_stored_url, function (err) {
                                     if (err) {
                                         callback(500, err);
@@ -76,36 +76,22 @@ exports.resize = function (url, APP_ID, callback) {
 
 exports.minify = function (url, APP_ID, callback) {
     if (url.length > 0 && APP_ID.length > 0) {
-        var image_url = URL_.parse(url).path;
-        var app_id = APP_ID.replace(/[^a-zA-Z0-9 ]/g, "");
-        var image_stored_url = app_id + image_url;
-        var url_last_index_length = url.lastIndexOf('/');
-        var image_name = url.substring(url_last_index_length + 1);
-        fs.readFile('public/resize/' + image_name, function (err, data) {
-        if (err) {
-        var file = fs.createWriteStream("public/" + image_name);
-                http.get(url, function (response) {
-                response.pipe(file);
-                        response.on('end', function () {
-                        imagemin(['public/' + image_name], 'public/' + image_url, {
-                        plugins: [
-                                imageminMozjpeg(),
-                                imageminPngquant({quality: '65-80'})
-                        ]
-                        }).then(files => {
-                            if (files[0].path !== null) {
-                                callback(200, "done", image_stored_url);
-                            } else {
-                                callback(500, "oops! some error occured");
-                            }
-                        })
-                    });
+        var image_url = URL_.parse(url).path;        
+        var image_fetch_url = image_url.replace("/shekhar_works/Eexpress_magento/public/","");
+        var filename = image_fetch_url.substring(0, image_fetch_url.lastIndexOf("/"));
+                imagemin(['public/' + image_fetch_url], 'public/minify/' + filename, {
+                    plugins: [
+                    imageminMozjpeg(),
+                    imageminPngquant({quality: '65-80'})
+                    ]
+                }).then(files => {
+                    if (files[0].path !== null) {
+                        callback(200, "done", config.IMAGE_MINIFY_URL+image_fetch_url );
+                    } else {
+                        callback(500, "oops! some error occured");
+                    }
                 })
-            } else{
-                callback(200, "done", image_stored_url);
-            }
-        })
-     } else{
-            callback(500, " APP_ID or url cannot be empty");
+            } else {
+        callback(500, " APP_ID or url cannot be empty");
     }
 };
