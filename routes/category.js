@@ -12,7 +12,6 @@ router.all('/products', function (req, res) {
     var id = req.body.id;
     var limit = req.body.limit;
     var APP_ID = req.headers.app_id;
-    var URL = req.URL;
     var status = req.status;
     if (id > 0) {
         client.hgetall('category_' + id, function (err, object) {
@@ -20,9 +19,8 @@ router.all('/products', function (req, res) {
                 res.json(object);
             } else {
                 var body = ({id: id, limit: limit});
-                var headers = {APP_ID: APP_ID};
-                var url = URL + '/category/products/';
-                request_.request(body, headers, url, function (req, response, msg) {
+                var url = '/category/products/';
+                request_.request(req, body, url, function (req, response, msg) {
                     if (msg === ERROR) {
                         res.json({status: 0, statuscode: ERR_STATUS, error: response});
                     } else if (req.statusCode === ERR_STATUS) {
@@ -79,8 +77,6 @@ router.all('/categorylist', function (req, res) {
     var parent_id = req.body.parent_id;
     var type = req.body.type;
     var store_id = req.body.store_id;
-    var APP_ID = req.headers.app_id;
-    var URL = req.URL;
     var status = req.status;
     if (parent_id > 0) {
         client.hgetall('category_' + parent_id, function (err, object) {
@@ -88,9 +84,8 @@ router.all('/categorylist', function (req, res) {
                 res.json({status: 1, statuscode: SUCCESS_STATUS, body: object});
             } else {
                 var body = ({parent_id: parent_id, type: type, store_id: store_id});
-                var headers = {APP_ID: APP_ID};
-                var url = URL + '/category/categorylist/';
-                request_.request(body, headers, url, function (req, response, msg) {
+                var url = '/category/categorylist/';
+                request_.request(req, body, url, function (req, response, msg) {
                     if (msg == ERROR) {
                         res.json({status: 0, statuscode: ERR_STATUS, error: response});
                     } else if (req.statusCode == ERR_STATUS) {

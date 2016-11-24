@@ -11,11 +11,11 @@ var fs = require('fs');
 var URL_ = require('url');
 var mkdirp = require('mkdirp');
 
-exports.request = function (body, headers, url, callback) {
+exports.request = function (req, body, url, callback) {
     request({
-        url: url, //URL to hit
+        url: req.URL + url, //URL to hit
         method: 'post',
-        headers: headers,
+        headers: {APP_ID: req.headers.app_id, "Authorization": req.headers.authorization},
         timeout: 10000,
         body: JSON.stringify(body)
     }, function (error, result, body) {
@@ -30,7 +30,6 @@ exports.request = function (body, headers, url, callback) {
 };
 
 exports.resize = function (url, APP_ID, callback) {
-
     if (url.length > 0 && APP_ID.length > 0) {
         var image_url = URL_.parse(url).path;
         var app_id = APP_ID.replace(/[^a-zA-Z0-9 ]/g, "");

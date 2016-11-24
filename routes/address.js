@@ -18,15 +18,12 @@ router.post('/edit', function (req, res) {
     var firstname = req.body.firstname;
     var lastname = req.body.lastname;
     var entity_id = req.body.entity_id;
-    var URL = req.URL;
-    var APP_ID = req.headers.app_id;
     if (countryid == UNDEFINE && zip == UNDEFINE && street == UNDEFINE && access_token == UNDEFINE) {
         res.json({status: 0, msg: UNDEFINE});
     } else {
         var body = ({countryid: countryid, zip: zip, city: city, telephone: telephone, fax: fax, company: company, street: street, firstname: firstname, lastname: lastname, secret: secret, entity_id: entity_id});
-        var headers = {APP_ID: APP_ID, "Authorization": access_token};
-        var url = URL + '/address/edit/';
-        request_.request(body, headers, url, function (req, response, msg) {
+        var url = '/address/edit/';
+        request_.request(req, body, url, function (req, response, msg) {
             if (msg == ERROR) {
                 res.json({status: 0, statuscode: ERR_STATUS, error: response});
             } else if (req.statusCode == ERR_STATUS) {
@@ -42,15 +39,12 @@ router.post('/delete', function (req, res) {
     var access_token = req.headers.authorization;
     var secret = req.body.secret;
     var entity_id = req.body.entity_id;
-    var URL = req.URL;
-    var APP_ID = req.headers.app_id;
-    if (entity_id == UNDEFINE) {
+    if (entity_id == UNDEFINE && access_token == UNDEFINE) {
         res.json({status: 0, msg: UNDEFINE});
     } else {
         var body = ({secret: secret, entity_id: entity_id});
-        var headers = {APP_ID: APP_ID, "Authorization": access_token};
-        var url = URL + '/address/delete/';
-        request_.request(body, headers, url, function (req, response, msg) {
+        var url = '/address/delete/';
+        request_.request(req, body, url, function (req, response, msg) {
             if (msg == ERROR) {
                 res.json({status: 0, statuscode: ERR_STATUS, error: response});
             } else if (req.statusCode == ERR_STATUS) {

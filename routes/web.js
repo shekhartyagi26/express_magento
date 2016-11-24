@@ -7,12 +7,9 @@ var request_ = require('../service/request');
 
 router.post('/config', function (req, res) {
     var store_id = req.body.store_id;
-    var APP_ID = req.headers.app_id;
-    var URL = req.URL;
     var body = ({store_id: store_id});
-    var url = URL + '/web/config';
-    var headers = {APP_ID: APP_ID};
-    request_.request(body, headers, url, function (req, response, msg) {
+    var url = '/web/config';
+    request_.request(req, body, url, function (req, response, msg) {
         if (msg == ERROR) {
             res.json({status: 0, statuscode: ERR_STATUS, error: response});
         } else if (req.statusCode == ERR_STATUS) {
@@ -25,12 +22,9 @@ router.post('/config', function (req, res) {
 
 router.post('/getAllowedCountries', function (req, res) {
     var store_id = req.body.store_id;
-    var APP_ID = req.headers.app_id;
-    var URL = req.URL;
     var body = ({store_id: store_id});
-    var url = URL + '/web/getAllowedCountries';
-    var headers = {APP_ID: APP_ID};
-    request_.request(body, headers, url, function (req, response, msg) {
+    var url = '/web/getAllowedCountries';
+    request_.request(req, body, url, function (req, response, msg) {
         if (msg == ERROR) {
             res.json({status: 0, statuscode: ERR_STATUS, error: response});
         } else if (req.statusCode == ERR_STATUS) {
