@@ -28,15 +28,21 @@ router.post('/get', function (req, res) {
                         if (categoryData !== undefined) {
                             var optmized_response = [];
                             async.eachOfLimit(categoryData, 1, processData, function (err) {
+                                var s = [];
                                 if (err) {
                                     res.json({status: 0, msg: "OOPS! How is this possible?"});
                                 } else {
                                     client.hmset('product_' + body.sku, {
                                         'sku': body.sku,
-                                        "body": JSON.stringify(optmized_response)
+                                        'body': JSON.stringify(optmized_response)
                                     });
                                     client.expire('product_' + body.sku, config.PRODUCT_EXPIRESAT);
-                                    res.json({status: status, statuscode: msg, body: JSON.stringify(optmized_response)});
+                                   if(optmized_response){
+                                        console.log(optmized_response);
+                                       res.json({status: status, statuscode: msg, abs: optmized_response});
+                                   }else{
+                                        res.json({status:11});
+                                    }
                                 }
                             });
                         } else {
@@ -47,6 +53,7 @@ router.post('/get', function (req, res) {
                             resize(image_url, APP_ID, body.mobile_width, function (status, response_, image_name) {
                                 if (status == "200") {
                                     minify(image_name, APP_ID, function (status, response_, image_name) {
+
                                         image_url = image_name;
                                         item.small_image = image_url;
                                         optmized_response[key] = item;
