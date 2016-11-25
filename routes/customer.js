@@ -5,7 +5,7 @@ var express = require('express');
 var router = express.Router();
 
 router.post('/login', function (req, res) {
-    isValidate(req, {countryid: 'optional',
+    isValidate(req, res, {countryid: 'optional',
         zip: 'optional',
         city: 'optional',
         telephone: 'optional',
@@ -24,24 +24,14 @@ router.post('/login', function (req, res) {
         type: 'optional',
         website_id: 'required',
         email: 'required'}, null, function (body) {
-        if (body == 0) {
-            res.json({status: 0, body: 'Secret Empty'});
-        } else {
-            API(req, body, '/customer/login/', function (req, response, msg) {
-                if (msg == ERROR) {
-                    res.json({status: 0, statuscode: ERR_STATUS, error: response});
-                } else if (req.statusCode == ERR_STATUS) {
-                    res.json({status: 0, statuscode: req.statusCode, body: response});
-                } else {
-                    res.json({status: 1, statuscode: req.statusCode, body: response});
-                }
-            });
-        }
+        API(req, body, '/customer/login/', function (status, response, msg) {
+            res.json({status: status, statuscode: msg, body: response});
+        });
     });
 });
 
 router.post('/register', function (req, res) {
-    isValidate(req, {countryid: 'optional',
+    isValidate(req, res, {countryid: 'optional',
         zip: 'optional',
         city: 'optional',
         telephone: 'optional',
@@ -60,24 +50,14 @@ router.post('/register', function (req, res) {
         type: 'optional',
         website_id: 'required',
         email: 'required'}, null, function (body) {
-        if (body == 0) {
-            res.json({status: 0, body: 'Secret Empty'});
-        } else {
-            API(req, body, '/customer/register/', function (req, response, msg) {
-                if (msg == ERROR) {
-                    res.json({status: 0, statuscode: ERR_STATUS, error: response});
-                } else if (req.statusCode == ERR_STATUS) {
-                    res.json({status: 0, statuscode: req.statusCode, body: response});
-                } else {
-                    res.json({status: 1, statuscode: req.statusCode, body: response});
-                }
-            });
-        }
+        API(req, body, '/customer/register/', function (status, response, msg) {
+            res.json({status: status, statuscode: msg, body: response});
+        });
     });
 });
 
 router.post('/forgot', function (req, res) {
-    isValidate(req, {countryid: 'optional',
+    isValidate(req, res, {countryid: 'optional',
         zip: 'optional',
         city: 'optional',
         telephone: 'optional',
@@ -96,24 +76,14 @@ router.post('/forgot', function (req, res) {
         type: 'optional',
         website_id: 'required',
         email: 'required'}, null, function (body) {
-        if (body == 0) {
-            res.json({status: 0, body: 'Secret Empty'});
-        } else {
-            API(req, body, '/customer/forgot/', function (req, response, msg) {
-                if (msg == ERROR) {
-                    res.json({status: 0, statuscode: ERR_STATUS, error: response});
-                } else if (req.statusCode == ERR_STATUS) {
-                    res.json({status: 0, statuscode: req.statusCode, body: response});
-                } else {
-                    res.json({status: 1, statuscode: req.statusCode, body: response});
-                }
-            });
-        }
+        API(req, body, '/customer/forgot/', function (status, response, msg) {
+            res.json({status: status, statuscode: msg, body: response});
+        });
     });
 });
 
 router.post('/social_account', function (req, res) {
-    isValidate(req, {countryid: 'optional',
+    isValidate(req, res, {countryid: 'optional',
         zip: 'optional',
         city: 'optional',
         telephone: 'optional',
@@ -134,19 +104,9 @@ router.post('/social_account', function (req, res) {
         email: 'required',
         social: 'required',
         social_id: 'required'}, null, function (body) {
-        if (body == 0) {
-            res.json({status: 0, body: 'Secret Empty'});
-        } else {
-            API(req, body, '/customer/social_account/', function (req, response, msg) {
-                if (msg == ERROR) {
-                    res.json({status: 0, statuscode: ERR_STATUS, error: response});
-                } else if (req.statusCode == ERR_STATUS) {
-                    res.json({status: 0, statuscode: req.statusCode, body: response});
-                } else {
-                    res.json({status: 1, statuscode: req.statusCode, body: response});
-                }
-            });
-        }
+        API(req, body, '/customer/social_account/', function (status, response, msg) {
+            res.json({status: status, statuscode: msg, body: response});
+        });
     });
 });
 

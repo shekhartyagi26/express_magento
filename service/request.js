@@ -20,11 +20,12 @@ API = function (req, body, url, callback) {
         body: JSON.stringify(body)
     }, function (error, result, body) {
         if (error) {
-            callback(500, error, ERROR);
+//            callback(500, error, ERROR);
+            callback(0, error, ERROR);
         } else if (result.statusCode === 500) {
-            callback(result, body, NOTFOUND)
+            callback(0, body, NOTFOUND);
         } else {
-            callback(result, body, SUCCESS);
+            callback(1, body, SUCCESS);
         }
     });
 };
