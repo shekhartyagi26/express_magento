@@ -39,6 +39,11 @@ resize = function (url, APP_ID, mobile_width, callback) {
             var file = fs.createWriteStream("public/" + image_name);
             http.get(url, function (response) {
                 response.pipe(file);
+                if (response.statusCode == 200) {
+                    image_name = image_name;
+                } else {
+                    image_name = 'test/wbk002t_3.jpg';
+                }
                 response.on('end', function () {
                     sharp('public/' + image_name)
                             .resize(width)
@@ -56,7 +61,6 @@ resize = function (url, APP_ID, mobile_width, callback) {
         } else {
             callback(200, "done", config.IMAGE_URL + image_stored_url);
         }
-
     } else {
         callback(500, " APP_ID or url or mobile_width cannot be empty");
     }

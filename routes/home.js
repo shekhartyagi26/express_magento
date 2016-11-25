@@ -31,13 +31,10 @@ router.post('/products', function (req, res) {
                         var categoryData = resp.data;
                         if (categoryData !== undefined) {
                             var optmized_response = [];
-                            // async.eachOfLimit(categoryData, 5, processData, function (err) {
-                                async.eachOfLimit(categoryData, 5, processData, function (err) {
-                                    console.log("fdfdgdfgfd")
+                            async.eachOfLimit(categoryData, 2, processData, function (err) {
                                 if (err) {
                                     res.json({status: 0, msg: "OOPS! How is this possible?"});
                                 } else {
-                                    console.log("ererer")
                                     client.hmset('products_' + type, {
                                         'type': type,
                                         'body': JSON.stringify(optmized_response)
@@ -63,7 +60,7 @@ router.post('/products', function (req, res) {
                                     })
                                 } else {
                                     item.data.small_image = image_url;
-                                    item.data.minify_image = minify_image;
+                                    item.data.minify_image = image_url;
                                     optmized_response[key] = item;
                                     callback(null);
                                 }
