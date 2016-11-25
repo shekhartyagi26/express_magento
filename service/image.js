@@ -11,6 +11,7 @@ var imageminPngquant = require('imagemin-pngquant');
 var fs = require('fs');
 var URL_ = require('url');
 var mkdirp = require('mkdirp');
+var path = require('path');
 
 resize = function (url, APP_ID, mobile_width, callback) {
     if (url.length > 0 && APP_ID.length > 0) {
@@ -19,7 +20,6 @@ resize = function (url, APP_ID, mobile_width, callback) {
         } else {
             mobile_width = 200;
         }
-        console.log(mobile_width)
         var image_url = URL_.parse(url).path;
         var app_id = APP_ID.replace(/[^a-zA-Z0-9 ]/g, "");
         var image_stored_url = app_id + image_url;

@@ -4,6 +4,7 @@ imports('config/constant');
 var express = require('express');
 var router = express.Router();
 var async = require('async');
+var path = require('path');
 var redis = require("redis"),
         client = redis.createClient();
 var request_ = require('../service/request');
@@ -14,7 +15,7 @@ router.post('/products', function (req, res) {
     var APP_ID = req.headers.app_id;
     var status = req.status;
     var mobile_width = req.body.mobile_width;
-    if (type.length > 0) {
+    if (type != undefined) {
         client.hgetall('products_' + type, function (err, object) {
             if (object != null && object.type == type && status == "enabled") {
                 res.json(object);
@@ -30,13 +31,16 @@ router.post('/products', function (req, res) {
                         var categoryData = resp.data;
                         if (categoryData !== undefined) {
                             var optmized_response = [];
-                            async.eachOfLimit(categoryData, 5, processData, function (err) {
+                            // async.eachOfLimit(categoryData, 5, processData, function (err) {
+                                async.eachOfLimit(categoryData, 5, processData, function (err) {
+                                    console.log("fdfdgdfgfd")
                                 if (err) {
                                     res.json({status: 0, msg: "OOPS! How is this possible?"});
                                 } else {
+                                    console.log("ererer")
                                     client.hmset('products_' + type, {
                                         'type': type,
-                                        'body': response
+                                        'body': JSON.stringify(optmized_response)
                                     });
                                     client.expire('products_' + type, config.PRODUCT_EXPIRESAT);
                                     res.json({status: 1, statuscode: req.statusCode, body: JSON.stringify(optmized_response)});
@@ -48,16 +52,18 @@ router.post('/products', function (req, res) {
 
                         function processData(item, key, callback) {
                             var image_url = item.data.small_image;
-                            resize(image_url, APP_ID,mobile_width, function (status, response_, image_name) {
+                            resize(image_url, APP_ID, mobile_width, function (status, response_, image_name) {
                                 if (status == '200') {
-                                    minify(image_name, APP_ID, function (status, response_, image_name) {
+                                    minify(image_name, APP_ID, function (status, response_, minify_image) {
                                         image_url = image_name;
                                         item.data.small_image = image_url;
+                                        item.data.minify_image = minify_image;
                                         optmized_response[key] = item;
                                         callback(null);
-                                    });
+                                    })
                                 } else {
                                     item.data.small_image = image_url;
+                                    item.data.minify_image = minify_image;
                                     optmized_response[key] = item;
                                     callback(null);
                                 }
@@ -139,7 +145,7 @@ router.post('/slider', function (req, res) {
                                     image_url = image_name;
                                     item = image_url;
                                     optmized_response[key] = item;
-                                    callback(null);
+                                    callback(null)
                                 });
                             } else {
                                 item = image_url;
