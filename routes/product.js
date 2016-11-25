@@ -26,7 +26,7 @@ router.post('/get', function (req, res) {
                         var resp = JSON.parse(response);
                         var categoryData = resp.data;
                         if (categoryData !== undefined) {
-                            var optmized_response = [];
+                            var optmized_response = {};
                             async.eachOfLimit(categoryData, 1, processData, function (err) {
                                 var s = [];
                                 if (err) {
@@ -38,7 +38,6 @@ router.post('/get', function (req, res) {
                                     });
                                     client.expire('product_' + body.sku, config.PRODUCT_EXPIRESAT);
                                    if(optmized_response){
-                                        console.log(optmized_response);
                                        res.json({status: status, statuscode: msg, abs: optmized_response});
                                    }else{
                                         res.json({status:11});
