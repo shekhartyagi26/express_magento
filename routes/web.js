@@ -5,29 +5,39 @@ var express = require('express');
 var router = express.Router();
 
 router.post('/config', function (req, res) {
-    var store_id = req.body.store_id;
-    var body = ({store_id: store_id});
-    API(req, body, '/web/config', function (req, response, msg) {
-        if (msg == ERROR) {
-            res.json({status: 0, statuscode: ERR_STATUS, error: response});
-        } else if (req.statusCode == ERR_STATUS) {
-            res.json({status: 0, statuscode: req.statusCode, body: response});
+    var schema = {store_id: 'required', secret: 'optional'};
+    isValidate(req, schema, null, function (body) {
+        if (body == 0) {
+            res.json({status: 0, body: 'Secret Empty'});
         } else {
-            res.json({status: 1, statuscode: req.statusCode, body: response});
+            API(req, body, '/web/config', function (req, response, msg) {
+                if (msg == ERROR) {
+                    res.json({status: 0, statuscode: ERR_STATUS, error: response});
+                } else if (req.statusCode == ERR_STATUS) {
+                    res.json({status: 0, statuscode: req.statusCode, body: response});
+                } else {
+                    res.json({status: 1, statuscode: req.statusCode, body: response});
+                }
+            });
         }
     });
 });
 
 router.post('/getAllowedCountries', function (req, res) {
-    var store_id = req.body.store_id;
-    var body = ({store_id: store_id});
-    API(req, body, '/web/getAllowedCountries', function (req, response, msg) {
-        if (msg == ERROR) {
-            res.json({status: 0, statuscode: ERR_STATUS, error: response});
-        } else if (req.statusCode == ERR_STATUS) {
-            res.json({status: 0, statuscode: req.statusCode, body: response});
+    var schema = {store_id: 'required', secret: 'optional'};
+    isValidate(req, schema, null, function (body) {
+        if (body == 0) {
+            res.json({status: 0, body: 'Secret Empty'});
         } else {
-            res.json({status: 1, statuscode: req.statusCode, body: response});
+            API(req, body, '/web/getAllowedCountries', function (req, response, msg) {
+                if (msg == ERROR) {
+                    res.json({status: 0, statuscode: ERR_STATUS, error: response});
+                } else if (req.statusCode == ERR_STATUS) {
+                    res.json({status: 0, statuscode: req.statusCode, body: response});
+                } else {
+                    res.json({status: 1, statuscode: req.statusCode, body: response});
+                }
+            });
         }
     });
 });
