@@ -1,6 +1,8 @@
 require('node-import');
 imports('config/index');
-require('../service/secret');
+require('../service/auth');
+require('../service/validate');
+require('../service/cache');
 imports('config/constant');
 var express = require('express');
 var router = express.Router();
