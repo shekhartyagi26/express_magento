@@ -1,7 +1,34 @@
-require('node-import');
-imports('config/index');
-imports('config/constant');
+var _underscore = require('underscore');
 
-isAuth = function (req, callback) {
-    callback(req.body.secret);
+isAuth = function (req, res, callback) {
+    if (req.body.secret) {
+        callback(req.body.secret);
+    } else {
+        res.json({status: 0, body: 'Secret Empty'});
+    }
+};
+
+validate = function (req, res, schema, secret, callback) {
+    var result = {};
+    var allkeys = _underscore.keys(schema);
+    var find = false;
+    for (var a = 0; a < allkeys.length; a++) {
+        var myKey = allkeys[a];
+        if (schema[myKey] != 'optional') {
+            if (myKey == 'secret') {
+                result[myKey] = secret;
+            }
+            if (req.body[myKey]) {
+                result[myKey] = req.body[myKey];
+            } else {
+                find = true;
+                break;
+            }
+        }
+    }
+    if (find == true) {
+        res.json({status: 0, body: 'Fill required fields!'});
+    } else {
+        callback(result);
+    }
 };

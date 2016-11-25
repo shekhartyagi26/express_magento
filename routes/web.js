@@ -5,30 +5,20 @@ var express = require('express');
 var router = express.Router();
 
 router.post('/config', function (req, res) {
-    var store_id = req.body.store_id;
-    var body = ({store_id: store_id});
-    API(req, body, '/web/config', function (req, response, msg) {
-        if (msg == ERROR) {
-            res.json({status: 0, statuscode: ERR_STATUS, error: response});
-        } else if (req.statusCode == ERR_STATUS) {
-            res.json({status: 0, statuscode: req.statusCode, body: response});
-        } else {
-            res.json({status: 1, statuscode: req.statusCode, body: response});
-        }
+    validate(req, res, {store_id: 'required',
+        secret: 'optional'}, null, function (body) {
+        API(req, body, '/web/config', function (status, response, msg) {
+            res.json({status: status, statuscode: msg, body: response});
+        });
     });
 });
 
 router.post('/getAllowedCountries', function (req, res) {
-    var store_id = req.body.store_id;
-    var body = ({store_id: store_id});
-    API(req, body, '/web/getAllowedCountries', function (req, response, msg) {
-        if (msg == ERROR) {
-            res.json({status: 0, statuscode: ERR_STATUS, error: response});
-        } else if (req.statusCode == ERR_STATUS) {
-            res.json({status: 0, statuscode: req.statusCode, body: response});
-        } else {
-            res.json({status: 1, statuscode: req.statusCode, body: response});
-        }
+    validate(req, res, {store_id: 'required',
+        secret: 'optional'}, null, function (body) {
+        API(req, body, '/web/getAllowedCountries', function (status, response, msg) {
+            res.json({status: status, statuscode: msg, body: response});
+        });
     });
 });
 

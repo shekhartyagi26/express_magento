@@ -6,61 +6,46 @@ var express = require('express');
 var router = express.Router();
 
 router.post('/edit', function (req, res) {
-    var access_token = req.headers.authorization;
-    var countryid = req.body.countryid;
-    var zip = req.body.zip;
-    var city = req.body.city;
-    var telephone = req.body.telephone;
-    var fax = req.body.fax;
-    var company = req.body.company;
-    var street = req.body.street;
-    var firstname = req.body.firstname;
-    var lastname = req.body.lastname;
-    var entity_id = req.body.entity_id;
-    isAuth(req, function (secret) {
-        if (secret.length == 0) {
-            res.json({status: 0, body: 'Secret Empty'});
-        } else {
-            if (countryid == UNDEFINE && zip == UNDEFINE && street == UNDEFINE && access_token == UNDEFINE) {
-                res.json({status: 0, msg: UNDEFINE});
-            } else {
-                var body = ({countryid: countryid, zip: zip, city: city, telephone: telephone, fax: fax, company: company, street: street, firstname: firstname, lastname: lastname, secret: secret, entity_id: entity_id});
-                API(req, body, '/address/edit/', function (req, response, msg) {
-                    if (msg == ERROR) {
-                        res.json({status: 0, statuscode: ERR_STATUS, error: response});
-                    } else if (req.statusCode == ERR_STATUS) {
-                        res.json({status: 0, statuscode: req.statusCode, body: response});
-                    } else {
-                        res.json({status: 1, statuscode: req.statusCode, body: response});
-                    }
-                });
-            }
-        }
+    isAuth(req, res, function (secret) {
+        validate(req, res, {countryid: 'required',
+            zip: 'required',
+            city: 'required',
+            telephone: 'required',
+            fax: 'required',
+            company: 'required',
+            street: 'required',
+            firstname: 'required',
+            lastname: 'required',
+            password: 'optional',
+            newPassword: 'optional',
+            secret: 'required',
+            entity_id: 'required'}, secret, function (body) {
+            API(req, body, '/address/edit/', function (status, response, msg) {
+                res.json({status: status, statuscode: msg, body: response});
+            });
+        });
     });
 });
 
 router.post('/delete', function (req, res) {
-    var access_token = req.headers.authorization;
-    var entity_id = req.body.entity_id;
-    isAuth(req, function (secret) {
-        if (secret.length == 0) {
-            res.json({status: 0, body: 'Secret Empty'});
-        } else {
-            if (entity_id == UNDEFINE && access_token == UNDEFINE) {
-                res.json({status: 0, msg: UNDEFINE});
-            } else {
-                var body = ({secret: secret, entity_id: entity_id});
-                API(req, body, '/address/delete/', function (req, response, msg) {
-                    if (msg == ERROR) {
-                        res.json({status: 0, statuscode: ERR_STATUS, error: response});
-                    } else if (req.statusCode == ERR_STATUS) {
-                        res.json({status: 0, statuscode: req.statusCode, body: response});
-                    } else {
-                        res.json({status: 1, statuscode: req.statusCode, body: response});
-                    }
-                });
-            }
-        }
+    isAuth(req, res, function (secret) {
+        validate(req, res, {countryid: 'optional',
+            zip: 'optional',
+            city: 'optional',
+            telephone: 'optional',
+            fax: 'optional',
+            company: 'optional',
+            street: 'optional',
+            firstname: 'optional',
+            lastname: 'optional',
+            password: 'optional',
+            newPassword: 'optional',
+            secret: 'required',
+            entity_id: 'required'}, secret, function (body) {
+            API(req, body, '/address/delete/', function (status, response, msg) {
+                res.json({status: status, statuscode: msg, body: response});
+            });
+        });
     });
 });
 

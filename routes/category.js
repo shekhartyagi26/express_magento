@@ -12,22 +12,35 @@ var redis = require("redis"),
         client = redis.createClient();
 
 router.all('/products', function (req, res) {
-    var id = req.body.id;
-    var limit = req.body.limit;
     var APP_ID = req.headers.app_id;
     var status = req.status;
-    var mobile_width = req.body.mobile_width;
-    if (id > 0) {
-        client.hgetall('category_' + id, function (err, object) {
-            if (object !== null && object.id === id && status === "enabled") {
+    validate(req, res, {countryid: 'optional',
+        zip: 'optional',
+        city: 'optional',
+        telephone: 'optional',
+        fax: 'optional',
+        company: 'optional',
+        street: 'optional',
+        firstname: 'optional',
+        lastname: 'optional',
+        password: 'optional',
+        newPassword: 'optional',
+        secret: 'optional',
+        entity_id: 'optional',
+        productid: 'optional',
+        store_id: 'optional',
+        parent_id: 'optional',
+        type: 'optional',
+        limit: 'required',
+        id: 'required',
+        mobile_width: 'required'}, null, function (body) {
+        client.hgetall('category_' + body.id, function (err, object) {
+            if (object !== null && object.id === body.id && status === "enabled") {
                 res.json(object);
             } else {
-                var body = ({id: id, limit: limit});
-                API(req, body, '/category/products/', function (req, response, msg) {
-                    if (msg === ERROR) {
-                        res.json({status: 0, statuscode: ERR_STATUS, error: response});
-                    } else if (req.statusCode === ERR_STATUS) {
-                        res.json({status: 0, statuscode: req.statusCode, body: response});
+                API(req, body, '/category/products/', function (status, response, msg) {
+                    if (status == 0) {
+                        res.json({status: status, statuscode: msg, body: response});
                     } else {
                         var resp = JSON.parse(response);
                         var categoryData = resp.data;
@@ -37,13 +50,13 @@ router.all('/products', function (req, res) {
                                 if (err) {
                                     res.json({status: 0, msg: "OOPS! How is this possible?"});
                                 } else {
-                                    client.hmset('category_' + id, {
-                                        'id': id,
-                                        "limit": limit,
+                                    client.hmset('category_' + body.id, {
+                                        'id': body.id,
+                                        "limit": body.limit,
                                         "body": JSON.stringify(optmized_response)
                                     });
-                                    client.expire('category_' + id, config.CATEGORY_EXPIRESAT);
-                                    res.json({status: 1, statuscode: req.statusCode, body: JSON.stringify(optmized_response)});
+                                    client.expire('category_' + body.id, config.CATEGORY_EXPIRESAT);
+                                    res.json({status: 1, statuscode: msg, body: JSON.stringify(optmized_response)});
                                 }
                             });
                         } else {
@@ -51,7 +64,7 @@ router.all('/products', function (req, res) {
                         }
                         function processData(item, key, callback) {
                             var image_url = item.data.small_image;
-                            resize(image_url, APP_ID, mobile_width, function (status, response_, image_name) {
+                            resize(image_url, APP_ID, body.mobile_width, function (status, response_, image_name) {
                                 if (status == '200') {
                                     minify(image_name, APP_ID, function (status, response_, minify_image) {
                                         item.data.small_image = image_name;
@@ -71,42 +84,48 @@ router.all('/products', function (req, res) {
                 });
             }
         });
-    } else {
-        res.json({status: 0, statuscode: ERR_STATUS, body: INVALID});
-    }
+    });
 });
 
 router.all('/categorylist', function (req, res) {
-    var parent_id = req.body.parent_id;
-    var type = req.body.type;
-    var store_id = req.body.store_id;
     var status = req.status;
-    if (parent_id > 0) {
-        client.hgetall('category_' + parent_id, function (err, object) {
-            if (object != null && object.parent_id == parent_id && status == "enabled") {
+    validate(req, res, {countryid: 'optional',
+        zip: 'optional',
+        city: 'optional',
+        telephone: 'optional',
+        fax: 'optional',
+        company: 'optional',
+        street: 'optional',
+        firstname: 'optional',
+        lastname: 'optional',
+        password: 'optional',
+        newPassword: 'optional',
+        secret: 'optional',
+        entity_id: 'optional',
+        productid: 'optional',
+        store_id: 'required',
+        parent_id: 'required',
+        type: 'required'}, null, function (body) {
+        client.hgetall('category_' + body.parent_id, function (err, object) {
+            if (object != null && object.parent_id == body.parent_id && status == "enabled") {
                 res.json({status: 1, statuscode: SUCCESS_STATUS, body: object});
             } else {
-                var body = ({parent_id: parent_id, type: type, store_id: store_id});
-                API(req, body, '/category/categorylist/', function (req, response, msg) {
-                    if (msg == ERROR) {
-                        res.json({status: 0, statuscode: ERR_STATUS, error: response});
-                    } else if (req.statusCode == ERR_STATUS) {
-                        res.json({status: 0, statuscode: req.statusCode, body: response});
+                API(req, body, '/category/categorylist/', function (status, response, msg) {
+                    if (status == 0) {
+                        res.json({status: status, statuscode: msg, error: response});
                     } else {
-                        client.hmset('category_' + parent_id, {
-                            'parent_id': parent_id,
+                        client.hmset('category_' + body.parent_id, {
+                            'parent_id': body.parent_id,
                             "body": response,
-                            "type": type
+                            "type": body.type
                         });
-                        client.expire('category_' + parent_id, config.CATEGORY_EXPIRESAT);
-                        res.json({status: 1, statuscode: req.statusCode, body: response});
+                        client.expire('category_' + body.parent_id, config.CATEGORY_EXPIRESAT);
+                        res.json({status: status, statuscode: msg, body: response});
                     }
                 });
             }
         });
-    } else {
-        res.json({status: 0, error: ERR_STATUS, body: INVALID});
-    }
+    });
 });
 
 module.exports = router;
