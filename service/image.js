@@ -36,16 +36,16 @@ resize = function (url, APP_ID, mobile_width, callback) {
                 }
             });
             var width = JSON.parse(mobile_width);
-            var file = fs.createWriteStream("public/" + image_name);
+            var file = fs.createWriteStream("public/original_image/" + image_name);
             http.get(url, function (response) {
                 response.pipe(file);
                 if (response.statusCode == 200) {
                     image_name = image_name;
                 } else {
-                    image_name = 'test/wbk002t_3.jpg';
+                    image_name = 'default/default.jpg';
                 }
                 response.on('end', function () {
-                    sharp('public/' + image_name)
+                    sharp('public/original_image/' + image_name)
                             .resize(width)
                             .toFile('public/' + image_stored_url, function (err) {
                                 if (err) {
@@ -74,7 +74,7 @@ minify = function (url, APP_ID, callback) {
                  imagemin(['public/' + image_fetch_url], 'public/minify/' + filename, {
                      plugins: [
                      imageminMozjpeg(),
-                     imageminPngquant({quality: '10-20'})
+                     imageminPngquant({quality: '5'})
                      ]
                  }).then(files => {
                      if (files[0].path !== null) {
