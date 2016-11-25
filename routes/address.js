@@ -7,9 +7,6 @@ var router = express.Router();
 
 router.post('/edit', function (req, res) {
     var access_token = req.headers.authorization;
-    var schema = {countryid: 'required', zip: 'required', city: 'required', telephone: 'required',
-        fax: 'required', company: 'required', street: 'required', firstname: 'required', lastname: 'required',
-        password: 'optional', newPassword: 'optional', secret: 'required', entity_id: 'required'};
     isAuth(req, function (secret) {
         if (secret.length == 0) {
             res.json({status: 0, body: 'Secret Empty'});
@@ -17,7 +14,19 @@ router.post('/edit', function (req, res) {
             if (access_token == UNDEFINE) {
                 res.json({status: 0, msg: UNDEFINE});
             } else {
-                isValidate(req, schema, secret, function (body) {
+                isValidate(req, {countryid: 'required',
+                    zip: 'required',
+                    city: 'required',
+                    telephone: 'required',
+                    fax: 'required',
+                    company: 'required',
+                    street: 'required',
+                    firstname: 'required',
+                    lastname: 'required',
+                    password: 'optional',
+                    newPassword: 'optional',
+                    secret: 'required',
+                    entity_id: 'required'}, secret, function (body) {
                     if (body == 0) {
                         res.json({status: 0, body: 'Fill required fields!'});
                     } else {
@@ -39,9 +48,6 @@ router.post('/edit', function (req, res) {
 
 router.post('/delete', function (req, res) {
     var access_token = req.headers.authorization;
-    var schema = {countryid: 'optional', zip: 'optional', city: 'optional', telephone: 'optional',
-        fax: 'optional', company: 'optional', street: 'optional', firstname: 'optional', lastname: 'optional',
-        password: 'optional', newPassword: 'optional', secret: 'required', entity_id: 'required'};
     isAuth(req, function (secret) {
         if (secret.length == 0) {
             res.json({status: 0, body: 'Secret Empty'});
@@ -49,7 +55,19 @@ router.post('/delete', function (req, res) {
             if (access_token == UNDEFINE) {
                 res.json({status: 0, body: UNDEFINE});
             } else {
-                isValidate(req, schema, secret, function (body) {
+                isValidate(req, {countryid: 'optional',
+                    zip: 'optional',
+                    city: 'optional',
+                    telephone: 'optional',
+                    fax: 'optional',
+                    company: 'optional',
+                    street: 'optional',
+                    firstname: 'optional',
+                    lastname: 'optional',
+                    password: 'optional',
+                    newPassword: 'optional',
+                    secret: 'required',
+                    entity_id: 'required'}, secret, function (body) {
                     if (body == 0) {
                         res.json({status: 0, body: 'Fill required fields!'});
                     } else {

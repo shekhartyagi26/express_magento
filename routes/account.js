@@ -7,8 +7,6 @@ var router = express.Router();
 
 router.all('/address', function (req, res) {
     var access_token = req.headers.authorization;
-    var schema = {firstname: 'optional', lastname: 'optional', password: 'optional',
-        newPassword: 'optional', zip: 'optional', secret: 'required'};
     isAuth(req, function (secret) {
         if (secret.length == 0) {
             res.json({status: 0, body: 'Secret Empty'});
@@ -16,7 +14,12 @@ router.all('/address', function (req, res) {
             if (access_token == UNDEFINE) {
                 res.json({status: 0, statuscode: ERR_STATUS, body: UNDEFINE});
             } else {
-                isValidate(req, schema, secret, function (body) {
+                isValidate(req, {firstname: 'optional',
+                    lastname: 'optional',
+                    password: 'optional',
+                    newPassword: 'optional',
+                    zip: 'optional',
+                    secret: 'required'}, secret, function (body) {
                     if (body == 0) {
                         res.json({status: 0, body: 'Fill required fields!'});
                     } else {
@@ -39,8 +42,6 @@ router.all('/address', function (req, res) {
 
 router.post('/changepassword', function (req, res) {
     var access_token = req.headers.authorization;
-    var schema = {firstname: 'optional', lastname: 'optional', password: 'required',
-        newPassword: 'required', zip: 'optional', secret: 'required'};
     isAuth(req, function (secret) {
         if (secret.length == 0) {
             res.json({status: 0, body: 'Secret Empty'});
@@ -48,7 +49,12 @@ router.post('/changepassword', function (req, res) {
             if (access_token == UNDEFINE) {
                 res.json({status: 0, statuscode: ERR_STATUS, body: UNDEFINE});
             } else {
-                isValidate(req, schema, secret, function (body) {
+                isValidate(req, {firstname: 'optional',
+                    lastname: 'optional',
+                    password: 'required',
+                    newPassword: 'required',
+                    zip: 'optional',
+                    secret: 'required'}, secret, function (body) {
                     if (body == 0) {
                         res.json({status: 0, body: 'Fill required fields!'});
                     } else {

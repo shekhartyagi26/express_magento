@@ -11,9 +11,8 @@ var request_ = require('../service/request');
 router.post('/get', function (req, res) {
     var APP_ID = req.headers.app_id;
     var status = req.status;
-    var schema = {sku: 'required', secret: 'optional'};
-
-    isValidate(req, schema, null, function (body) {
+    isValidate(req, {sku: 'required',
+        secret: 'optional'}, null, function (body) {
         if (body == 0) {
             res.json({status: 0, body: 'Secret Empty'});
         } else {
@@ -73,8 +72,10 @@ router.post('/get', function (req, res) {
 
 router.post('/review', function (req, res) {
     var status = req.status;
-    var schema = {sku: 'required', secret: 'optional', pagesize: 'required', pageno: 'required'};
-    isValidate(req, schema, null, function (body) {
+    isValidate(req, {sku: 'required',
+        secret: 'optional',
+        pagesize: 'required',
+        pageno: 'required'}, null, function (body) {
         if (body == 0) {
             res.json({status: 0, body: 'Secret Empty'});
         } else {
@@ -105,8 +106,7 @@ router.post('/review', function (req, res) {
 
 router.post('/getrating', function (req, res) {
     var status = req.status;
-    var schema = {};
-    isValidate(req, schema, null, function (body) {
+    isValidate(req, {}, null, function (body) {
         if (body == 0) {
             res.json({status: 0, body: 'Secret Empty'});
         } else {
@@ -138,9 +138,13 @@ router.post('/getrating', function (req, res) {
 });
 
 router.post('/submitreview', function (req, res) {
-    var schema = {sku: 'required', store_id: 'required', title: 'required', details: 'required',
-        nickname: 'required', rating_options: 'required', secret: 'optional'};
-    isValidate(req, schema, null, function (body) {
+    isValidate(req, {sku: 'required',
+        store_id: 'required',
+        title: 'required',
+        details: 'required',
+        nickname: 'required',
+        rating_options: 'required',
+        secret: 'optional'}, null, function (body) {
         if (body == 0) {
             res.json({status: 0, body: 'Secret Empty'});
         } else {

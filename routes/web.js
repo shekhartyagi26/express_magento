@@ -5,8 +5,8 @@ var express = require('express');
 var router = express.Router();
 
 router.post('/config', function (req, res) {
-    var schema = {store_id: 'required', secret: 'optional'};
-    isValidate(req, schema, null, function (body) {
+    isValidate(req, {store_id: 'required',
+        secret: 'optional'}, null, function (body) {
         if (body == 0) {
             res.json({status: 0, body: 'Secret Empty'});
         } else {
@@ -24,8 +24,8 @@ router.post('/config', function (req, res) {
 });
 
 router.post('/getAllowedCountries', function (req, res) {
-    var schema = {store_id: 'required', secret: 'optional'};
-    isValidate(req, schema, null, function (body) {
+    isValidate(req, {store_id: 'required',
+        secret: 'optional'}, null, function (body) {
         if (body == 0) {
             res.json({status: 0, body: 'Secret Empty'});
         } else {

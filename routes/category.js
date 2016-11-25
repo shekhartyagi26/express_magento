@@ -77,11 +77,23 @@ router.all('/products', function (req, res) {
 
 router.all('/categorylist', function (req, res) {
     var status = req.status;
-    var schema = {countryid: 'optional', zip: 'optional', city: 'optional', telephone: 'optional',
-        fax: 'optional', company: 'optional', street: 'optional', firstname: 'optional', lastname: 'optional',
-        password: 'optional', newPassword: 'optional', secret: 'optional', entity_id: 'optional',
-        productid: 'optional', store_id: 'required', parent_id: 'required', type: 'required'};
-    isValidate(req, schema, null, function (body) {
+    isValidate(req, {countryid: 'optional',
+        zip: 'optional',
+        city: 'optional',
+        telephone: 'optional',
+        fax: 'optional',
+        company: 'optional',
+        street: 'optional',
+        firstname: 'optional',
+        lastname: 'optional',
+        password: 'optional',
+        newPassword: 'optional',
+        secret: 'optional',
+        entity_id: 'optional',
+        productid: 'optional',
+        store_id: 'required',
+        parent_id: 'required',
+        type: 'required'}, null, function (body) {
         if (body == 0) {
             res.json({status: 0, body: 'Secret Empty'});
         } else {

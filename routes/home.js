@@ -11,8 +11,8 @@ var request_ = require('../service/request');
 router.post('/products', function (req, res) {
     var APP_ID = req.headers.app_id;
     var status = req.status;
-    var schema = {type: 'required', secret: 'optional'};
-    isValidate(req, schema, null, function (body) {
+    isValidate(req, {type: 'required',
+        secret: 'optional'}, null, function (body) {
         if (body == 0) {
             res.json({status: 0, body: 'Secret Empty'});
         } else {
@@ -72,8 +72,7 @@ router.post('/products', function (req, res) {
 
 router.post('/categories', function (req, res) {
     var status = req.status;
-    var schema = {};
-    isValidate(req, schema, null, function (body) {
+    isValidate(req, {}, null, function (body) {
         if (body == 0) {
             res.json({status: 0, body: 'Secret Empty'});
         } else {
@@ -104,8 +103,7 @@ router.post('/categories', function (req, res) {
 router.post('/slider', function (req, res) {
     var APP_ID = req.headers.app_id;
     var status = req.status;
-    var schema = {};
-    isValidate(req, schema, null, function (body) {
+    isValidate(req, {}, null, function (body) {
         if (body == 0) {
             res.json({status: 0, body: 'Secret Empty'});
         } else {

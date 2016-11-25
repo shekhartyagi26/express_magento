@@ -5,12 +5,25 @@ var express = require('express');
 var router = express.Router();
 
 router.post('/login', function (req, res) {
-    var schema = {countryid: 'optional', zip: 'optional', city: 'optional', telephone: 'optional',
-        fax: 'optional', company: 'optional', street: 'optional', firstname: 'optional', lastname: 'optional',
-        password: 'required', newPassword: 'optional', secret: 'optional', entity_id: 'optional',
-        productid: 'optional', store_id: 'optional', parent_id: 'optional', type: 'optional',
-        website_id: 'required', email: 'required'};
-    isValidate(req, schema, null, function (body) {
+    isValidate(req, {countryid: 'optional',
+        zip: 'optional',
+        city: 'optional',
+        telephone: 'optional',
+        fax: 'optional',
+        company: 'optional',
+        street: 'optional',
+        firstname: 'optional',
+        lastname: 'optional',
+        password: 'required',
+        newPassword: 'optional',
+        secret: 'optional',
+        entity_id: 'optional',
+        productid: 'optional',
+        store_id: 'optional',
+        parent_id: 'optional',
+        type: 'optional',
+        website_id: 'required',
+        email: 'required'}, null, function (body) {
         if (body == 0) {
             res.json({status: 0, body: 'Secret Empty'});
         } else {
@@ -28,12 +41,25 @@ router.post('/login', function (req, res) {
 });
 
 router.post('/register', function (req, res) {
-    var schema = {countryid: 'optional', zip: 'optional', city: 'optional', telephone: 'optional',
-        fax: 'optional', company: 'optional', street: 'optional', firstname: 'required', lastname: 'required',
-        password: 'required', newPassword: 'optional', secret: 'optional', entity_id: 'optional',
-        productid: 'optional', store_id: 'optional', parent_id: 'optional', type: 'optional',
-        website_id: 'required', email: 'required'};
-    isValidate(req, schema, null, function (body) {
+    isValidate(req, {countryid: 'optional',
+        zip: 'optional',
+        city: 'optional',
+        telephone: 'optional',
+        fax: 'optional',
+        company: 'optional',
+        street: 'optional',
+        firstname: 'required',
+        lastname: 'required',
+        password: 'required',
+        newPassword: 'optional',
+        secret: 'optional',
+        entity_id: 'optional',
+        productid: 'optional',
+        store_id: 'optional',
+        parent_id: 'optional',
+        type: 'optional',
+        website_id: 'required',
+        email: 'required'}, null, function (body) {
         if (body == 0) {
             res.json({status: 0, body: 'Secret Empty'});
         } else {
@@ -51,12 +77,25 @@ router.post('/register', function (req, res) {
 });
 
 router.post('/forgot', function (req, res) {
-    var schema = {countryid: 'optional', zip: 'optional', city: 'optional', telephone: 'optional',
-        fax: 'optional', company: 'optional', street: 'optional', firstname: 'optional', lastname: 'optional',
-        password: 'optional', newPassword: 'optional', secret: 'optional', entity_id: 'optional',
-        productid: 'optional', store_id: 'optional', parent_id: 'optional', type: 'optional',
-        website_id: 'required', email: 'required'};
-    isValidate(req, schema, null, function (body) {
+    isValidate(req, {countryid: 'optional',
+        zip: 'optional',
+        city: 'optional',
+        telephone: 'optional',
+        fax: 'optional',
+        company: 'optional',
+        street: 'optional',
+        firstname: 'optional',
+        lastname: 'optional',
+        password: 'optional',
+        newPassword: 'optional',
+        secret: 'optional',
+        entity_id: 'optional',
+        productid: 'optional',
+        store_id: 'optional',
+        parent_id: 'optional',
+        type: 'optional',
+        website_id: 'required',
+        email: 'required'}, null, function (body) {
         if (body == 0) {
             res.json({status: 0, body: 'Secret Empty'});
         } else {
@@ -74,12 +113,27 @@ router.post('/forgot', function (req, res) {
 });
 
 router.post('/social_account', function (req, res) {
-    var schema = {countryid: 'optional', zip: 'optional', city: 'optional', telephone: 'optional',
-        fax: 'optional', company: 'optional', street: 'optional', firstname: 'required', lastname: 'required',
-        password: 'optional', newPassword: 'optional', secret: 'optional', entity_id: 'optional',
-        productid: 'optional', store_id: 'optional', parent_id: 'optional', type: 'optional',
-        website_id: 'required', email: 'required', social: 'required', social_id: 'required'};
-    isValidate(req, schema, null, function (body) {
+    isValidate(req, {countryid: 'optional',
+        zip: 'optional',
+        city: 'optional',
+        telephone: 'optional',
+        fax: 'optional',
+        company: 'optional',
+        street: 'optional',
+        firstname: 'required',
+        lastname: 'required',
+        password: 'optional',
+        newPassword: 'optional',
+        secret: 'optional',
+        entity_id: 'optional',
+        productid: 'optional',
+        store_id: 'optional',
+        parent_id: 'optional',
+        type: 'optional',
+        website_id: 'required',
+        email: 'required',
+        social: 'required',
+        social_id: 'required'}, null, function (body) {
         if (body == 0) {
             res.json({status: 0, body: 'Secret Empty'});
         } else {
