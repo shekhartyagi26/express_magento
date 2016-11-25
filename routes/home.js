@@ -11,7 +11,7 @@ var request_ = require('../service/request');
 router.post('/products', function (req, res) {
     var APP_ID = req.headers.app_id;
     var status = req.status;
-    isValidate(req, res, {type: 'required',
+    validate(req, res, {type: 'required',
         secret: 'optional'}, null, function (body) {
         client.hgetall('products_' + body.type, function (err, object) {
             if (object != null && object.type == body.type && status == "enabled") {
@@ -66,7 +66,7 @@ router.post('/products', function (req, res) {
 
 router.post('/categories', function (req, res) {
     var status = req.status;
-    isValidate(req, res, {}, null, function (body) {
+    validate(req, res, {}, null, function (body) {
         client.hgetall('categories', function (err, object) {
             if (object != null && object == object && status == "enabled") {
                 res.json(object);
@@ -90,7 +90,7 @@ router.post('/categories', function (req, res) {
 router.post('/slider', function (req, res) {
     var APP_ID = req.headers.app_id;
     var status = req.status;
-    isValidate(req, res, {}, null, function (body) {
+    validate(req, res, {}, null, function (body) {
         client.hgetall('slider', function (err, object) {
             if (err) {
                 res.json({status: 0, error: err});

@@ -5,7 +5,7 @@ var express = require('express');
 var router = express.Router();
 
 router.post('/login', function (req, res) {
-    isValidate(req, res, {countryid: 'optional',
+    validate(req, res, {countryid: 'optional',
         zip: 'optional',
         city: 'optional',
         telephone: 'optional',
@@ -31,7 +31,7 @@ router.post('/login', function (req, res) {
 });
 
 router.post('/register', function (req, res) {
-    isValidate(req, res, {countryid: 'optional',
+    validate(req, res, {countryid: 'optional',
         zip: 'optional',
         city: 'optional',
         telephone: 'optional',
@@ -57,7 +57,7 @@ router.post('/register', function (req, res) {
 });
 
 router.post('/forgot', function (req, res) {
-    isValidate(req, res, {countryid: 'optional',
+    validate(req, res, {countryid: 'optional',
         zip: 'optional',
         city: 'optional',
         telephone: 'optional',
@@ -83,7 +83,7 @@ router.post('/forgot', function (req, res) {
 });
 
 router.post('/social_account', function (req, res) {
-    isValidate(req, res, {countryid: 'optional',
+    validate(req, res, {countryid: 'optional',
         zip: 'optional',
         city: 'optional',
         telephone: 'optional',

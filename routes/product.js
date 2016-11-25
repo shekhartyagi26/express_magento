@@ -11,7 +11,7 @@ var request_ = require('../service/request');
 router.post('/get', function (req, res) {
     var APP_ID = req.headers.app_id;
     var status = req.status;
-    isValidate(req, res, {sku: 'required',
+    validate(req, res, {sku: 'required',
         secret: 'optional'}, null, function (body) {
         client.hgetall('product_' + body.sku, function (err, object) {
             if (object != null && object.sku == body.sku && status == 'enabled') {
@@ -66,7 +66,7 @@ router.post('/get', function (req, res) {
 
 router.post('/review', function (req, res) {
     var status = req.status;
-    isValidate(req, res, {sku: 'required',
+    validate(req, res, {sku: 'required',
         secret: 'optional',
         pagesize: 'required',
         pageno: 'required'}, null, function (body) {
@@ -93,8 +93,8 @@ router.post('/review', function (req, res) {
 
 router.post('/getrating', function (req, res) {
     var status = req.status;
-    isValidate(req, res, {}, null, function (body) {
-        if (req.URL.length > 0) {
+    validate(req, res, {}, null, function (body) {
+        if (req.URL) {
             client.hgetall('product_', function (err, object) {
                 if (object != null && status == 'enabled') {
                     res.json(object);
@@ -119,14 +119,14 @@ router.post('/getrating', function (req, res) {
 });
 
 router.post('/submitreview', function (req, res) {
-    isValidate(req, res, {sku: 'required',
+    validate(req, res, {sku: 'required',
         store_id: 'required',
         title: 'required',
         details: 'required',
         nickname: 'required',
         rating_options: 'required',
         secret: 'optional'}, null, function (body) {
-        if (req.headers.app_id.length > 0 && req.URL.length > 0) {
+        if (req.headers.app_id && req.URL) {
             API(req, body, '/product/submitreview/', function (status, response, msg) {
                 res.json({status: status, statuscode: msg, body: response});
             });

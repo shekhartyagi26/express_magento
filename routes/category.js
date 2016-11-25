@@ -11,7 +11,7 @@ var redis = require("redis"),
 router.all('/products', function (req, res) {
     var APP_ID = req.headers.app_id;
     var status = req.status;
-    isValidate(req, res, {countryid: 'optional',
+    validate(req, res, {countryid: 'optional',
         zip: 'optional',
         city: 'optional',
         telephone: 'optional',
@@ -84,7 +84,7 @@ router.all('/products', function (req, res) {
 
 router.all('/categorylist', function (req, res) {
     var status = req.status;
-    isValidate(req, res, {countryid: 'optional',
+    validate(req, res, {countryid: 'optional',
         zip: 'optional',
         city: 'optional',
         telephone: 'optional',

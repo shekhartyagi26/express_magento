@@ -8,7 +8,7 @@ isAuth = function (req, res, callback) {
     }
 };
 
-isValidate = function (req, res, schema, secret, callback) {
+validate = function (req, res, schema, secret, callback) {
     var result = {};
     var allkeys = _underscore.keys(schema);
     var find = false;
