@@ -13,7 +13,7 @@ router.all('/address', function (req, res) {
             newPassword: 'optional',
             zip: 'optional',
             secret: 'required'}, secret, function (body) {
-            API(req, body, '/account/address/', function (status, response, msg) {
+            API(req, res, body, '/account/address/', function (status, response, msg) {
                 res.json({status: status, statuscode: msg, body: response});
             });
         });
@@ -28,7 +28,7 @@ router.post('/changepassword', function (req, res) {
             newPassword: 'required',
             zip: 'optional',
             secret: 'required'}, secret, function (body) {
-            API(req, body, '/account/changepassword/', function (status, response, msg) {
+            API(req, res, body, '/account/changepassword/', function (status, response, msg) {
                 res.json({status: status, statuscode: msg, body: response});
             });
         });

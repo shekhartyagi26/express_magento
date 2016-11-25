@@ -8,7 +8,7 @@ var router = express.Router();
 router.post('/alllist', function (req, res) {
     isAuth(req, res, function (secret) {
         validate(req, res, {secret: 'required'}, secret, function (body) {
-            API(req, body, '/order/alllist/', function (status, response, msg) {
+            API(req, res, body, '/order/alllist/', function (status, response, msg) {
                 res.json({status: status, statuscode: msg, body: response});
             });
         });
@@ -18,7 +18,7 @@ router.post('/alllist', function (req, res) {
 router.post('/totalorder', function (req, res) {
     isAuth(req, res, function (secret) {
         validate(req, res, {secret: 'required'}, secret, function (body) {
-            API(req, body, '/order/totalorder/', function (status, response, msg) {
+            API(req, res, body, '/order/totalorder/', function (status, response, msg) {
                 res.json({status: status, statuscode: msg, body: response});
             });
         });

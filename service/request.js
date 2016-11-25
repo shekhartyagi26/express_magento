@@ -11,7 +11,7 @@ var fs = require('fs');
 var URL_ = require('url');
 var mkdirp = require('mkdirp');
 
-API = function (req, body, url, callback) {
+API = function (req, res, body, url, callback) {
     request({
         url: req.URL + url, //URL to hit
         method: 'post',
@@ -21,9 +21,9 @@ API = function (req, body, url, callback) {
     }, function (error, result, body) {
         if (error) {
 //            callback(500, error, ERROR);
-            callback(0, error, ERROR);
+            res.json({status: 0, statuscode: error, body: ERROR});
         } else if (result.statusCode === 500) {
-            callback(0, body, NOTFOUND);
+            res.json({status: 0, statuscode: NOTFOUND, body: body});
         } else {
             callback(1, body, SUCCESS);
         }

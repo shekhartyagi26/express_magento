@@ -20,7 +20,7 @@ router.post('/edit', function (req, res) {
             newPassword: 'optional',
             secret: 'required',
             entity_id: 'required'}, secret, function (body) {
-            API(req, body, '/address/edit/', function (status, response, msg) {
+            API(req, res, body, '/address/edit/', function (status, response, msg) {
                 res.json({status: status, statuscode: msg, body: response});
             });
         });
@@ -42,7 +42,7 @@ router.post('/delete', function (req, res) {
             newPassword: 'optional',
             secret: 'required',
             entity_id: 'required'}, secret, function (body) {
-            API(req, body, '/address/delete/', function (status, response, msg) {
+            API(req, res, body, '/address/delete/', function (status, response, msg) {
                 res.json({status: status, statuscode: msg, body: response});
             });
         });

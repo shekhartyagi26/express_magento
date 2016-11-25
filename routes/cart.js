@@ -22,7 +22,7 @@ router.all('/cart', function (req, res) {
             entity_id: 'optional',
             productid: 'required',
             store_id: 'required'}, secret, function (body) {
-            API(req, body, '/cart/cart/', function (status, response, msg) {
+            API(req, res, body, '/cart/cart/', function (status, response, msg) {
                 res.json({status: status, statuscode: msg, body: response});
             });
         });
