@@ -5,12 +5,11 @@ mongoose.Promise = require('bluebird');
 
 module.exports = function (req, res, next) {
     var appId = req.headers.app_id;
-    var authorization = req.headers.authorization;
     var dtabase = req.app;
     var promise = dtabase.findOne({
         APP_ID: appId
     }).exec();
-    if (appId && authorization) {
+    if (appId) {
         promise.then(function (verify) {
             URL = verify.get('URL');
             req.URL = URL;
