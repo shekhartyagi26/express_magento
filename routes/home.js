@@ -48,14 +48,13 @@ router.post('/products', function (req, res) {
                             resize(image_url, APP_ID, body.mobile_width, function (status, response_, image_name) {
                                 if (status == '200') {
                                     minify(image_name, APP_ID, function (status, response_, minify_image) {
-                                        image_url = image_name;
-                                        item.data.small_image = image_url;
+                                        item.data.small_image = image_name;
                                         item.data.minify_image = minify_image;
                                         optmized_response[key] = item;
                                         callback(null);
                                     })
                                 } else {
-                                    item.data.small_image = image_url;
+                                    item.data.small_image  = image_url;
                                     item.data.minify_image = image_url;
                                     optmized_response[key] = item;
                                     callback(null);
