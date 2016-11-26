@@ -1,13 +1,5 @@
 var _underscore = require('underscore');
 
-isAuth = function (req, res, callback) {
-    if (req.body.secret) {
-        callback(req.body.secret);
-    } else {
-        res.json({status: 0, body: 'Secret Empty'});
-    }
-};
-
 validate = function (req, res, schema, secret, callback) {
     var result = {};
     var allkeys = _underscore.keys(schema);

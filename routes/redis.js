@@ -21,14 +21,13 @@ router.post('/set_status', function (req, res) {
     var dtabase = req.app;
     var APP_ID = req.headers.app_id;
     var status = req.body.status;
-
     dtabase.find({APP_ID: APP_ID}, function (err, result) {
         if (err) {
             res.json({status: '0', msg: err});
         } else if (status == 'enabled' || status == 'disabled') {
             dtabase.update({APP_ID: APP_ID}, {
                 status: status,
-            }, function (err, result) {
+            }, function (err) {
                 if (err) {
                     res.json({status: '0', msg: err});
                 } else {
