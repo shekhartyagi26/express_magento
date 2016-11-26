@@ -1,6 +1,6 @@
 require('node-import');
-require('../service/auth');
 require('../service/validate');
+require('../service/request');
 require('../service/cache');
 imports('config/index');
 imports('config/constant');
@@ -41,7 +41,8 @@ router.all('/products', function (req, res) {
                             res.json({status: 0, msg: "OOPS! How is this possible?"});
                         } else {
                             redisSet('category_', body.id, body.limit, JSON.stringify(optmized_response), null, function () {
-                                res.json({status: status, statuscode: msg, body: JSON.stringify(optmized_response)});
+//                                res.json({status: status, statuscode: msg, body: JSON.stringify(optmized_response)});
+                                res.json({status: status, statuscode: msg, body: optmized_response});
                             });
                         }
                     });
@@ -91,7 +92,7 @@ router.all('/categorylist', function (req, res) {
         redisFetch(req, res, 'category_', body.parent_id, body.type, function () {
             API(req, res, body, '/category/categorylist/', function (status, response, msg) {
                 redisSet('category_', body.parent_id, null, response, body.type, function () {
-                    res.json({status: status, statuscode: msg, body: response});
+                    res.json({status: status, statuscode: msg, body: JSON.parse(response)});
                 });
             });
         });

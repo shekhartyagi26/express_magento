@@ -1,6 +1,6 @@
 require('node-import');
-require('../service/auth');
 require('../service/validate');
+require('../service/request');
 require('../service/cache');
 imports('config/index');
 imports('config/constant');
@@ -26,7 +26,8 @@ router.post('/products', function (req, res) {
                             res.json({status: 0, msg: "OOPS! How is this possible?"});
                         } else {
                             redisSet('products_', null, null, response, body.type, function () {
-                                res.json({status: status, statuscode: msg, body: JSON.stringify(optmized_response)});
+//                                res.json({status: status, statuscode: msg, body: JSON.stringify(optmized_response)});
+                                res.json({status: status, statuscode: msg, body: optmized_response});
                             });
                         }
                     });
@@ -60,7 +61,7 @@ router.post('/categories', function (req, res) {
         redisFetch(req, res, 'categories', null, null, function () {
             API(req, res, body, '/home/categories/', function (status, response, msg) {
                 redisSet('categories', null, null, response, null, function () {
-                    res.json({status: status, statuscode: msg, body: response});
+                    res.json({status: status, statuscode: msg, body: JSON.parse(response)});
                 });
             });
         });
@@ -86,7 +87,8 @@ router.post('/slider', function (req, res) {
                                 "statuscode": msg
                             });
                             client.expire('categories', config.PRODUCT_EXPIRESAT);
-                            res.json({status: status, statuscode: msg, body: JSON.stringify(optmized_response)});
+//                            res.json({status: status, statuscode: msg, body: JSON.stringify(optmized_response)});
+                            res.json({status: status, statuscode: msg, body: optmized_response});
                         }
                     });
                 } else {

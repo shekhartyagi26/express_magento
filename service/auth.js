@@ -1,7 +1,6 @@
-isAuth = function (req, res, callback) {
-    console.log('yes');
+isAuth = function (req, res, next) {
     if (req.body.secret) {
-        callback(req.body.secret);
+        next();
     } else {
         res.json({status: 0, body: 'Secret Empty'});
     }
