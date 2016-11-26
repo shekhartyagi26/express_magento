@@ -19,6 +19,7 @@ API = function (req, res, body, url, callback) {
         timeout: 10000,
         body: JSON.stringify(body)
     }, function (error, result, body) {
+        console.log(body);
         if (error) {
 //            callback(500, error, ERROR);
             res.json({status: 0, statuscode: error, body: ERROR});

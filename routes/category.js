@@ -8,8 +8,6 @@ var express = require('express');
 var router = express.Router();
 var async = require('async');
 var request_ = require('../service/request');
-var redis = require("redis"),
-        client = redis.createClient();
 
 router.all('/products', function (req, res) {
     var APP_ID = req.headers.app_id;
@@ -32,7 +30,7 @@ router.all('/products', function (req, res) {
         type: 'optional',
         limit: 'required',
         id: 'required'}, null, function (body) {
-        redisFetch(req, res, 'category_', body.id, function () {
+        redisFetch(req, res, 'category_', body.id, null, function () {
             API(req, res, body, '/category/products/', function (status, response, msg) {
                 var resp = JSON.parse(response);
                 var categoryData = resp.data;
@@ -42,13 +40,9 @@ router.all('/products', function (req, res) {
                         if (err) {
                             res.json({status: 0, msg: "OOPS! How is this possible?"});
                         } else {
-                            client.hmset('category_' + body.id, {
-                                'id': body.id,
-                                "limit": body.limit,
-                                "body": JSON.stringify(optmized_response)
+                            redisSet('category_', body.id, body.limit, JSON.stringify(optmized_response), null, function () {
+                                res.json({status: status, statuscode: msg, body: JSON.stringify(optmized_response)});
                             });
-                            client.expire('category_' + body.id, config.CATEGORY_EXPIRESAT);
-                            res.json({status: status, statuscode: msg, body: JSON.stringify(optmized_response)});
                         }
                     });
                 } else {
@@ -94,15 +88,11 @@ router.all('/categorylist', function (req, res) {
         store_id: 'required',
         parent_id: 'required',
         type: 'required'}, null, function (body) {
-        redisFetch(req, res, 'category_', '1', body.parent_id, function () {
+        redisFetch(req, res, 'category_', body.parent_id, body.type, function () {
             API(req, res, body, '/category/categorylist/', function (status, response, msg) {
-                client.hmset('category_' + body.parent_id, {
-                    'parent_id': body.parent_id,
-                    "body": response,
-                    "type": body.type
+                redisSet('category_', body.parent_id, null, response, body.type, function () {
+                    res.json({status: status, statuscode: msg, body: response});
                 });
-                client.expire('category_' + body.parent_id, config.CATEGORY_EXPIRESAT);
-                res.json({status: status, statuscode: msg, body: response});
             });
         });
     });

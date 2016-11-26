@@ -7,15 +7,13 @@ imports('config/constant');
 var express = require('express');
 var router = express.Router();
 var async = require('async');
-var redis = require("redis"),
-        client = redis.createClient();
 var request_ = require('../service/request');
 
 router.post('/get', function (req, res) {
     var APP_ID = req.headers.app_id;
     validate(req, res, {sku: 'required',
         secret: 'optional'}, null, function (body) {
-        redisFetch(req, res, 'product_', '2', body.parent_id, function () {
+        redisFetch(req, res, 'product_', body.parent_id, null, function () {
             API(req, res, body, '/product/get/', function (status, response, msg) {
                 var resp = JSON.parse(response);
                 var categoryData = resp.data;
@@ -25,12 +23,9 @@ router.post('/get', function (req, res) {
                         if (err) {
                             res.json({status: 0, msg: "OOPS! How is this possible?"});
                         } else {
-                            client.hmset('product_' + body.sku, {
-                                'sku': body.sku,
-                                "body": JSON.stringify(optmized_response)
+                            redisSet('product_', body.sku, null, JSON.stringify(optmized_response), null, function () {
+                                res.json({status: status, statuscode: msg, body: JSON.stringify(optmized_response)});
                             });
-                            client.expire('product_' + body.sku, config.PRODUCT_EXPIRESAT);
-                            res.json({status: status, statuscode: msg, body: JSON.stringify(optmized_response)});
                         }
                     });
                 } else {
@@ -63,14 +58,11 @@ router.post('/review', function (req, res) {
         secret: 'optional',
         pagesize: 'required',
         pageno: 'required'}, null, function (body) {
-        redisFetch(req, res, 'product_', '2', body.parent_id, function () {
+        redisFetch(req, res, 'product_', body.parent_id, null, function () {
             API(req, res, body, '/product/review/', function (status, response, msg) {
-                client.hmset('product_' + body.sku, {
-                    'sku': body.sku,
-                    "body": response
+                redisSet('product_', body.sku, null, response, null, function () {
+                    res.json({status: status, statuscode: msg, body: response});
                 });
-                client.expire('product_' + body.sku, config.PRODUCT_EXPIRESAT);
-                res.json({status: status, statuscode: msg, body: response});
             });
         });
     });
@@ -79,13 +71,11 @@ router.post('/review', function (req, res) {
 router.post('/getrating', function (req, res) {
     validate(req, res, {}, null, function (body) {
         if (req.URL) {
-            redisFetch(req, res, 'product_', '0', body.parent_id, function () {
+            redisFetch(req, res, 'product_', null, null, function () {
                 API(req, res, body, '/product/getrating/', function (status, response, msg) {
-                    client.hmset('product_', {
-                        "body": response
+                    redisSet('product_', null, null, response, null, function () {
+                        res.json({status: status, statuscode: msg, body: response});
                     });
-                    client.expire('product_', config.PRODUCT_EXPIRESAT);
-                    res.json({status: status, statuscode: msg, body: response});
                 });
             });
         } else {

@@ -15,7 +15,7 @@ router.post('/products', function (req, res) {
     var APP_ID = req.headers.app_id;
     validate(req, res, {type: 'required',
         secret: 'optional'}, null, function (body) {
-        redisFetch(req, res, 'products_', '3', body.parent_id, function () {
+        redisFetch(req, res, 'products_', null, body.type, function () {
             API(req, res, body, '/home/products/', function (status, response, msg) {
                 var resp = JSON.parse(response);
                 var categoryData = resp.data;
@@ -25,12 +25,9 @@ router.post('/products', function (req, res) {
                         if (err) {
                             res.json({status: 0, msg: "OOPS! How is this possible?"});
                         } else {
-                            client.hmset('products_' + body.type, {
-                                'type': body.type,
-                                'body': response
+                            redisSet('products_', null, null, response, body.type, function () {
+                                res.json({status: status, statuscode: msg, body: JSON.stringify(optmized_response)});
                             });
-                            client.expire('products_' + body.type, config.PRODUCT_EXPIRESAT);
-                            res.json({status: status, statuscode: msg, body: JSON.stringify(optmized_response)});
                         }
                     });
                 } else {
@@ -60,13 +57,11 @@ router.post('/products', function (req, res) {
 
 router.post('/categories', function (req, res) {
     validate(req, res, {}, null, function (body) {
-        redisFetch(req, res, 'categories', null, '0', body.parent_id, function () {
+        redisFetch(req, res, 'categories', null, null, function () {
             API(req, res, body, '/home/categories/', function (status, response, msg) {
-                client.hmset('categories', {
-                    "body": response
+                redisSet('categories', null, null, response, null, function () {
+                    res.json({status: status, statuscode: msg, body: response});
                 });
-                client.expire('categories', config.PRODUCT_EXPIRESAT);
-                res.json({status: status, statuscode: msg, body: response});
             });
         });
     });
@@ -75,7 +70,7 @@ router.post('/categories', function (req, res) {
 router.post('/slider', function (req, res) {
     var APP_ID = req.headers.app_id;
     validate(req, res, {}, null, function (body) {
-        redisFetch(req, res, 'slider', null, '0', body.parent_id, function () {
+        redisFetch(req, res, 'slider', null, null, function () {
             API(req, res, body, '/home/slider/', function (status, response, msg) {
                 var resp = JSON.parse(response);
                 var categoryData = resp.data.url;
