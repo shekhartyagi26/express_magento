@@ -2,6 +2,7 @@ require('node-import');
 require('../service/auth');
 require('../service/validate');
 require('../service/request');
+require('../service/responseMsg');
 imports('config/index');
 imports('config/constant');
 var express = require('express');
@@ -22,7 +23,8 @@ router.post('/edit', isAuth, function (req, res) {
         secret: 'required',
         entity_id: 'required'}, req.body.secret, function (body) {
         API(req, res, body, '/address/edit/', function (status, response, msg) {
-            res.json({status: status, statuscode: msg, body: response});
+            resMsg(res, status, response);
+//            res.json({status: status, statuscode: msg, body: response});
         });
     });
 });
@@ -42,7 +44,8 @@ router.post('/delete', isAuth, function (req, res) {
         secret: 'required',
         entity_id: 'required'}, req.body.secret, function (body) {
         API(req, res, body, '/address/delete/', function (status, response, msg) {
-            res.json({status: status, statuscode: msg, body: response});
+            resMsg(res, status, response);
+//            res.json({status: status, statuscode: msg, body: response});
         });
     });
 });
