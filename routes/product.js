@@ -38,7 +38,7 @@ router.post('/get', function (req, res) {
                                     });
                                     client.expire('product_' + body.sku, config.PRODUCT_EXPIRESAT);
                                    if(optmized_response){
-                                       res.json({status: status, statuscode: msg, abs: optmized_response});
+                                       res.json({status: status, statuscode: msg, body: optmized_response});
                                    }else{
                                         res.json({status:11});
                                     }
