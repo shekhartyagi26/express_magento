@@ -17,7 +17,8 @@ API = function (req, res, body, url, callback) {
         } else if (result.statusCode === 500) {
             res.json({status: 0, statuscode: NOTFOUND, body: body});
         } else {
-            callback(1, body, SUCCESS);
+            var allData = JSON.parse(body);
+            callback(1, allData.data, SUCCESS);
         }
     });
 };

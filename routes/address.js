@@ -22,7 +22,7 @@ router.post('/edit', isAuth, function (req, res) {
         secret: 'required',
         entity_id: 'required'}, req.body.secret, function (body) {
         API(req, res, body, '/address/edit/', function (status, response, msg) {
-            res.json({status: status, statuscode: msg, body: JSON.parse(response)});
+            res.json({status: status, statuscode: msg, body: response});
         });
     });
 });
@@ -42,7 +42,7 @@ router.post('/delete', isAuth, function (req, res) {
         secret: 'required',
         entity_id: 'required'}, req.body.secret, function (body) {
         API(req, res, body, '/address/delete/', function (status, response, msg) {
-            res.json({status: status, statuscode: msg, body: JSON.parse(response)});
+            res.json({status: status, statuscode: msg, body: response});
         });
     });
 });
