@@ -1,30 +1,26 @@
-var express = require('express');
-var app = express();
-var router = express.Router();
-var request = require('request');
-var cors = require('cors');
-var bodyParser = require('body-parser');
-var app = express();
 require('node-import');
+require('../service/validate');
+require('../service/request');
 imports('config/index');
 imports('config/constant');
-const request_ = require('../service/request');
+var express = require('express');
+var router = express.Router();
 
 router.post('/config', function (req, res) {
-    var store_id = req.body.store_id;
-    var APP_ID = req.headers.app_id;
-    var URL = req.URL;
-    var body = ({store_id: store_id});
-    var url = URL + '/web/config';
-    var headers = {APP_ID: APP_ID};
-    request_.request(body, headers, url, function (req, response, msg) {
-        if (msg == ERROR) {
-            res.json({status: 0, statuscode: ERR_STATUS, error: response});
-        } else if (req.statusCode == ERR_STATUS) {
-            res.json({status: 0, statuscode: req.statusCode, body: response});
-        } else {
-            res.json({status: 1, statuscode: req.statusCode, body: response});
-        }
+    validate(req, res, {store_id: 'required',
+        secret: 'optional'}, null, function (body) {
+        API(req, res, body, '/web/config', function (status, response, msg) {
+            res.json({status: status, statuscode: msg, body: JSON.parse(response)});
+        });
+    });
+});
+
+router.post('/getAllowedCountries', function (req, res) {
+    validate(req, res, {store_id: 'required',
+        secret: 'optional'}, null, function (body) {
+        API(req, res, body, '/web/getAllowedCountries', function (status, response, msg) {
+            res.json({status: status, statuscode: msg, body: JSON.parse(response)});
+        });
     });
 });
 
