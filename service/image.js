@@ -46,11 +46,11 @@ resize = function (url, APP_ID, mobile_width, callback) {
                 response.on('end', function () {
                     sharp('public/original_image/' + image_name)
                             .resize(width)
-                            .toFile('public/' + image_stored_url, function (err) {
+                            .toFile('public/' + filename + image_name, function (err) {
                                 if (err) {
                                     callback(500, err);
                                 } else if (err === null) {
-                                    callback(200, "done", config.IMAGE_URL + image_stored_url);
+                                    callback(200, "done", config.IMAGE_URL + filename + image_name);
                                 } else {
                                     callback(500, "oops! some error occured");
                                 }
@@ -73,7 +73,7 @@ minify = function (url, APP_ID, callback) {
         var url_last_index_length = url.lastIndexOf('/');
         var image_name = url.substring(url_last_index_length + 1);
         if (fileExists('public/minify/' + filename + '/' + image_name) == false) {
-                 imagemin(['public/' + image_fetch_url], 'public/minify/' + filename, {
+                 imagemin(["public/original_image/" + image_name], 'public/minify/' + filename, {
                   plugins: [
                   imageminMozjpeg(),
                   imageminPngquant({quality: '5'})

@@ -35,17 +35,15 @@ router.all('/products', function (req, res) {
         mobile_width: 'required'}, null, function (body) {
         redisFetch(req, res, 'category_', body.id, null, function () {
             API(req, res, body, '/category/products/', function (status, response, msg) {
-                var resp = JSON.parse(response);
-                var categoryData = resp.data;
-                if (categoryData !== undefined) {
+                if (response !== undefined) {
                     var optmized_response = [];
-                    async.eachOfLimit(categoryData, 5, processData, function (err) {
+                    async.eachOfLimit(response, 5, processData, function (err) {
                         if (err) {
                             res.json({status: 0, msg: "OOPS! How is this possible?"});
                         } else {
                             redisSet('category_', body.id, body.limit, JSON.stringify(optmized_response), null, function () {
-//                                res.json({status: status, statuscode: msg, body: JSON.stringify(optmized_response)});
-                                res.json({status: status, statuscode: msg, body: optmized_response});
+                                res.json({status: status, statuscode: msg, body: JSON.stringify(optmized_response)});
+                                // res.json({status: status, statuscode: msg, body: optmized_response});
                             });
                         }
                     });
@@ -54,7 +52,8 @@ router.all('/products', function (req, res) {
                 }
                 function processData(item, key, callback) {
                     var image_url = item.data.small_image;
-                    request_.resize(image_url, APP_ID, body.mobile_width, function (status, response_, image_name) {
+                    resize(image_url, APP_ID, body.mobile_width, function (status, response_, image_name) {
+                        // console.log(image_name)
                         if (status == '200') {
                             minify(image_name, APP_ID, function (status, response_, minify_image) {
                                 item.data.small_image = image_name;
@@ -96,7 +95,8 @@ router.all('/categorylist', function (req, res) {
         redisFetch(req, res, 'category_', body.parent_id, body.type, function () {
             API(req, res, body, '/category/categorylist/', function (status, response, msg) {
                 redisSet('category_', body.parent_id, null, response, body.type, function () {
-                    res.json({status: status, statuscode: msg, body: JSON.parse(response)});
+                    resMsg(res, status, response);
+                    // res.json({status: status, statuscode: msg, body: response});
                 });
             });
         });

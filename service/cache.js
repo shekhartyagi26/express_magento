@@ -34,7 +34,7 @@ redisSet = function (catType, id, limit, optmized_response, type, callback) {
     client.hmset(catType + id, {
         'id': id,
         "limit": limit,
-        "body": optmized_response,
+        "body": JSON.stringify(optmized_response),
         "type": type
     });
     if (id) {
