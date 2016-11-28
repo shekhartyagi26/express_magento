@@ -25,8 +25,7 @@ router.all('/cart', isAuth, function (req, res) {
         productid: 'required',
         store_id: 'required'}, req.body.secret, function (body) {
         API(req, res, body, '/cart/cart/', function (status, response, msg) {
-            resMsg(res, status, response);
-//            res.json({status: status, statuscode: msg, body: response});
+            success(res, status, response);
         });
     });
 });

@@ -33,7 +33,6 @@ router.post('/products', function (req, res) {
                         } else {
                             redisSet('products_', null, null, response, body.type, function () {
                                 res.json({status: status, statuscode: msg, body: JSON.stringify(optmized_response)});
-                                // res.json({status: status, statuscode: msg, body: optmized_response});
                             });
                         }
                     });
@@ -70,7 +69,7 @@ router.post('/categories', function (req, res) {
         redisFetch(req, res, 'categories', null, null, function () {
             API(req, res, body, '/home/categories/', function (status, response, msg) {
                 redisSet('categories', null, null, response, null, function () {
-                    resMsg(res, status, response);
+                    success(res, status, response);
                 });
             });
         });

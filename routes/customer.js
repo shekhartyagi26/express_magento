@@ -28,8 +28,7 @@ router.post('/login', function (req, res) {
         website_id: 'required',
         email: 'required'}, null, function (body) {
         API(req, res, body, '/customer/login/', function (status, response, msg) {
-            resMsg(res, status, response);
-//            res.json({status: status, statuscode: msg, body: response});
+            success(res, status, response);
         });
     });
 });
@@ -55,8 +54,7 @@ router.post('/register', function (req, res) {
         website_id: 'required',
         email: 'required'}, null, function (body) {
         API(req, res, body, '/customer/register/', function (status, response, msg) {
-            resMsg(res, status, response);
-//            res.json({status: status, statuscode: msg, body: response});
+            success(res, status, response);
         });
     });
 });
@@ -82,8 +80,7 @@ router.post('/forgot', function (req, res) {
         website_id: 'required',
         email: 'required'}, null, function (body) {
         API(req, res, body, '/customer/forgot/', function (status, response, msg) {
-            resMsg(res, status, response);
-//            res.json({status: status, statuscode: msg, body: response});
+            success(res, status, response);
         });
     });
 });
@@ -111,8 +108,7 @@ router.post('/social_account', function (req, res) {
         social: 'required',
         social_id: 'required'}, null, function (body) {
         API(req, res, body, '/customer/social_account/', function (status, response, msg) {
-            resMsg(res, status, response);
-//            res.json({status: status, statuscode: msg, body: response});
+            success(res, status, response);
         });
     });
 });

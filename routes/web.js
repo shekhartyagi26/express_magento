@@ -11,8 +11,7 @@ router.post('/config', function (req, res) {
     validate(req, res, {store_id: 'required',
         secret: 'optional'}, null, function (body) {
         API(req, res, body, '/web/config', function (status, response, msg) {
-            resMsg(res, status, response);
-//            res.json({status: status, statuscode: msg, body: response});
+            success(res, status, response);
         });
     });
 });
@@ -21,8 +20,7 @@ router.post('/getAllowedCountries', function (req, res) {
     validate(req, res, {store_id: 'required',
         secret: 'optional'}, null, function (body) {
         API(req, res, body, '/web/getAllowedCountries', function (status, response, msg) {
-            resMsg(res, status, response);
-//            res.json({status: status, statuscode: msg, body: response});
+            success(res, status, response);
         });
     });
 });
