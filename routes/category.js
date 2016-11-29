@@ -31,7 +31,8 @@ router.all('/products', function (req, res) {
         type: 'optional',
         limit: 'required',
         id: 'required',
-        mobile_width: 'required'}, null, function (body) {
+        mobile_width: 'required',
+        pageno: 'required'}, null, function (body) {
         redisFetch(req, res, 'category_', body.id, null, function () {
             API(req, res, body, '/category/products/', function (status, response, msg) {
                 if (response !== undefined) {
