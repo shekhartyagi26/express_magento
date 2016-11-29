@@ -57,7 +57,7 @@ router.post('/get', function (req, res) {
 router.post('/review', function (req, res) {
     validate(req, res, {sku: 'required',
         secret: 'optional',
-        pagesize: 'required',
+        mobile_width: 'required',
         pageno: 'required'}, null, function (body) {
         redisFetch(req, res, 'product_', body.parent_id, null, function () {
             API(req, res, body, '/product/review/', function (status, response, msg) {
