@@ -1,5 +1,6 @@
 require('node-import');
 require('../service/validate');
+require('../service/image');
 require('../service/request');
 require('../service/cache');
 require('../service/responseMsg');
