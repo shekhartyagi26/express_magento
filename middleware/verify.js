@@ -13,6 +13,8 @@ module.exports = function (req, res, next) {
         promise.then(function (verify) {
             URL = verify.get('URL');
             req.URL = URL;
+            Crone_running_time = verify.get('Crone_running_time');
+            req.Crone_running_time = Crone_running_time;
             next();
         }).catch(function (err) {
             res.json({status: 0, statuscode: 500, body: "APP ID Not Found in Database!"});
