@@ -7,10 +7,20 @@ var bodyParser = require('body-parser');
 
 var verify = require('./middleware/verify.js');
 var redis = require('./middleware/redis.js');
+var optimus = require('connect-image-optimus');
+var connect = require('connect');
+
 
 var db = require('./mods/db.js');
 var app = express();
 
+
+//var app = connect();
+
+var staticPath = __dirname + '/static/';
+
+app.use(optimus(staticPath));
+app.use(connect.static(staticPath));
 
 var cors = require('cors');
 // view engine setup
