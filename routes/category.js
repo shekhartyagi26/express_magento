@@ -45,7 +45,7 @@ router.all('/products', function (req, res) {
                         }
                     });
                 } else {
-                    res.json({status: 0, statuscode: '500', body: ERROR});
+                    success(res, 0, ERROR);
                 }
                 function processData(item, key, callback) {
                     var image_url = item.data.small_image;

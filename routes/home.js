@@ -24,7 +24,7 @@ router.post('/products', function (req, res) {
                     var optmized_response = [];
                     async.eachOfLimit(response, 5, processData, function (err) {
                         if (err) {
-                            res.json({status: 0, msg: "OOPS! How is this possible?"});
+                            success(res, 0, "OOPS! How is this possible?");
                         } else {
                             redisSet('products_', null, null, response, body.type, function () {
                                 success(res, status, optmized_response);
@@ -32,7 +32,7 @@ router.post('/products', function (req, res) {
                         }
                     });
                 } else {
-                    res.json({status: 0, statuscode: '500', body: ERROR});
+                    success(res, 0, ERROR);
                 }
 
                 function processData(item, key, callback) {
@@ -44,7 +44,7 @@ router.post('/products', function (req, res) {
                                 item.data.minify_image = minify_image;
                                 optmized_response[key] = item;
                                 callback(null);
-                            })
+                            });
                         } else {
                             item.data.small_image = image_url;
                             item.data.minify_image = image_url;
@@ -81,7 +81,7 @@ router.post('/slider', function (req, res) {
                     var optmized_response = [];
                     async.eachOfLimit(response.url, 5, processData, function (err) {
                         if (err) {
-                            res.json({status: 0, msg: "OOPS! How is this possible?"});
+                            success(res, 0, "OOPS! How is this possible?");
                         } else {
                             client.hmset('slider', {
                                 "body": JSON.stringify(response),
@@ -93,7 +93,7 @@ router.post('/slider', function (req, res) {
                         }
                     });
                 } else {
-                    res.json({status: 0, statuscode: '500', body: ERROR});
+                    success(res, 0, ERROR);
                 }
 
                 function processData(item, key, callback) {

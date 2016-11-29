@@ -20,7 +20,7 @@ router.post('/get', function (req, res) {
                     var optmized_response = {};
                     async.eachOfLimit(response, 1, processData, function (err) {
                         if (err) {
-                            res.json({status: 0, msg: "OOPS! How is this possible?"});
+                            success(res, 0, "OOPS! How is this possible?");
                         } else {
                             redisSet('product_', body.sku, null, JSON.stringify(optmized_response), null, function () {
                                 success(res, status, optmized_response);
@@ -28,7 +28,7 @@ router.post('/get', function (req, res) {
                         }
                     });
                 } else {
-                    res.json({status: 0, statuscode: '500', body: ERROR});
+                    success(res, 0, ERROR);
                 }
                 function processData(item, key, callback) {
                     var image_url = item.small_image;
