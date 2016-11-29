@@ -8,8 +8,6 @@ imports('config/constant');
 var express = require('express');
 var router = express.Router();
 var async = require('async');
-var request_ = require('../service/request');
-var image_ = require('../service/image');
 
 router.all('/products', function (req, res) {
     var APP_ID = req.headers.app_id;
@@ -39,10 +37,10 @@ router.all('/products', function (req, res) {
                     var optmized_response = [];
                     async.eachOfLimit(response, 5, processData, function (err) {
                         if (err) {
-                            res.json({status: 0, msg: "OOPS! How is this possible?"});
+                            success(res, 0, "OOPS! How is this possible?");
                         } else {
                             redisSet('category_', body.id, body.limit, JSON.stringify(optmized_response), null, function () {
-                                res.json({status: status, statuscode: msg, body: JSON.stringify(optmized_response)});
+                                success(res, status, optmized_response);
                             });
                         }
                     });

@@ -8,11 +8,8 @@ imports('config/constant');
 var express = require('express');
 var router = express.Router();
 var async = require('async');
-var path = require('path');
 var redis = require("redis"),
         client = redis.createClient();
-var request_ = require('../service/request');
-var image_ = require('../service/image');
 
 router.post('/products', function (req, res) {
     var APP_ID = req.headers.app_id;
@@ -23,7 +20,6 @@ router.post('/products', function (req, res) {
     }, null, function (body) {
         redisFetch(req, res, 'products_', null, body.type, function () {
             API(req, res, body, '/home/products/', function (status, response, msg) {
-
                 if (response !== undefined) {
                     var optmized_response = [];
                     async.eachOfLimit(response, 5, processData, function (err) {
@@ -32,7 +28,6 @@ router.post('/products', function (req, res) {
                         } else {
                             redisSet('products_', null, null, response, body.type, function () {
                                 success(res, status, optmized_response);
-//                                res.json({status: status, statuscode: msg, body: optmized_response});
                             });
                         }
                     });
@@ -95,7 +90,6 @@ router.post('/slider', function (req, res) {
                             });
                             client.expire('categories', config.PRODUCT_EXPIRESAT);
                             success(res, status, optmized_response);
-//                            res.json({status: status, statuscode: msg, body: optmized_response});
                         }
                     });
                 } else {

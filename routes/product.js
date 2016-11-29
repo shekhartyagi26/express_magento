@@ -23,7 +23,7 @@ router.post('/get', function (req, res) {
                             res.json({status: 0, msg: "OOPS! How is this possible?"});
                         } else {
                             redisSet('product_', body.sku, null, JSON.stringify(optmized_response), null, function () {
-                                res.json({status: status, statuscode: msg, body: optmized_response});
+                                success(res, status, optmized_response);
                             });
                         }
                     });
@@ -61,7 +61,7 @@ router.post('/review', function (req, res) {
         redisFetch(req, res, 'product_', body.parent_id, null, function () {
             API(req, res, body, '/product/review/', function (status, response, msg) {
                 redisSet('product_', body.sku, null, JSON.stringify(response), null, function () {
-                    res.json({status: status, statuscode: msg, body: response});
+                    success(res, status, response);
                 });
             });
         });
@@ -74,12 +74,12 @@ router.post('/getrating', function (req, res) {
             redisFetch(req, res, 'product_', null, null, function () {
                 API(req, res, body, '/product/getrating/', function (status, response, msg) {
                     redisSet('product_', null, null, response, null, function () {
-                        res.json({status: status, statuscode: msg, body: response});
+                        success(res, status, response);
                     });
                 });
             });
         } else {
-            res.json({status: 0, statuscode: ERR_STATUS, body: INVALID});
+            success(res, 0, INVALID);
         }
     });
 });
@@ -94,10 +94,10 @@ router.post('/submitreview', function (req, res) {
         secret: 'optional'}, null, function (body) {
         if (req.headers.app_id && req.URL) {
             API(req, res, body, '/product/submitreview/', function (status, response, msg) {
-                res.json({status: status, statuscode: msg, body: response});
+                success(res, status, response);
             });
         } else {
-            res.json({status: 0, statuscode: ERR_STATUS, body: INVALID});
+            success(res, 0, INVALID);
         }
     });
 });
