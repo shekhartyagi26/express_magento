@@ -28,7 +28,7 @@ router.post('/products', function (req, res) {
                             success(res, 0, "OOPS! How is this possible?");
                         } else {
                             redisSet('products_', null, null, response, body.type, function () {
-                                res.json({status: status, statuscode: msg, body: optmized_response});
+                                success(res, status, optmized_response);
                             });
                         }
                     });
