@@ -31,7 +31,8 @@ router.post('/products', function (req, res) {
                             res.json({status: 0, msg: "OOPS! How is this possible?"});
                         } else {
                             redisSet('products_', null, null, response, body.type, function () {
-                                res.json({status: status, statuscode: msg, body: optmized_response});
+                                success(res, status, optmized_response);
+//                                res.json({status: status, statuscode: msg, body: optmized_response});
                             });
                         }
                     });
@@ -93,7 +94,8 @@ router.post('/slider', function (req, res) {
                                 "statuscode": msg
                             });
                             client.expire('categories', config.PRODUCT_EXPIRESAT);
-                            res.json({status: status, statuscode: msg, body: optmized_response});
+                            success(res, status, optmized_response);
+//                            res.json({status: status, statuscode: msg, body: optmized_response});
                         }
                     });
                 } else {
