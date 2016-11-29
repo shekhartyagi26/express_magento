@@ -2,6 +2,7 @@ require('node-import');
 require('../service/auth');
 require('../service/validate');
 require('../service/request');
+require('../service/responseMsg');
 imports('config/index');
 imports('config/constant');
 var express = require('express');
@@ -24,7 +25,7 @@ router.all('/cart', isAuth, function (req, res) {
         productid: 'required',
         store_id: 'required'}, req.body.secret, function (body) {
         API(req, res, body, '/cart/cart/', function (status, response, msg) {
-            res.json({status: status, statuscode: msg, body: JSON.parse(response)});
+            success(res, status, response);
         });
     });
 });

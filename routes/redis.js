@@ -1,3 +1,4 @@
+require('../service/responseMsg');
 var express = require('express');
 var router = express.Router();
 var redis = require("redis"),

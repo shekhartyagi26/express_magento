@@ -39,23 +39,23 @@ resize = function (url, APP_ID, mobile_width, callback) {
             http.get(url, function (response) {
                 if (response.statusCode == 200) {
                     response.pipe(file);
-                    image_name = image_name;
+                    response.on('end', function () {
+                        sharp('public/original_image/' + image_name)
+                                .resize(width)
+                                .toFile('public/' + filename + image_name, function (err) {
+                                    if (err) {
+                                        callback(500, err);
+                                    } else if (err === null) {
+                                        callback(200, "done", config.IMAGE_URL + filename + image_name);
+                                    } else {
+                                        callback(500, "oops! some error occured");
+                                    }
+                                });
+                    });
                 } else {
-                    image_name = 'default/default.jpg';
+                    callback(200, "done", config.DEFAULT_IMAGE_URL);
                 }
-                response.on('end', function () {
-                    sharp('public/original_image/' + image_name)
-                            .resize(width)
-                            .toFile('public/' + image_stored_url, function (err) {
-                                if (err) {
-                                    callback(500, err);
-                                } else if (err === null) {
-                                    callback(200, "done", config.IMAGE_URL + image_stored_url);
-                                } else {
-                                    callback(500, "oops! some error occured");
-                                }
-                            });
-                });
+
             });
         } else {
             callback(200, "done", config.IMAGE_URL + image_stored_url);
@@ -65,30 +65,30 @@ resize = function (url, APP_ID, mobile_width, callback) {
     }
 };
 
-minify = function (url, APP_ID, callback) {
-    if (url && APP_ID) {
-        var image_url = URL_.parse(url).path;
-        var image_fetch_url = image_url.replace("/shekhar_works/Eexpress_magento/public/", "");
-        var filename = image_fetch_url.substring(0, image_fetch_url.lastIndexOf("/"));
-        var url_last_index_length = url.lastIndexOf('/');
-        var image_name = url.substring(url_last_index_length + 1);
-        if (fileExists('public/minify/' + filename + '/' + image_name) == false) {
-                 imagemin(['public/' + image_fetch_url], 'public/minify/' + filename, {
-                  plugins: [
-                  imageminMozjpeg(),
-                  imageminPngquant({quality: '5'})
-                  ]
-                 }).then(files => {
-                      if (files[0].path !== null) {
-                          callback(200, "done", config.IMAGE_MINIFY_URL+image_fetch_url );
-                      } else {
-                          callback(500, "oops! some error occured");
-                      }
-            })
-        } else {
-            callback(200, "done", config.IMAGE_MINIFY_URL + image_fetch_url);
-        }
-    } else {
-        callback(500, " APP_ID or url cannot be empty");
-    }
-};
+ minify = function (url, APP_ID, callback) {
+     if (url && APP_ID) {
+         var image_url = URL_.parse(url).path;
+         var image_fetch_url = image_url.replace("/shekhar_works/Eexpress_magento/public/", "");
+         var filename = image_fetch_url.substring(0, image_fetch_url.lastIndexOf("/"));
+         var url_last_index_length = url.lastIndexOf('/');
+         var image_name = url.substring(url_last_index_length + 1);
+         if (fileExists('public/minify/' + filename + '/' + image_name) == false) {
+                  imagemin(["public/original_image/" + image_name], 'public/minify/' + filename, {
+                   plugins: [
+                   imageminMozjpeg(),
+                   imageminPngquant({quality: '5'})
+                   ]
+                  }).then(files => {
+                       if (files[0].path !== null) {
+                           callback(200, "done", config.IMAGE_MINIFY_URL+image_fetch_url );
+                       } else {
+                           callback(500, "oops! some error occured");
+                       }
+             })
+         } else {
+             callback(200, "done", config.IMAGE_MINIFY_URL + image_fetch_url);
+         }
+     } else {
+         callback(500, " APP_ID or url cannot be empty");
+     }
+ };

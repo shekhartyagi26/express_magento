@@ -2,6 +2,7 @@ require('node-import');
 require('../service/auth');
 require('../service/validate');
 require('../service/request');
+require('../service/responseMsg');
 imports('config/index');
 imports('config/constant');
 var express = require('express');
@@ -15,7 +16,7 @@ router.all('/address', isAuth, function (req, res) {
         zip: 'optional',
         secret: 'required'}, req.body.secret, function (body) {
         API(req, res, body, '/account/address/', function (status, response, msg) {
-            res.json({status: status, statuscode: msg, body: JSON.parse(response)});
+            success(res, status, response);
         });
     });
 });
@@ -28,7 +29,7 @@ router.post('/changepassword', isAuth, function (req, res) {
         zip: 'optional',
         secret: 'required'}, req.body.secret, function (body) {
         API(req, res, body, '/account/changepassword/', function (status, response, msg) {
-            res.json({status: status, statuscode: msg, body: JSON.parse(response)});
+            success(res, status, response);
         });
     });
 });

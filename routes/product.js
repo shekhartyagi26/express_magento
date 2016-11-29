@@ -2,13 +2,12 @@ require('node-import');
 require('../service/validate');
 require('../service/request');
 require('../service/cache');
+require('../service/responseMsg');
 imports('config/index');
 imports('config/constant');
 var express = require('express');
 var router = express.Router();
 var async = require('async');
-var request_ = require('../service/request');
-var image_ = require('../service/image');
 
 router.post('/get', function (req, res) {
     var APP_ID = req.headers.app_id;
@@ -17,16 +16,13 @@ router.post('/get', function (req, res) {
         mobile_width: 'required'}, null, function (body) {
         redisFetch(req, res, 'product_', body.parent_id, null, function () {
             API(req, res, body, '/product/get/', function (status, response, msg) {
-                var resp = JSON.parse(response);
-                var categoryData = resp.data;
-                if (categoryData !== undefined) {
+                if (response !== undefined) {
                     var optmized_response = {};
-                    async.eachOfLimit(categoryData, 1, processData, function (err) {
+                    async.eachOfLimit(response, 1, processData, function (err) {
                         if (err) {
                             res.json({status: 0, msg: "OOPS! How is this possible?"});
                         } else {
                             redisSet('product_', body.sku, null, JSON.stringify(optmized_response), null, function () {
-//                                res.json({status: status, statuscode: msg, body: JSON.stringify(optmized_response)});
                                 res.json({status: status, statuscode: msg, body: optmized_response});
                             });
                         }
@@ -36,20 +32,20 @@ router.post('/get', function (req, res) {
                 }
                 function processData(item, key, callback) {
                     var image_url = item.small_image;
-                    request_.resize(image_url, APP_ID, body.mobile_width, function (status, response_, image_name) {
+                    resize(image_url, APP_ID, body.mobile_width, function (status, response_, image_name) {
                         if (status == "200") {
-                                    minify(image_name, APP_ID, function (status, response_, image_name) {
-                                        item.small_image = image_name;
-                                        item.minify_image = minify_image;
-                                        optmized_response[key] = item;
-                                        callback(null);
-                                    });
-                                } else {
-                                    item.small_image = image_url;
-                                    item.minify_image = minify_image;
-                                    optmized_response[key] = item;
-                                    callback(null);
-                                }
+                            minify(image_name, APP_ID, function (status, response_, minify_image) {
+                                item.small_image = image_name;
+                                item.minify_image = minify_image;
+                                optmized_response[key] = item;
+                                callback(null);
+                            });
+                        } else {
+                            item.small_image = image_url;
+                            item.minify_image = image_url;
+                            optmized_response[key] = item;
+                            callback(null);
+                        }
                     });
                 }
             });
@@ -64,8 +60,8 @@ router.post('/review', function (req, res) {
         pageno: 'required'}, null, function (body) {
         redisFetch(req, res, 'product_', body.parent_id, null, function () {
             API(req, res, body, '/product/review/', function (status, response, msg) {
-                redisSet('product_', body.sku, null, response, null, function () {
-                    res.json({status: status, statuscode: msg, body: JSON.parse(response)});
+                redisSet('product_', body.sku, null, JSON.stringify(response), null, function () {
+                    res.json({status: status, statuscode: msg, body: response});
                 });
             });
         });
@@ -78,7 +74,7 @@ router.post('/getrating', function (req, res) {
             redisFetch(req, res, 'product_', null, null, function () {
                 API(req, res, body, '/product/getrating/', function (status, response, msg) {
                     redisSet('product_', null, null, response, null, function () {
-                        res.json({status: status, statuscode: msg, body: JSON.parse(response)});
+                        res.json({status: status, statuscode: msg, body: response});
                     });
                 });
             });
@@ -98,7 +94,7 @@ router.post('/submitreview', function (req, res) {
         secret: 'optional'}, null, function (body) {
         if (req.headers.app_id && req.URL) {
             API(req, res, body, '/product/submitreview/', function (status, response, msg) {
-                res.json({status: status, statuscode: msg, body: JSON.parse(response)});
+                res.json({status: status, statuscode: msg, body: response});
             });
         } else {
             res.json({status: 0, statuscode: ERR_STATUS, body: INVALID});
