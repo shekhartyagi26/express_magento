@@ -93,7 +93,7 @@ router.all('/categorylist', function (req, res) {
         redisFetch(req, res, 'category_', body.parent_id, body.type, function () {
             API(req, res, body, '/category/categorylist/', function (status, response, msg) {
                 redisSet('category_', body.parent_id, null, response, body.type, function () {
-                    resMsg(res, status, response);
+                    success(res, status, response);
                     // res.json({status: status, statuscode: msg, body: response});
                 });
             });
