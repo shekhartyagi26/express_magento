@@ -1,5 +1,6 @@
 require('node-import');
 require('../service/validate');
+require('../service/image');
 require('../service/request');
 require('../service/cache');
 require('../service/responseMsg');
@@ -8,11 +9,8 @@ imports('config/constant');
 var express = require('express');
 var router = express.Router();
 var async = require('async');
-var path = require('path');
 var redis = require("redis"),
         client = redis.createClient();
-var request_ = require('../service/request');
-var image_ = require('../service/image');
 
 router.post('/products', function (req, res) {
     var APP_ID = req.headers.app_id;
@@ -23,20 +21,19 @@ router.post('/products', function (req, res) {
     }, null, function (body) {
         redisFetch(req, res, 'products_', null, body.type, function () {
             API(req, res, body, '/home/products/', function (status, response, msg) {
-
                 if (response !== undefined) {
                     var optmized_response = [];
                     async.eachOfLimit(response, 5, processData, function (err) {
                         if (err) {
-                            res.json({status: 0, msg: "OOPS! How is this possible?"});
+                            success(res, 0, "OOPS! How is this possible?");
                         } else {
                             redisSet('products_', null, null, response, body.type, function () {
-                                res.json({status: status, statuscode: msg, body: JSON.stringify(optmized_response)});
+                                success(res, status, optmized_response);
                             });
                         }
                     });
                 } else {
-                    res.json({status: 0, statuscode: '500', body: ERROR});
+                    success(res, 0, ERROR);
                 }
 
                 function processData(item, key, callback) {
@@ -48,7 +45,7 @@ router.post('/products', function (req, res) {
                                 item.data.minify_image = minify_image;
                                 optmized_response[key] = item;
                                 callback(null);
-                            })
+                            });
                         } else {
                             item.data.small_image = image_url;
                             item.data.minify_image = image_url;
@@ -85,7 +82,7 @@ router.post('/slider', function (req, res) {
                     var optmized_response = [];
                     async.eachOfLimit(response.url, 5, processData, function (err) {
                         if (err) {
-                            res.json({status: 0, msg: "OOPS! How is this possible?"});
+                            success(res, 0, "OOPS! How is this possible?");
                         } else {
                             client.hmset('slider', {
                                 "body": JSON.stringify(response),
@@ -93,11 +90,11 @@ router.post('/slider', function (req, res) {
                                 "statuscode": msg
                             });
                             client.expire('categories', config.PRODUCT_EXPIRESAT);
-                            res.json({status: status, statuscode: msg, body: JSON.stringify(optmized_response)});
+                            success(res, status, optmized_response);
                         }
                     });
                 } else {
-                    res.json({status: 0, statuscode: '500', body: ERROR});
+                    success(res, 0, ERROR);
                 }
 
                 function processData(item, key, callback) {

@@ -1,5 +1,6 @@
 require('node-import');
 require('../service/validate');
+require('../service/image');
 require('../service/request');
 require('../service/cache');
 require('../service/responseMsg');
@@ -8,8 +9,6 @@ imports('config/constant');
 var express = require('express');
 var router = express.Router();
 var async = require('async');
-var request_ = require('../service/request');
-var image_ = require('../service/image');
 
 router.all('/products', function (req, res) {
     var APP_ID = req.headers.app_id;
@@ -32,22 +31,23 @@ router.all('/products', function (req, res) {
         type: 'optional',
         limit: 'required',
         id: 'required',
-        mobile_width: 'required'}, null, function (body) {
+        mobile_width: 'required',
+        pageno: 'required'}, null, function (body) {
         redisFetch(req, res, 'category_', body.id, null, function () {
             API(req, res, body, '/category/products/', function (status, response, msg) {
                 if (response !== undefined) {
                     var optmized_response = [];
                     async.eachOfLimit(response, 5, processData, function (err) {
                         if (err) {
-                            res.json({status: 0, msg: "OOPS! How is this possible?"});
+                            success(res, 0, "OOPS! How is this possible?");
                         } else {
                             redisSet('category_', body.id, body.limit, JSON.stringify(optmized_response), null, function () {
-                                res.json({status: status, statuscode: msg, body: JSON.stringify(optmized_response)});
+                                success(res, status, optmized_response);
                             });
                         }
                     });
                 } else {
-                    res.json({status: 0, statuscode: '500', body: ERROR});
+                    success(res, 0, ERROR);
                 }
                 function processData(item, key, callback) {
                     var image_url = item.data.small_image;
@@ -93,7 +93,7 @@ router.all('/categorylist', function (req, res) {
         redisFetch(req, res, 'category_', body.parent_id, body.type, function () {
             API(req, res, body, '/category/categorylist/', function (status, response, msg) {
                 redisSet('category_', body.parent_id, null, response, body.type, function () {
-                    resMsg(res, status, response);
+                    success(res, status, response);
                     // res.json({status: status, statuscode: msg, body: response});
                 });
             });
