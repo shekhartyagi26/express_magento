@@ -27,7 +27,6 @@ router.post('/products', function (req, res) {
                 if (response !== undefined) {
                     var optmized_response = [];
                     async.eachOfLimit(response, 5, processData, function (err) {
-                        console.log(optmized_response)
                         if (err) {
                             res.json({status: 0, msg: "OOPS! How is this possible?"});
                         } else {
@@ -47,7 +46,6 @@ router.post('/products', function (req, res) {
                             minify(image_name, APP_ID, function (status, response_, minify_image) {
                                 item.data.small_image = image_name;
                                 item.data.minify_image = minify_image;
-                                console.log(optmized_response[key]);
                                 optmized_response[key] = item;
                                 callback(null);
                             })
