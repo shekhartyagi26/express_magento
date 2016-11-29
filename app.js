@@ -11,6 +11,13 @@ var redis = require('./middleware/redis.js');
 var db = require('./mods/db.js');
 var app = express();
 
+var optimus = require('connect-image-optimus');
+
+var staticPath = __dirname + '/static/';
+
+app.use(optimus(staticPath));
+app.use(connect.static(staticPath));
+
 
 var cors = require('cors');
 // view engine setup
