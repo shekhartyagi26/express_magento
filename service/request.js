@@ -11,25 +11,15 @@ API = function (req, body, url, callback) {
         timeout: 10000,
         body: JSON.stringify(body)
     }, function (error, result, body) {
-
-        console.log('---------------------');
-        console.log(error);
-//        console.log(result);
-        console.log(body);
-        console.log('---------------------');
-
-
-        var allData = JSON.parse(body);
         if (error) {
 //            res.json({status: 0, statuscode: error, body: ERROR});
             callback(0, error, ERROR);
         } else if (result.statusCode === 500) {
-            console.log('status code');
-//            res.json({status: 0, statuscode: NOTFOUND, body: allData.data});
+            var allData = JSON.parse(body);
+            //            res.json({status: 0, statuscode: NOTFOUND, body: allData.data});
             callback(0, allData.data, NOTFOUND);
         } else {
-            console.log('else');
-            var allData = JSON.parse(body);
+            allData = JSON.parse(body);
             callback(1, allData.data, SUCCESS);
         }
     });
