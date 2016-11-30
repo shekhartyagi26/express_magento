@@ -1,29 +1,29 @@
 var redis = require("redis"),
         client = redis.createClient();
 
-redisFetch = function (req, res, productType, id, type, callback) {
+redisFetch = function (req, productType, id, type, callback) {
     var status = req.status;
     client.hgetall(productType + id, function (err, object) {
         if (err) {
-            res.json({status: 0, body: err});
+            callback({status: 0, body: err});
         } else {
             if (id) {
                 if (object !== null && object.id == id && status == "enabled") {
-                    res.json(object);
+                    callback({status: 1, body: object});
                 } else {
-                    callback();
+                    callback({status: 2});
                 }
             } else if (!id && type) {
                 if (object != null && object.type == type && status == "enabled") {
-                    res.json(object);
+                    callback({status: 1, body: object});
                 } else {
-                    callback();
+                    callback({status: 2});
                 }
             } else {
                 if (object != null && status == 'enabled') {
-                    res.json(object);
+                    callback({status: 1, body: object});
                 } else {
-                    callback();
+                    callback({status: 2});
                 }
             }
         }
