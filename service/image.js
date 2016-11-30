@@ -30,10 +30,10 @@ resize = function (url, APP_ID, mobile_width, callback) {
         var image_webp = '/' + image_name_without_extension + '.webp';
         var image_png = '/' + image_name_without_extension + '.png';
         if (image_name_without_extension == '') {
-            callback(200, "done", config.DEFAULT_IMAGE_URL);
+            callback(200, config.DEFAULT_IMAGE_URL);
         } else {
             if (fileExists('public/original_image/' + image_name) == false) {
-                var width = JSON.parse(mobile_width);
+                var width = parseInt(mobile_width);
                 var file = fs.createWriteStream("public/original_image/" + image_name);
                 http.get(url, function (response) {
                     mkdirp('public/' + filename, function (err) {
@@ -54,7 +54,7 @@ resize = function (url, APP_ID, mobile_width, callback) {
                                             sharp('public/original_image/' + image_name)
                                                     .resize(width)
                                                     .toFile('public/' + filename + image_png, function (err) {
-                                                        callback(200, "done", config.CDN_URL + filename + image_png);
+                                                        callback(200, config.CDN_URL + filename + image_png);
                                                     });
                                         } else {
                                             callback(500, "oops! some error occured");
@@ -62,11 +62,11 @@ resize = function (url, APP_ID, mobile_width, callback) {
                                     });
                         });
                     } else {
-                        callback(200, "done", config.DEFAULT_IMAGE_URL);
+                        callback(200,config.DEFAULT_IMAGE_URL);
                     }
                 });
             } else {
-                callback(200, "done", config.CDN_URL + filename + image_png);
+                callback(200, config.CDN_URL + filename + image_png);
             }
         }
 
@@ -92,13 +92,13 @@ minify = function (url, APP_ID, callback) {
                  ]
                 }).then(files => {
                      if (files[0].path !== null) {
-                         callback(200, "done", config.CDN_URL+image_minified_name+image_jpg );
+                         callback(200, config.CDN_URL+image_minified_name+image_jpg );
                      } else {
                          callback(500, "oops! some error occured");
                      }
            })
         } else {
-            callback(200, "done", config.CDN_URL+image_minified_name+image_jpg);
+            callback(200, config.CDN_URL+image_minified_name+image_jpg);
         }
     } else {
         callback(500, " APP_ID or url cannot be empty");

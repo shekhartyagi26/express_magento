@@ -33,9 +33,9 @@ router.post('/get', function (req, res) {
                 }
                 function processData(item, key, callback) {
                     var image_url = item.small_image;
-                    resize(image_url, APP_ID, body.mobile_width, function (status, response_, image_name) {
+                    resize(image_url, APP_ID, body.mobile_width, function (status, image_name) {
                         if (status == "200") {
-                            minify(image_name, APP_ID, function (status, response_, minify_image) {
+                            minify(image_name, APP_ID, function (status, minify_image) {
                                 item.small_image = image_name;
                                 item.minify_image = minify_image;
                                 optmized_response[key] = item;
