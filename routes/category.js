@@ -94,7 +94,6 @@ router.all('/categorylist', function (req, res) {
             API(req, res, body, '/category/categorylist/', function (status, response, msg) {
                 redisSet('category_', body.parent_id, null, response, body.type, function () {
                     success(res, status, response);
-                    // res.json({status: status, statuscode: msg, body: response});
                 });
             });
         });

@@ -30,16 +30,15 @@ resize = function (url, APP_ID, mobile_width, callback) {
         var image_webp = '/' + image_name_without_extension + '.webp';
         var image_png = '/' + image_name_without_extension + '.png';
         if (fileExists('public/original_image/' + image_name) == false) {
-            mkdirp('public/' + filename, function (err) {
-                if (err) {
-                    callback(500, "oops! some error occured");
-                } else {
-                    console.log('pow!');
-                }
-            });
             var width = JSON.parse(mobile_width);
             var file = fs.createWriteStream("public/original_image/" + image_name);
             http.get(url, function (response) {
+                mkdirp('public/' + filename, function (err) {
+                    if (err) {
+                        callback(500, "oops! some error occured");
+                    } else {
+                    }
+                });
                 if (response.statusCode == 200) {
                     response.pipe(file);
                     response.on('end', function () {
@@ -82,18 +81,18 @@ minify = function (url, APP_ID, callback) {
         var image_jpg = '/' + image_name_without_extension + '.jpg';
         var image_minified_name = filename.replace("comtethr/300", "comtethr/300/minify");
         if (fileExists('public' + image_minified_name + '/' + image_jpg) == false) {
-                  imagemin(["public/original_image/" + image_jpg], 'public/' + image_minified_name, {
-                   plugins: [
-                   imageminMozjpeg(),
-                   imageminPngquant({quality: '5'})
-                   ]
-                  }).then(files => {
-                       if (files[0].path !== null) {
-                           callback(200, "done", config.CDN_URL+image_minified_name+image_jpg );
-                       } else {
-                           callback(500, "oops! some error occured");
-                       }
-             })
+                imagemin(["public/original_image/" + image_jpg], 'public/' + image_minified_name, {
+                 plugins: [
+                 imageminMozjpeg(),
+                 imageminPngquant({quality: '5'})
+                 ]
+                }).then(files => {
+                     if (files[0].path !== null) {
+                         callback(200, "done", config.CDN_URL+image_minified_name+image_jpg );
+                     } else {
+                         callback(500, "oops! some error occured");
+                     }
+           })
         } else {
             callback(200, "done", config.CDN_URL+image_minified_name+image_jpg);
         }
