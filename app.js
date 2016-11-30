@@ -7,9 +7,24 @@ var bodyParser = require('body-parser');
 
 var verify = require('./middleware/verify.js');
 var redis = require('./middleware/redis.js');
+var optimus = require('connect-image-optimus');
+var connect = require('connect');
+
 
 var db = require('./mods/db.js');
 var app = express();
+
+var optimus = require('connect-image-optimus');
+var connect = require('connect');
+var serveStatic = require('serve-static');
+
+var staticPath = __dirname + '/static/';
+
+app.use(optimus(staticPath));
+//app.use(connect.static(staticPath));
+app.use(serveStatic(staticPath));
+
+//var app = connect();
 
 
 var cors = require('cors');

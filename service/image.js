@@ -28,7 +28,6 @@ resize = function (url, APP_ID, mobile_width, callback) {
         var filename = image_stored_url.substring(0, image_stored_url.lastIndexOf("/"));
         var image_name_without_extension = image_name.substr(0, image_name.lastIndexOf('.'));
         var image_new_name = '/'+image_name_without_extension+'.webp';
-        var image_new_name_ = '/'+image_name_without_extension+'.png';
         if (fileExists('public/original_image/' + image_name) == false) {
             mkdirp('public/' + filename, function (err) {
                 if (err) {
@@ -76,16 +75,15 @@ resize = function (url, APP_ID, mobile_width, callback) {
          var url_last_index_length = url.lastIndexOf('/');
          var image_name = url.substring(url_last_index_length + 1);
          var image_name_without_extension = image_name.substr(0, image_name.lastIndexOf('.'));
-         var image_new_name = '/'+image_name_without_extension+'.png';
+        var image_new_name = '/'+image_name_without_extension+'.jpg';
          if (fileExists('public/minify/' + filename + '/' + image_new_name) == false) {
-                  imagemin(['public/minify/' + filename + '/' + image_new_name], 'public/minify/' + filename, {
+                  imagemin(["public/original_image/" + image_new_name], 'public/minify/' + filename, {
                    plugins: [
                    imageminMozjpeg(),
                    imageminPngquant({quality: '5'})
                    ]
                   }).then(files => {
                        if (files[0].path !== null) {
-                        console.log('done');
                            callback(200, "done", config.IMAGE_MINIFY_URL+filename+image_new_name );
                        } else {
                            callback(500, "oops! some error occured");

@@ -1,5 +1,6 @@
 require('node-import');
 require('../service/validate');
+require('../service/image');
 require('../service/request');
 require('../service/cache');
 require('../service/responseMsg');
@@ -20,15 +21,15 @@ router.post('/get', function (req, res) {
                     var optmized_response = {};
                     async.eachOfLimit(response, 1, processData, function (err) {
                         if (err) {
-                            res.json({status: 0, msg: "OOPS! How is this possible?"});
+                            success(res, 0, "OOPS! How is this possible?");
                         } else {
                             redisSet('product_', body.sku, null, JSON.stringify(optmized_response), null, function () {
-                                res.json({status: status, statuscode: msg, body: optmized_response});
+                                success(res, status, optmized_response);
                             });
                         }
                     });
                 } else {
-                    res.json({status: 0, statuscode: '500', body: ERROR});
+                    success(res, 0, ERROR);
                 }
                 function processData(item, key, callback) {
                     var image_url = item.small_image;
@@ -56,12 +57,12 @@ router.post('/get', function (req, res) {
 router.post('/review', function (req, res) {
     validate(req, res, {sku: 'required',
         secret: 'optional',
-        pagesize: 'required',
+        mobile_width: 'required',
         pageno: 'required'}, null, function (body) {
         redisFetch(req, res, 'product_', body.parent_id, null, function () {
             API(req, res, body, '/product/review/', function (status, response, msg) {
                 redisSet('product_', body.sku, null, JSON.stringify(response), null, function () {
-                    res.json({status: status, statuscode: msg, body: response});
+                    success(res, status, response);
                 });
             });
         });
@@ -74,12 +75,12 @@ router.post('/getrating', function (req, res) {
             redisFetch(req, res, 'product_', null, null, function () {
                 API(req, res, body, '/product/getrating/', function (status, response, msg) {
                     redisSet('product_', null, null, response, null, function () {
-                        res.json({status: status, statuscode: msg, body: response});
+                        success(res, status, response);
                     });
                 });
             });
         } else {
-            res.json({status: 0, statuscode: ERR_STATUS, body: INVALID});
+            success(res, 0, INVALID);
         }
     });
 });
@@ -94,10 +95,10 @@ router.post('/submitreview', function (req, res) {
         secret: 'optional'}, null, function (body) {
         if (req.headers.app_id && req.URL) {
             API(req, res, body, '/product/submitreview/', function (status, response, msg) {
-                res.json({status: status, statuscode: msg, body: response});
+                success(res, status, response);
             });
         } else {
-            res.json({status: 0, statuscode: ERR_STATUS, body: INVALID});
+            success(res, 0, INVALID);
         }
     });
 });
