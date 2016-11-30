@@ -65,7 +65,6 @@ app.use('/order', order);
 app.use('/address', address);
 app.use('/cart', cart);
 app.use('/redis', redis);
-app.use('/web', web);
 
 app.use(function (req, res, next) {
     var err = new Error('Not Found');
