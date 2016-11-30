@@ -53,3 +53,34 @@ productGet = function (req, res) {
         });
     });
 };
+
+productReview = function (req, res) {
+    validate(req, res, {sku: 'required',
+        secret: 'optional',
+        mobile_width: 'required',
+        pageno: 'required'}, null, function (body) {
+        redisFetch(req, res, 'product_', body.parent_id, null, function () {
+            API(req, res, body, '/product/review/', function (status, response, msg) {
+                redisSet('product_', body.sku, null, JSON.stringify(response), null, function () {
+                    success(res, status, response);
+                });
+            });
+        });
+    });
+};
+
+productGetRating = function (req, res) {
+    validate(req, res, {}, null, function (body) {
+        if (req.URL) {
+            redisFetch(req, res, 'product_', null, null, function () {
+                API(req, res, body, '/product/getrating/', function (status, response, msg) {
+                    redisSet('product_', null, null, response, null, function () {
+                        success(res, status, response);
+                    });
+                });
+            });
+        } else {
+            success(res, 0, INVALID);
+        }
+    });
+};
