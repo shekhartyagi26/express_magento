@@ -12,106 +12,146 @@ var async = require('async');
 var redis = require("redis"),
         client = redis.createClient();
 
-homeProducts = function (req, res) {
+homeProducts = function (req, callback) {
     var APP_ID = req.headers.app_id;
-    validate(req, res, {
+    validate(req, {
         type: 'required',
         secret: 'optional',
         mobile_width: 'required'
     }, null, function (body) {
-        redisFetch(req, res, 'products_', null, body.type, function () {
-            API(req, res, body, '/home/products/', function (status, response, msg) {
-                if (response !== undefined) {
-                    var optmized_response = [];
-                    async.eachOfLimit(response, 5, processData, function (err) {
-                        if (err) {
-                            oops(res, "OOPS! How is this possible?");
-                        } else {
-                            redisSet('products_', null, null, response, body.type, function () {
-                                success(res, status, optmized_response);
-                            });
-                        }
-                    });
+        if (body.status == 0) {
+            callback({status: 0, msg: body.body});
+        } else {
+            redisFetch(req, 'products_', null, body.type, function (result) {
+                if (result.status == 0) {
+                    callback({status: 0, msg: result.body});
+                } else if (result.status == 1) {
+                    callback({status: 1, msg: result.body});
                 } else {
-                    oops(res, ERROR);
-                }
-
-                function processData(item, key, callback) {
-                    var image_url = item.data.small_image;
-                    resize(image_url, APP_ID, body.mobile_width, function (status, response_, image_name) {
-                        if (status == '200') {
-                            minify(image_name, APP_ID, function (status, response_, minify_image) {
-                                item.data.small_image = image_name;
-                                item.data.minify_image = minify_image;
-                                optmized_response[key] = item;
-                                callback(null);
-                            });
+                    API(req, body, '/home/products/', function (status, response, msg) {
+                        if (status == 0) {
+                            callback({status: 0, msg: response});
                         } else {
-                            item.data.small_image = image_url;
-                            item.data.minify_image = image_url;
-                            optmized_response[key] = item;
-                            callback(null);
+                            if (response !== undefined) {
+                                var optmized_response = [];
+                                async.eachOfLimit(response, 5, processData, function (err) {
+                                    if (err) {
+                                        callback({status: 0, msg: 'OOPS! How is this possible?'});
+                                    } else {
+                                        redisSet('products_', null, null, response, body.type, function () {
+                                            callback({status: status, msg: optmized_response})
+                                        });
+                                    }
+                                });
+                            } else {
+                                callback({status: 0, msg: ERROR});
+                            }
+                            function processData(item, key, callback) {
+                                var image_url = item.data.small_image;
+                                resize(image_url, APP_ID, body.mobile_width, function (status, response_, image_name) {
+                                    if (status == '200') {
+                                        minify(image_name, APP_ID, function (status, response_, minify_image) {
+                                            item.data.small_image = image_name;
+                                            item.data.minify_image = minify_image;
+                                            optmized_response[key] = item;
+                                            callback(null);
+                                        });
+                                    } else {
+                                        item.data.small_image = image_url;
+                                        item.data.minify_image = image_url;
+                                        optmized_response[key] = item;
+                                        callback(null);
+                                    }
+                                });
+                            }
                         }
                     });
                 }
             });
-        });
+        }
     });
 };
 
-homeCategories = function (req, res) {
-    validate(req, res, {}, null, function (body) {
-        redisFetch(req, res, 'categories', null, null, function () {
-            API(req, res, body, '/home/categories/', function (status, response, msg) {
-                redisSet('categories', null, null, response, null, function () {
-                    success(res, status, response);
-                });
+homeCategories = function (req, callback) {
+    validate(req, {}, null, function (body) {
+        if (body.status == 0) {
+            callback({status: 0, msg: body.body});
+        } else {
+            redisFetch(req, 'categories', null, null, function (result) {
+                if (result.status == 0) {
+                    callback({status: 0, msg: result.body});
+                } else if (result.status == 1) {
+                    callback({status: 1, msg: result.body});
+                } else {
+                    API(req, body, '/home/categories/', function (status, response, msg) {
+                        if (status == 0) {
+                            callback({status: 0, msg: response});
+                        } else {
+                            redisSet('categories', null, null, response, null, function () {
+                                callback({status: status, msg: response});
+                            });
+                        }
+                    });
+                }
             });
-        });
+        }
     });
 };
 
-homeSlider = function (req, res) {
+homeSlider = function (req, callback) {
     var APP_ID = req.headers.app_id;
-    validate(req, res, {
+    validate(req, {
         mobile_width: 'required'
     }, null, function (body) {
-        redisFetch(req, res, 'slider', null, null, function () {
-            API(req, res, body, '/home/slider/', function (status, response, msg) {
-                if (response.url !== undefined) {
-                    var optmized_response = [];
-                    async.eachOfLimit(response.url, 5, processData, function (err) {
-                        if (err) {
-                            oops(res, "OOPS! How is this possible?");
-                        } else {
-                            client.hmset('slider', {
-                                "body": JSON.stringify(response),
-                                "status": 1,
-                                "statuscode": msg
-                            });
-                            client.expire('categories', config.PRODUCT_EXPIRESAT);
-                            success(res, status, optmized_response);
-                        }
-                    });
+        if (body.status == 0) {
+            callback({status: 0, msg: body.body});
+        } else {
+            redisFetch(req, 'slider', null, null, function (result) {
+                if (result.status == 0) {
+                    callback({status: 0, msg: result.body});
+                } else if (result.status == 1) {
+                    callback({status: 1, msg: result.body});
                 } else {
-                    oops(res, 0, ERROR);
-                }
-
-                function processData(item, key, callback) {
-                    resize(item, APP_ID, body.mobile_width, function (status, response_, image_name) {
-                        if (status == '200') {
-                            image_url = image_name;
-                            item = image_url;
-                            optmized_response[key] = item;
-                            callback(null);
+                    API(req, body, '/home/slider/', function (status, response, msg) {
+                        if (status == 0) {
+                            callback({status: 0, msg: response});
                         } else {
-                            item = image_url;
-                            optmized_response[key] = item;
-                            callback(null);
+                            if (response.url !== undefined) {
+                                var optmized_response = [];
+                                async.eachOfLimit(response.url, 5, processData, function (err) {
+                                    if (err) {
+                                        callback({status: 0, msg: 'OOPS! How is this possible?'});
+                                    } else {
+                                        client.hmset('slider', {
+                                            "body": JSON.stringify(response),
+                                            "status": 1,
+                                            "statuscode": msg
+                                        });
+                                        client.expire('categories', config.PRODUCT_EXPIRESAT);
+                                        callback({status: status, msg: optmized_response});
+                                    }
+                                });
+                            } else {
+                                callback({status: 0, msg: ERROR});
+                            }
+                            function processData(item, key, callback) {
+                                resize(item, APP_ID, body.mobile_width, function (status, response_, image_name) {
+                                    if (status == '200') {
+                                        image_url = image_name;
+                                        item = image_url;
+                                        optmized_response[key] = item;
+                                        callback(null);
+                                    } else {
+                                        item = image_url;
+                                        optmized_response[key] = item;
+                                        callback(null);
+                                    }
+                                });
+                            }
                         }
                     });
                 }
             });
-        });
+        }
     });
 };

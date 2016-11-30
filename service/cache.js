@@ -9,21 +9,18 @@ redisFetch = function (req, productType, id, type, callback) {
         } else {
             if (id) {
                 if (object !== null && object.id == id && status == "enabled") {
-//                    res.json(object);
                     callback({status: 1, body: object});
                 } else {
                     callback({status: 2});
                 }
             } else if (!id && type) {
                 if (object != null && object.type == type && status == "enabled") {
-//                    res.json(object);
                     callback({status: 1, body: object});
                 } else {
                     callback({status: 2});
                 }
             } else {
                 if (object != null && status == 'enabled') {
-//                    res.json(object);
                     callback({status: 1, body: object});
                 } else {
                     callback({status: 2});

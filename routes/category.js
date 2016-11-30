@@ -9,9 +9,6 @@ imports('config/index');
 imports('config/constant');
 var express = require('express');
 var router = express.Router();
-var async = require('async');
-
-///var/www/html/express_magento/routes/category.js
 
 router.all('/products', function (req, res) {
     categoryProducts(req, function (body) {
@@ -24,7 +21,13 @@ router.all('/products', function (req, res) {
 });
 
 router.all('/categorylist', function (req, res) {
-    categoryCategoryList(req, res);
+    categoryList(req, function (body) {
+        if (body.status == 0) {
+            oops(res, body.msg);
+        } else {
+            success(res, 1, body.msg);
+        }
+    });
 });
 
 module.exports = router;

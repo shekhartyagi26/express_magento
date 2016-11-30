@@ -12,11 +12,9 @@ API = function (req, body, url, callback) {
         body: JSON.stringify(body)
     }, function (error, result, body) {
         if (error) {
-//            res.json({status: 0, statuscode: error, body: ERROR});
             callback(0, error, ERROR);
         } else if (result.statusCode === 500) {
             var allData = JSON.parse(body);
-            //            res.json({status: 0, statuscode: NOTFOUND, body: allData.data});
             callback(0, allData.data, NOTFOUND);
         } else {
             allData = JSON.parse(body);

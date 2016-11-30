@@ -55,7 +55,6 @@ resize = function (url, APP_ID, mobile_width, callback) {
                 } else {
                     callback(200, "done", config.DEFAULT_IMAGE_URL);
                 }
-
             });
         } else {
             callback(200, "done", config.IMAGE_URL + image_stored_url);

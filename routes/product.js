@@ -11,15 +11,33 @@ var express = require('express');
 var router = express.Router();
 
 router.post('/get', function (req, res) {
-    productGet(req, res);
+    productGet(req, function (body) {
+        if (body.status == 0) {
+            oops(res, body.msg);
+        } else {
+            success(res, 1, body.msg);
+        }
+    });
 });
 
 router.post('/review', function (req, res) {
-    productReview(req, res);
+    productReview(req, function (body) {
+        if (body.status == 0) {
+            oops(res, body.msg);
+        } else {
+            success(res, 1, body.msg);
+        }
+    });
 });
 
 router.post('/getrating', function (req, res) {
-    productGetRating(req, res);
+    productGetRating(req, function (body) {
+        if (body.status == 0) {
+            oops(res, body.msg);
+        } else {
+            success(res, 1, body.msg);
+        }
+    });
 });
 
 router.post('/submitreview', function (req, res) {

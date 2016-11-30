@@ -11,17 +11,24 @@ validate = function (req, schema, secret, callback) {
             if (myKey == 'secret') {
                 result[myKey] = secret;
             }
-            if (req.body[myKey]) {
-                result[myKey] = req.body[myKey];
+            if (myKey == 'entity_id') {
+                if (req.body[myKey]) {
+                    result[myKey] = req.body[myKey];
+                } else {
+                    result[myKey] = '';
+                }
             } else {
-                find = true;
-                break;
+                if (req.body[myKey]) {
+                    result[myKey] = req.body[myKey];
+                } else {
+                    find = true;
+                    break;
+                }
             }
         }
     }
     if (find == true) {
         callback({status: 0, body: 'Fill required fields!'});
-//        res.json({status: 0, body: 'Fill required fields!'});
     } else {
         callback(result);
     }
