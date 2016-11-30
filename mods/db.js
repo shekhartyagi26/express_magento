@@ -4,7 +4,7 @@ imports('config/index');
 
 module.exports = function () {
     var mongoose = require('mongoose');
-    mongoose.connect(config.DbUrl);
+    mongoose.connect(config.DB_URL);
     var Schema = mongoose.Schema;
     var conn = mongoose.connection;
 

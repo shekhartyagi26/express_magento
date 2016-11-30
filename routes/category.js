@@ -51,9 +51,9 @@ router.all('/products', function (req, res) {
                 }
                 function processData(item, key, callback) {
                     var image_url = item.data.small_image;
-                    resize(image_url, APP_ID, body.mobile_width, function (status, response_, image_name) {
+                    resize(image_url, APP_ID, body.mobile_width, function (status, image_name) {
                         if (status == '200') {
-                            minify(image_name, APP_ID, function (status, response_, minify_image) {
+                            minify(image_name, APP_ID, function (status, minify_image) {
                                 item.data.small_image = image_name;
                                 item.data.minify_image = minify_image;
                                 optmized_response[key] = item;
@@ -94,7 +94,6 @@ router.all('/categorylist', function (req, res) {
             API(req, res, body, '/category/categorylist/', function (status, response, msg) {
                 redisSet('category_', body.parent_id, null, response, body.type, function () {
                     success(res, status, response);
-                    // res.json({status: status, statuscode: msg, body: response});
                 });
             });
         });
