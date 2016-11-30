@@ -73,8 +73,7 @@ resize = function (url, APP_ID, mobile_width, callback) {
 minify = function (url, APP_ID, callback) {
     if (url && APP_ID) {
         var image_url = URL_.parse(url).path;
-        var image_fetch_url = image_url.replace("/shekhar_works/Eexpress_magento/public/", "");
-        var filename = image_fetch_url.substring(0, image_fetch_url.lastIndexOf("/"));
+        var filename = image_url.substring(0, image_url.lastIndexOf("/"));
         var url_last_index_length = url.lastIndexOf('/');
         var image_name = url.substring(url_last_index_length + 1);
         var image_name_without_extension = image_name.substr(0, image_name.lastIndexOf('.'));
