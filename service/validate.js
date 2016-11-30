@@ -1,6 +1,6 @@
 var _underscore = require('underscore');
 
-validate = function (req, res, schema, secret, callback) {
+validate = function(req, res, schema, secret, callback) {
     var result = {};
     var allkeys = _underscore.keys(schema);
     var find = false;
@@ -11,16 +11,27 @@ validate = function (req, res, schema, secret, callback) {
                 result[myKey] = secret;
             }
 
-            if (req.body[myKey] || myKey == 'entity_id') {
-                result[myKey] = req.body[myKey];
+            if (myKey == 'entity_id') {
+                if (req.body[myKey]) {
+                    result[myKey] = req.body[myKey];
+                } else {
+                    result[myKey] = '';
+                }
             } else {
-                find = true;
-                break;
+                if (req.body[myKey]) {
+                    result[myKey] = req.body[myKey];
+                } else {
+                    find = true;
+                    break;
+                }
             }
         }
     }
     if (find == true) {
-        res.json({status: 0, body: 'Fill required fields!'});
+        res.json({
+            status: 0,
+            body: 'Fill required fields!'
+        });
     } else {
         callback(result);
     }
