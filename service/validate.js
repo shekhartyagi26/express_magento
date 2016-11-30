@@ -1,6 +1,7 @@
 var _underscore = require('underscore');
+require('./responseMsg');
 
-validate = function (req, res, schema, secret, callback) {
+validate = function (req, schema, secret, callback) {
     var result = {};
     var allkeys = _underscore.keys(schema);
     var find = false;
@@ -19,7 +20,8 @@ validate = function (req, res, schema, secret, callback) {
         }
     }
     if (find == true) {
-        res.json({status: 0, body: 'Fill required fields!'});
+        callback({status: 0, body: 'Fill required fields!'});
+//        res.json({status: 0, body: 'Fill required fields!'});
     } else {
         callback(result);
     }

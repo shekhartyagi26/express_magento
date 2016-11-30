@@ -21,7 +21,7 @@ productGet = function (req, res) {
                     var optmized_response = {};
                     async.eachOfLimit(response, 1, processData, function (err) {
                         if (err) {
-                            success(res, 0, "OOPS! How is this possible?");
+                            oops(res, "OOPS! How is this possible?");
                         } else {
                             redisSet('product_', body.sku, null, JSON.stringify(optmized_response), null, function () {
                                 success(res, status, optmized_response);
@@ -29,7 +29,7 @@ productGet = function (req, res) {
                         }
                     });
                 } else {
-                    success(res, 0, ERROR);
+                    oops(res, ERROR);
                 }
                 function processData(item, key, callback) {
                     var image_url = item.small_image;
@@ -80,7 +80,7 @@ productGetRating = function (req, res) {
                 });
             });
         } else {
-            success(res, 0, INVALID);
+            oops(res, INVALID);
         }
     });
 };

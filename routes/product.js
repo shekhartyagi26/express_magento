@@ -4,7 +4,7 @@ require('../service/image');
 require('../service/request');
 require('../service/cache');
 require('../service/responseMsg');
-require('../service/productAPIs');
+require('../service/product');
 imports('config/index');
 imports('config/constant');
 var express = require('express');
@@ -35,7 +35,7 @@ router.post('/submitreview', function (req, res) {
                 success(res, status, response);
             });
         } else {
-            success(res, 0, INVALID);
+            oops(res, INVALID);
         }
     });
 });

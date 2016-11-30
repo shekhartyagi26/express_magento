@@ -1,4 +1,5 @@
 require('node-import');
+require('../service/home');
 imports('config/index');
 imports('config/constant');
 var express = require('express');

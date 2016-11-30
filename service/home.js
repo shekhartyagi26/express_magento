@@ -25,7 +25,7 @@ homeProducts = function (req, res) {
                     var optmized_response = [];
                     async.eachOfLimit(response, 5, processData, function (err) {
                         if (err) {
-                            success(res, 0, "OOPS! How is this possible?");
+                            oops(res, "OOPS! How is this possible?");
                         } else {
                             redisSet('products_', null, null, response, body.type, function () {
                                 success(res, status, optmized_response);
@@ -33,7 +33,7 @@ homeProducts = function (req, res) {
                         }
                     });
                 } else {
-                    success(res, 0, ERROR);
+                    oops(res, ERROR);
                 }
 
                 function processData(item, key, callback) {
@@ -82,7 +82,7 @@ homeSlider = function (req, res) {
                     var optmized_response = [];
                     async.eachOfLimit(response.url, 5, processData, function (err) {
                         if (err) {
-                            success(res, 0, "OOPS! How is this possible?");
+                            oops(res, "OOPS! How is this possible?");
                         } else {
                             client.hmset('slider', {
                                 "body": JSON.stringify(response),
@@ -94,7 +94,7 @@ homeSlider = function (req, res) {
                         }
                     });
                 } else {
-                    success(res, 0, ERROR);
+                    oops(res, 0, ERROR);
                 }
 
                 function processData(item, key, callback) {
