@@ -3,7 +3,7 @@ imports('config/index');
 imports('config/constant');
 var request = require('request');
 
-API = function (req, res, body, url, callback) {
+API = function (req, body, url, callback) {
     request({
         url: req.URL + url, //URL to hit
         method: 'post',
@@ -11,12 +11,24 @@ API = function (req, res, body, url, callback) {
         timeout: 10000,
         body: JSON.stringify(body)
     }, function (error, result, body) {
+
+        console.log('---------------------');
+        console.log(error);
+//        console.log(result);
+        console.log(body);
+        console.log('---------------------');
+
+
         var allData = JSON.parse(body);
         if (error) {
-            res.json({status: 0, statuscode: error, body: ERROR});
+//            res.json({status: 0, statuscode: error, body: ERROR});
+            callback(0, error, ERROR);
         } else if (result.statusCode === 500) {
-            res.json({status: 0, statuscode: NOTFOUND, body: allData.data});
+            console.log('status code');
+//            res.json({status: 0, statuscode: NOTFOUND, body: allData.data});
+            callback(0, allData.data, NOTFOUND);
         } else {
+            console.log('else');
             var allData = JSON.parse(body);
             callback(1, allData.data, SUCCESS);
         }
