@@ -1,23 +1,24 @@
-var request = require('request');
 require('node-import');
 imports('config/index');
 imports('config/constant');
+var request = require('request');
 
-exports.request = function (body, headers, url, callback) {
-
+API = function (req, res, body, url, callback) {
     request({
-        url: url, //URL to hit
+        url: req.URL + url, //URL to hit
         method: 'post',
-        headers: headers,
+        headers: {APP_ID: req.headers.app_id, "Authorization": req.headers.authorization},
         timeout: 10000,
         body: JSON.stringify(body)
     }, function (error, result, body) {
+        var allData = JSON.parse(body);
         if (error) {
-            callback(500, error, ERROR);
-        } else if (result.statusCode == 500) {
-            callback(result, body, NOTFOUND)
+            res.json({status: 0, statuscode: error, body: ERROR});
+        } else if (result.statusCode === 500) {
+            res.json({status: 0, statuscode: NOTFOUND, body: allData.data});
         } else {
-            callback(result, body, SUCCESS);
+            var allData = JSON.parse(body);
+            callback(1, allData.data, SUCCESS);
         }
     });
-}
+};

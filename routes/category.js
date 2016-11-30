@@ -1,87 +1,104 @@
-var express = require('express');
-var router = express.Router();
-var path = require('path');
-var request = require('request');
-var cors = require('cors');
 require('node-import');
+require('../service/validate');
+require('../service/image');
+require('../service/request');
+require('../service/cache');
+require('../service/responseMsg');
 imports('config/index');
 imports('config/constant');
-const request_ = require('../service/request');
-var redis = require("redis"),
-        client = redis.createClient();
+var express = require('express');
+var router = express.Router();
+var async = require('async');
 
 router.all('/products', function (req, res) {
-    var id = req.body.id;
-    var page = req.body.page;
-    var limit = req.body.limit;
     var APP_ID = req.headers.app_id;
-    var URL = req.URL;
-    if (id > 0) {
-        client.hgetall('category_' + id, function (err, object) {
-            if (object != null && object.id == id) {
-                res.json(object);
-            } else {
-                var body = ({id: id, page: page, limit: limit});
-                var headers = {APP_ID: APP_ID};
-                var url = URL + '/category/products/';
-                request_.request(body, headers, url, function (req, response, msg) {
-                    if (msg == ERROR) {
-                        res.json({status: 0, statuscode: ERR_STATUS, error: response});
-                    } else if (req.statusCode == ERR_STATUS) {
-                        res.json({status: 0, statuscode: req.statusCode, body: response});
-                    } else {
-                        client.hmset('category_' + id, {
-                            'id': id,
-                            "page": page,
-                            "limit": limit,
-                            "body": response
-                        });
-                        client.expire('category_' + id, config.CATEGORY_EXPIRESAT);
-                        res.json({status: 1, statuscode: req.statusCode, body: response});
-                    }
-                });
-            }
+    validate(req, res, {countryid: 'optional',
+        zip: 'optional',
+        city: 'optional',
+        telephone: 'optional',
+        fax: 'optional',
+        company: 'optional',
+        street: 'optional',
+        firstname: 'optional',
+        lastname: 'optional',
+        password: 'optional',
+        newPassword: 'optional',
+        secret: 'optional',
+        entity_id: 'optional',
+        productid: 'optional',
+        store_id: 'optional',
+        parent_id: 'optional',
+        type: 'optional',
+        limit: 'required',
+        id: 'required',
+        mobile_width: 'required',
+        pageno: 'required'}, null, function (body) {
+        redisFetch(req, res, 'category_', body.id, null, function () {
+            API(req, res, body, '/category/products/', function (status, response, msg) {
+                if (response !== undefined) {
+                    var optmized_response = [];
+                    async.eachOfLimit(response, 5, processData, function (err) {
+                        if (err) {
+                            success(res, 0, "OOPS! How is this possible?");
+                        } else {
+                            redisSet('category_', body.id, body.limit, JSON.stringify(optmized_response), null, function () {
+                                success(res, status, optmized_response);
+                            });
+                        }
+                    });
+                } else {
+                    success(res, 0, ERROR);
+                }
+                function processData(item, key, callback) {
+                    var image_url = item.data.small_image;
+                    resize(image_url, APP_ID, body.mobile_width, function (status, response_, image_name) {
+                        if (status == '200') {
+                            minify(image_name, APP_ID, function (status, response_, minify_image) {
+                                item.data.small_image = image_name;
+                                item.data.minify_image = minify_image;
+                                optmized_response[key] = item;
+                                callback(null);
+                            })
+                        } else {
+                            item.data.small_image = image_url;
+                            item.data.minify_image = image_url;
+                            optmized_response[key] = item;
+                            callback(null);
+                        }
+                    });
+                }
+            });
         });
-    } else {
-        res.json({status: 0, statuscode: ERR_STATUS, body: INVALID});
-    }
+    });
 });
 
 router.all('/categorylist', function (req, res) {
-    var parent_id = req.body.parent_id;
-    var type = req.body.type;
-    var store_id = req.body.store_id;
-    var APP_ID = req.headers.app_id;
-    var URL = req.URL;
-    if (parent_id > 0) {
-        client.hgetall('category_' + parent_id, function (err, object) {
-            if (object != null && object.parent_id == parent_id) {
-                res.json({status: 1, statuscode: SUCCESS_STATUS, body: object});
-            } else {
-                var body = ({parent_id: parent_id, type: type, store_id: store_id});
-                var headers = {APP_ID: APP_ID};
-                var url = URL + '/category/categorylist/';
-                request_.request(body, headers, url, function (req, response, msg) {
-                    if (msg == ERROR) {
-                        res.json({status: 0, statuscode: ERR_STATUS, error: response});
-                    } else if (req.statusCode == ERR_STATUS) {
-                        res.json({status: 0, statuscode: req.statusCode, body: response});
-                    } else {
-                        client.hmset('category_' + parent_id, {
-                            'parent_id': parent_id,
-                            "body": response,
-                            "type": type
-                        });
-                        client.expire('category_' + parent_id, config.CATEGORY_EXPIRESAT);
-                        res.json({status: 1, statuscode: req.statusCode, body: response});
-                    }
+    validate(req, res, {countryid: 'optional',
+        zip: 'optional',
+        city: 'optional',
+        telephone: 'optional',
+        fax: 'optional',
+        company: 'optional',
+        street: 'optional',
+        firstname: 'optional',
+        lastname: 'optional',
+        password: 'optional',
+        newPassword: 'optional',
+        secret: 'optional',
+        entity_id: 'optional',
+        productid: 'optional',
+        store_id: 'required',
+        parent_id: 'required',
+        type: 'required'}, null, function (body) {
+        redisFetch(req, res, 'category_', body.parent_id, body.type, function () {
+            API(req, res, body, '/category/categorylist/', function (status, response, msg) {
+                redisSet('category_', body.parent_id, null, response, body.type, function () {
+                    success(res, status, response);
+                    // res.json({status: status, statuscode: msg, body: response});
                 });
-
-            }
+            });
         });
-    } else {
-        res.json({status: 0, error: ERR_STATUS, body: INVALID});
-    }
+    });
 });
 
 module.exports = router;

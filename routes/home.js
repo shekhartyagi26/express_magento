@@ -1,100 +1,118 @@
-var express = require('express');
-var router = express.Router();
-var path = require('path');
-var request = require('request');
 require('node-import');
+require('../service/validate');
+require('../service/image');
+require('../service/request');
+require('../service/cache');
+require('../service/responseMsg');
 imports('config/index');
 imports('config/constant');
+var express = require('express');
+var router = express.Router();
+var async = require('async');
 var redis = require("redis"),
         client = redis.createClient();
-const request_ = require('../service/request');
 
 router.post('/products', function (req, res) {
-    var type = req.body.type;
     var APP_ID = req.headers.app_id;
-    var URL = req.URL;
-    if (type.length > 0) {
-        client.hgetall('products_' + type, function (err, object) {
-            if (object != null && object.type == type) {
-                res.json(object);
-            } else {
-                var body = ({type: type});
-                var headers = {APP_ID: APP_ID};
-                var url = URL + '/home/products/';
-                request_.request(body, headers, url, function (req, response, msg) {
-                    if (msg == ERROR) {
-                        res.json({status: 0, statuscode: ERR_STATUS, error: response});
-                    } else if (req.statusCode == ERR_STATUS) {
-                        res.json({status: 0, statuscode: req.statusCode, body: response});
-                    } else {
-                        res.json({status: 1, statuscode: req.statusCode, body: response});
-                        client.hmset('products_' + type, {
-                            'type': type,
-                            "body": response
-                        });
-                        client.expire('products_' + type, config.PRODUCT_EXPIRESAT);
-                    }
-                });
-            }
+    validate(req, res, {
+        type: 'required',
+        secret: 'optional',
+        mobile_width: 'required'
+    }, null, function (body) {
+        redisFetch(req, res, 'products_', null, body.type, function () {
+            API(req, res, body, '/home/products/', function (status, response, msg) {
+                if (response !== undefined) {
+                    var optmized_response = [];
+                    async.eachOfLimit(response, 5, processData, function (err) {
+                        if (err) {
+                            success(res, 0, "OOPS! How is this possible?");
+                        } else {
+                            redisSet('products_', null, null, response, body.type, function () {
+                                success(res, status, optmized_response);
+                            });
+                        }
+                    });
+                } else {
+                    success(res, 0, ERROR);
+                }
+
+                function processData(item, key, callback) {
+                    var image_url = item.data.small_image;
+                    resize(image_url, APP_ID, body.mobile_width, function (status, response_, image_name) {
+                        if (status == '200') {
+                            minify(image_name, APP_ID, function (status, response_, minify_image) {
+                                item.data.small_image = image_name;
+                                item.data.minify_image = minify_image;
+                                optmized_response[key] = item;
+                                callback(null);
+                            });
+                        } else {
+                            item.data.small_image = image_url;
+                            item.data.minify_image = image_url;
+                            optmized_response[key] = item;
+                            callback(null);
+                        }
+                    });
+                }
+            });
         });
-    } else {
-        res.json({status: 0, error: ERR_STATUS, body: INVALID});
-    }
+    });
 });
 
 router.post('/categories', function (req, res) {
-    var APP_ID = req.headers.app_id;
-    var URL = req.URL;
-    client.hgetall('categories', function (err, object) {
-        if (object != null && object == object) {
-            res.json(object);
-        } else {
-            var body = ({});
-            var headers = {APP_ID: APP_ID};
-            var url = URL + '/home/categories/';
-            request_.request(body, headers, url, function (req, response, msg) {
-                if (msg == ERROR) {
-                    res.json({status: 0, statuscode: ERR_STATUS, error: response});
-                } else if (req.statusCode == ERR_STATUS) {
-                    res.json({status: 0, statuscode: req.statusCode, body: response});
-                } else {
-                    res.json({status: 1, statuscode: req.statusCode, body: response});
-                    client.hmset('categories', {
-                        "body": response
-                    });
-                    client.expire('categories', config.PRODUCT_EXPIRESAT);
-                }
+    validate(req, res, {}, null, function (body) {
+        redisFetch(req, res, 'categories', null, null, function () {
+            API(req, res, body, '/home/categories/', function (status, response, msg) {
+                redisSet('categories', null, null, response, null, function () {
+                    success(res, status, response);
+                });
             });
-        }
+        });
     });
 });
 
 router.post('/slider', function (req, res) {
     var APP_ID = req.headers.app_id;
-    var URL = req.URL;
-    client.hgetall('slider', function (err, object) {
-        if (object != null && object == object) {
-            res.json(object);
-        } else {
-            var body = ({});
-            var headers = {APP_ID: APP_ID};
-            var url = URL + '/home/slider/';
-            request_.request(body, headers, url, function (req, response, msg) {
-                if (msg == ERROR) {
-                    res.json({status: 0, statuscode: ERR_STATUS, error: response});
-                } else if (req.statusCode == ERR_STATUS) {
-                    res.json({status: 0, statuscode: req.statusCode, msg: msg});
-                } else {
-                    client.hmset('slider', {
-                        "body": response,
-                        "status": 1,
-                        "statuscode": req.statusCode
+    validate(req, res, {
+        mobile_width: 'required'
+    }, null, function (body) {
+        redisFetch(req, res, 'slider', null, null, function () {
+            API(req, res, body, '/home/slider/', function (status, response, msg) {
+                if (response.url !== undefined) {
+                    var optmized_response = [];
+                    async.eachOfLimit(response.url, 5, processData, function (err) {
+                        if (err) {
+                            success(res, 0, "OOPS! How is this possible?");
+                        } else {
+                            client.hmset('slider', {
+                                "body": JSON.stringify(response),
+                                "status": 1,
+                                "statuscode": msg
+                            });
+                            client.expire('categories', config.PRODUCT_EXPIRESAT);
+                            success(res, status, optmized_response);
+                        }
                     });
-                    client.expire('categories', config.PRODUCT_EXPIRESAT);
-                    res.json({status: 1, statuscode: req.statusCode, body: response});
+                } else {
+                    success(res, 0, ERROR);
+                }
+
+                function processData(item, key, callback) {
+                    resize(item, APP_ID, body.mobile_width, function (status, response_, image_name) {
+                        if (status == '200') {
+                            image_url = image_name;
+                            item = image_url;
+                            optmized_response[key] = item;
+                            callback(null);
+                        } else {
+                            item = image_url;
+                            optmized_response[key] = item;
+                            callback(null);
+                        }
+                    });
                 }
             });
-        }
+        });
     });
 });
 

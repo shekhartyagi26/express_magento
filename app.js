@@ -11,25 +11,32 @@ var redis = require('./middleware/redis.js');
 var db = require('./mods/db.js');
 var app = express();
 
+var optimus = require('connect-image-optimus');
+var connect = require('connect');
+var serveStatic = require('serve-static');
+
+var staticPath = __dirname + '/static/';
+
+app.use(optimus(staticPath));
+//app.use(connect.static(staticPath));
+app.use(serveStatic(staticPath));
+
 
 var cors = require('cors');
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+app.set('view engine', 'pug');
 
 app.use(favicon());
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public ')));
 app.use(cors());
 app.use(db());
 app.use(verify);
 app.use(redis);
-
-
-
 
 var routes = require('./routes/index');
 var category = require('./routes/category');
