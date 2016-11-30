@@ -30,6 +30,8 @@ resize = function (url, APP_ID, mobile_width, callback) {
         var image_webp = '/' + image_name_without_extension + '.webp';
         var image_png = '/' + image_name_without_extension + '.png';
         if (fileExists('public/original_image/' + image_name) == false) {
+                    console.log("yyyyyyyyyyyyyyyyyyyyyyyy")
+
             var width = JSON.parse(mobile_width);
             var file = fs.createWriteStream("public/original_image/" + image_name);
             http.get(url, function (response) {
@@ -63,6 +65,7 @@ resize = function (url, APP_ID, mobile_width, callback) {
                 }
             });
         } else {
+            console.log('222')
             callback(200, "done", config.CDN_URL + filename + image_png);
         }
     } else {
