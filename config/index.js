@@ -1,4 +1,5 @@
-config = {'APP_ID': 'com.tethr',
+config = {
+    'APP_ID': 'com.tethr',
     "DbUrl": "mongodb://127.0.0.1/magento_mobile",
     "URL": "http://144.76.34.244:8080/magento/mobile/web/index.php/excellence/mobile/api/v1",
     "CATEGORY_EXPIRESAT": "216000",
