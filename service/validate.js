@@ -10,7 +10,10 @@ validate = function (req, res, schema, secret, callback) {
             if (myKey == 'secret') {
                 result[myKey] = secret;
             }
-            if (req.body[myKey]) {
+
+            if(myKey == 'entity_id'){
+                result[myKey] = req.body[myKey];
+            } else if (req.body[myKey]) {
                 result[myKey] = req.body[myKey];
             } else {
                 find = true;
