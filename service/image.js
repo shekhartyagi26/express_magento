@@ -30,8 +30,6 @@ resize = function (url, APP_ID, mobile_width, callback) {
         var image_webp = '/' + image_name_without_extension + '.webp';
         var image_png = '/' + image_name_without_extension + '.png';
         if (fileExists('public/original_image/' + image_name) == false) {
-                    console.log("yyyyyyyyyyyyyyyyyyyyyyyy")
-
             var width = JSON.parse(mobile_width);
             var file = fs.createWriteStream("public/original_image/" + image_name);
             http.get(url, function (response) {
@@ -65,7 +63,6 @@ resize = function (url, APP_ID, mobile_width, callback) {
                 }
             });
         } else {
-            console.log('222')
             callback(200, "done", config.CDN_URL + filename + image_png);
         }
     } else {
@@ -82,7 +79,9 @@ minify = function (url, APP_ID, callback) {
         var image_name_without_extension = image_name.substr(0, image_name.lastIndexOf('.'));
         var image_jpg = '/' + image_name_without_extension + '.jpg';
         var image_minified_name = filename.replace("comtethr/300", "comtethr/300/minify");
+        console.log('public' + image_minified_name + '/' + image_jpg)
         if (fileExists('public' + image_minified_name + '/' + image_jpg) == false) {
+            console.log('exist')
                 imagemin(["public/original_image/" + image_jpg], 'public/' + image_minified_name, {
                  plugins: [
                  imageminMozjpeg(),
@@ -96,6 +95,7 @@ minify = function (url, APP_ID, callback) {
                      }
            })
         } else {
+            console.log("12322")
             callback(200, "done", config.CDN_URL+image_minified_name+image_jpg);
         }
     } else {
