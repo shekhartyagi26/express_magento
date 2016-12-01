@@ -1,7 +1,5 @@
 require('node-import');
 imports('config/index');
-require('../service/category');
-require('../service/responseMsg');
 require('../service/cron');
 
 module.exports = function () {
@@ -14,6 +12,11 @@ module.exports = function () {
             cron_running_time: {type: String, required: true, unique: true}
         });
         var app_urls = mongoose.model('AppUrls', app_url_schema);
+        var categoryListSchema = mongoose.Schema({}, {
+            strict: false,
+            collection: 'categoryList'
+        });
+        var CollectioncategoryList = conn.model('categoryList', categoryListSchema);
         app_urls.find({}, {APP_ID: 1, _id: 0}, function (err, value) {
             if (err) {
                 console.log(err)
@@ -22,7 +25,7 @@ module.exports = function () {
             } else {
                 for (i = 0; i < value.length; i++) {
                     app_id = value[i].get('APP_ID');
-                    cron(app_urls, app_id);
+                    cron(app_urls, CollectioncategoryList, app_id);
                 }
             }
         })
