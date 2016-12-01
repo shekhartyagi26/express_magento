@@ -1,33 +1,37 @@
 var redis = require("redis"),
         client = redis.createClient();
 
-redisFetch = function (req, productType, id, type, callback) {
+redisFetch = function (req, productType, id, type, isAdmin, callback) {
     var status = req.status;
-    client.hgetall(productType + id, function (err, object) {
-        if (err) {
-            callback({status: 0, body: err});
-        } else {
-            if (id) {
-                if (object !== null && object.id == id && status == "enabled") {
-                    callback({status: 1, body: object});
-                } else {
-                    callback({status: 2});
-                }
-            } else if (!id && type) {
-                if (object != null && object.type == type && status == "enabled") {
-                    callback({status: 1, body: object});
-                } else {
-                    callback({status: 2});
-                }
+    if (isAdmin == true) {
+        callback(null);
+    } else {
+        client.hgetall(productType + id, function (err, object) {
+            if (err) {
+                callback({status: 0, body: err});
             } else {
-                if (object != null && status == 'enabled') {
-                    callback({status: 1, body: object});
+                if (id) {
+                    if (object !== null && object.id == id && status == "enabled") {
+                        callback({status: 1, body: object});
+                    } else {
+                        callback({status: 2});
+                    }
+                } else if (!id && type) {
+                    if (object != null && object.type == type && status == "enabled") {
+                        callback({status: 1, body: object});
+                    } else {
+                        callback({status: 2});
+                    }
                 } else {
-                    callback({status: 2});
+                    if (object != null && status == 'enabled') {
+                        callback({status: 1, body: object});
+                    } else {
+                        callback({status: 2});
+                    }
                 }
             }
-        }
-    });
+        });
+    }
 };
 
 redisSet = function (catType, id, limit, optmized_response, type, callback) {

@@ -6,7 +6,7 @@ var express = require('express');
 var router = express.Router();
 
 router.post('/products', function (req, res) {
-    homeProducts(req, function (body) {
+    homeProducts(req, isAdmin, function (body) {
         if (body.status == 0) {
             oops(res, body.msg);
         } else {
@@ -16,7 +16,7 @@ router.post('/products', function (req, res) {
 });
 
 router.post('/categories', function (req, res) {
-    homeCategories(req, function (body) {
+    homeCategories(req, isAdmin, function (body) {
         if (body.status == 0) {
             oops(res, body.msg);
         } else {
@@ -26,7 +26,7 @@ router.post('/categories', function (req, res) {
 });
 
 router.post('/slider', function (req, res) {
-    homeSlider(req, function (body) {
+    homeSlider(req, isAdmin, function (body) {
         if (body.status == 0) {
             oops(res, body.msg);
         } else {

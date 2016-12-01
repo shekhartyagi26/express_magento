@@ -11,7 +11,7 @@ var express = require('express');
 var router = express.Router();
 
 router.post('/get', function (req, res) {
-    productGet(req, function (body) {
+    productGet(req, isAdmin, function (body) {
         if (body.status == 0) {
             oops(res, body.msg);
         } else {
@@ -21,7 +21,7 @@ router.post('/get', function (req, res) {
 });
 
 router.post('/review', function (req, res) {
-    productReview(req, function (body) {
+    productReview(req, isAdmin, function (body) {
         if (body.status == 0) {
             oops(res, body.msg);
         } else {
@@ -31,7 +31,7 @@ router.post('/review', function (req, res) {
 });
 
 router.post('/getrating', function (req, res) {
-    productGetRating(req, function (body) {
+    productGetRating(req, isAdmin, function (body) {
         if (body.status == 0) {
             oops(res, body.msg);
         } else {
