@@ -54,6 +54,8 @@ var address = require('./routes/address');
 var cart = require('./routes/cart');
 var redis = require('./routes/redis');
 var web = require('./routes/web');
+var cron = require('./routes/cron');
+
 
 app.use('/', routes);
 app.use('/category', category);
@@ -65,6 +67,9 @@ app.use('/order', order);
 app.use('/address', address);
 app.use('/cart', cart);
 app.use('/redis', redis);
+app.use('/web', web);
+app.use('/cron', cron);
+
 
 app.use(function (req, res, next) {
     var err = new Error('Not Found');
