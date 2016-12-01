@@ -4,8 +4,6 @@ require('../service/category');
 require('../service/responseMsg');
 require('../service/cron');
 
-
-
 module.exports = function () {
     var mongoose = require('mongoose');
     mongoose.connect(config.DB_URL, function (err, db) {
@@ -13,11 +11,23 @@ module.exports = function () {
             headers: {type: String, required: true, unique: true},
             url: {type: String, required: true, unique: true},
             status: {type: String, required: true, unique: true},
-            Cron_running_time: {type: String, required: true, unique: true}
+            cron_running_time: {type: String, required: true, unique: true}
         });
-        var AppUrls = mongoose.model('AppUrls', app_url_schema);
-        cron(AppUrls);
+        var app_urls = mongoose.model('AppUrls', app_url_schema);
+        app_urls.find({}, {APP_ID: 1, _id: 0}, function (err, value) {
+            if (err) {
+                console.log(err)
+            } else if (!value) {
+                console.log(value)
+            } else {
+                for (i = 0; i < value.length; i++) {
+                    app_id = value[i].get('APP_ID');
+                    cron(app_urls, app_id);
+                }
+            }
+        })
     });
+
     var Schema = mongoose.Schema;
     var conn = mongoose.connection;
     var Grid = require('gridfs-stream');
@@ -31,7 +41,7 @@ module.exports = function () {
     return function (req, res, next) {
         req.mongo = conn;
         req.gfs = gfs;
-        req.app = AppUrls;
+        req.app = app_urls;
         next();
     };
 };
