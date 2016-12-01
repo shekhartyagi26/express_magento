@@ -23,37 +23,37 @@ cron = function (AppUrls, CollectioncategoryList) {
                 var time = moment().tz(timezone).format('h:mm:ss a');
                 // var EST_timezone = 'EST' + moment().tz("Europe/London").format('h:mm:ss a');
                 // var PST_timezone = 'PST' + moment().tz("America/Los_Angeles").format('h:mm:ss a');
-//                if (time == cron_running_time) {
+                if (time == cron_running_time) {
 //                    console.log('here you can fire api');
-                console.log('You will see this message every second');
-                categoryList(req, function (body) {
-                    if (body.status == 0) {
-                    } else {
-                        var categoryListDB = CollectioncategoryList;
+                    console.log('You will see this message every second');
+                    categoryList(req, function (body) {
+                        if (body.status == 0) {
+                        } else {
+                            var categoryListDB = CollectioncategoryList;
 
-                        categoryListDB.find({
-                        }, function (error, result) {
-                            if (error) {
-                                console.log(error);
-                            } else if (result.length == 0 || !result) {
-                                var allData = body.msg.children[0].children;
-                                for (var a = allData.length - 1; a >= 0; a--) {
-                                    var allRecords = new categoryListDB({cache: 0, data: allData[a]});
-                                    allRecords.save(function (err) {
-                                        if (err) {
-                                            console.log('not saved');
-                                        } else {
-                                            console.log('saved');
-                                        }
-                                    });
+                            categoryListDB.find({
+                            }, function (error, result) {
+                                if (error) {
+                                    console.log(error);
+                                } else if (result.length == 0 || !result) {
+                                    var allData = body.msg.children[0].children;
+                                    for (var a = allData.length - 1; a >= 0; a--) {
+                                        var allRecords = new categoryListDB({cache: 0, data: allData[a]});
+                                        allRecords.save(function (err) {
+                                            if (err) {
+                                                console.log('not saved');
+                                            } else {
+                                                console.log('saved');
+                                            }
+                                        });
+                                    }
+                                } else {
+                                    console.log('Record already exist.');
                                 }
-                            } else {
-                                console.log('Record already exist.');
-                            }
-                        });
-                    }
-                });
-//                }
+                            });
+                        }
+                    });
+                }
             }
         });
     }, null, true);
