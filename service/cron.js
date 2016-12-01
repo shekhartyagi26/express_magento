@@ -7,7 +7,7 @@ require('./category');
 
 cron = function (AppUrls, CollectioncategoryList) {
     // pattern for crone  after 5 min '*/5 * * * *'
-    new CronJob('*/1 * * * *', function () {
+    new CronJob('* * * * * *', function () {
         AppUrls.findOne({APP_ID: "com.tethr"}, function (err, user) {
             if (err) {
                 console.log(err);
@@ -20,11 +20,12 @@ cron = function (AppUrls, CollectioncategoryList) {
 //                    console.log('here you can fire api');
                 console.log('You will see this message every minute');
                 var categoryListDB = CollectioncategoryList;
-                categoryListDB.find({
+                categoryListDB.findOne({
+                    cache: 0
                 }, function (error, result) {
                     if (error) {
                         console.log(error);
-                    } else if (result.length == 0 || !result) {
+                    } else if (!result) {
                         var req = {headers: {app_id: config.APP_ID},
                             body: {store_id: '1', parent_id: '1', type: 'full'},
                             URL: config.URL
@@ -34,8 +35,8 @@ cron = function (AppUrls, CollectioncategoryList) {
                             } else {
                                 var allData = body.msg.children[0].children;
                                 for (var a = allData.length - 1; a >= 0; a--) {
-                                    var allRecords = new categoryListDB({cache: 0, categoryId: allData[a].id,
-                                        categoryName: allData[a].name});
+                                    var allRecords = new categoryListDB({cache: 0, key: allData[a].id,
+                                        categoryName: allData[a].name, type: 'category'});
                                     allRecords.save(function (err) {
                                         if (err) {
                                             console.log('not saved');
@@ -47,34 +48,45 @@ cron = function (AppUrls, CollectioncategoryList) {
                             }
                         });
                     } else {
-                        for (var p = 0; p < result.length; p++) {
-                            var row = result[p];
-                            var inputId = row.get('categoryId');
-                            categoryListDB.update({
-                                categoryId: inputId
-                            }, {
-                                $set: {
-                                    cache: '1'
-                                }
-                            }, function (err) {
-                                if (!err) {
-                                    console.log('Update Done');
-                                    var myReq = {headers: {app_id: config.APP_ID},
-                                        body: {id: inputId, limit: '10', mobile_width: '300', pageno: '1'},
-                                        URL: config.URL
-                                    };
-                                    console.log(inputId);
-                                    console.log('***********');
-                                    categoryProducts(myReq, function (body) {
-                                        if (body.status == 0) {
-                                            console.log('error');
-                                        } else {
-                                            console.log(inputId);
-                                            console.log('-----------------');
-                                            console.log(body.msg);
-                                            console.log(body.msg.length);
-                                            console.log('-----------------');
+                        console.log('esle');
+                        var type = result.get('type');
+                        if (type == 'category') {
+                            var inputId = result.get('key');
+                            var myReq = {headers: {app_id: config.APP_ID},
+                                body: {id: inputId, limit: '10', mobile_width: '300', pageno: '1'},
+                                URL: config.URL
+                            };
+                            categoryProducts(myReq, function (body) {
+                                if (body.status == 0) {
+                                    console.log('error');
+                                } else {
+                                    var allData = body.msg;
+                                    for (var a = 0; a < allData.length; a++) {
+                                        var row = allData[a].data;
+                                        var allRecords = new categoryListDB({cache: 0, key: row.sku,
+                                            name: row.name, type: 'product'});
+                                        allRecords.save(function (err) {
+                                            if (err) {
+                                                console.log('not saved');
+                                            } else {
+                                                console.log('saved sub-category');
+                                                categoryListDB.update({
+                                                    'key': inputId
+                                                }, {
+                                                    $set: {
+                                                        cache: 1
+                                                    }
+                                                }, function (err) {
+                                                    if (!err) {
+                                                        console.log('Update Done');
+                                                    } else {
+                                                        console.log('my error');
+                                                    }
+                                                });
+                                            }
+                                        });
 
+                                    }
 
 //                                    var categoryProductsDB = CollectioncategoryList;
 //                                    categoryProductsDB.update({
@@ -90,11 +102,31 @@ cron = function (AppUrls, CollectioncategoryList) {
 //                                            console.log('my error');
 //                                        }
 //                                    });
+                                }
+                            });
+                        } else if (type == 'product') {
+                            var inputId = result.get('key');
+                            var myReq = {headers: {app_id: config.APP_ID},
+                                body: {sku: inputId, mobile_width: '300'},
+                                URL: config.URL
+                            };
+                            productGet(myReq, function (body) {
+                                if (body.status == 0) {
+                                    console.log('error');
+                                } else {
+                                    categoryListDB.update({
+                                        'key': inputId
+                                    }, {
+                                        $set: {
+                                            cache: 1
+                                        }
+                                    }, function (err) {
+                                        if (!err) {
+                                            console.log('Product get done.');
+                                        } else {
+                                            console.log('my error');
                                         }
                                     });
-
-                                } else {
-                                    console.log('my error');
                                 }
                             });
                         }
