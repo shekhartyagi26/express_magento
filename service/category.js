@@ -53,7 +53,7 @@ categoryProducts = function (req, callback) {
                                         callback({status: 0, msg: 'OOPS! How is this possible?'});
                                     } else {
                                         redisSet('category_', body.id, body.limit, JSON.stringify(optmized_response), null, function () {
-                                            callback({status: status, msg: optmized_response})
+                                            callback({status: status, msg: optmized_response});
                                         });
                                     }
                                 });
