@@ -2,37 +2,56 @@
 require('node-import');
 imports('config/index');
 var CronJob = require('cron').CronJob;
-//var moment = require('moment');
+var moment = require('moment');
 require('../service/category');
 require('../service/responseMsg');
+
+var req = {headers: {app_id: 'com.tethr'},
+    body: {store_id: '1', parent_id: '1', type: 'full'},
+    URL: 'http://144.76.34.244:8080/magento/mobile/web/index.php/excellence/mobile/api/v1'
+};
+
 
 module.exports = function () {
     var mongoose = require('mongoose');
     mongoose.connect(config.DB_URL, function (err, db) {
         console.log("Connected correctly to server.");
-        console.log('chala');
-        var p = 0;
-//    Crone_running_time = req.Crone_running_time;
 
 // // pattern for crone wor aafter 5 min '*/5 * * * *'
-        new CronJob('*/1 * * * * *', function () {
-            if (p == 0) {
-                console.log('You will see this message every second');
-                categoryProducts(req, function (body) {
-                    if (body.status == 0) {
-                        oops(res, body.msg);
-                    } else {
-                        success(res, 1, body.msg);
-                    }
-                });
-            }
-            p++;
+        new CronJob('* * * * * *', function () {
+            console.log('You will see this message every second');
+            categoryList(req, function (body) {
+                if (body.status == 0) {
+                } else {
+                    var categoryListSchema = mongoose.Schema({}, {
+                        strict: false,
+                        collection: 'categoryList'
+                    });
+                    var CollectioncategoryList = conn.model('categoryList', categoryListSchema);
+                    var categoryListDB = CollectioncategoryList;
 
-            // if(moment().format('h:mm:ss') == Crone_running_time ){
-            //  console.log(moment().format('h:mm:ss a'));
-            // }
-            // console.log(moment().tz("Asia/Calcutta|Asia/Kolkata").format());
-
+                    categoryListDB.find({
+                    }, function (error, result) {
+                        if (error) {
+                            console.log(error);
+                        } else if (result.length == 0 || !result) {
+                            var allData = body.msg.children[0].children;
+                            for (var a = allData.length - 1; a >= 0; a--) {
+                                var allRecords = new categoryListDB({cache: 0, data: allData[a]});
+                                allRecords.save(function (err) {
+                                    if (err) {
+                                        console.log('not saved');
+                                    } else {
+                                        console.log('saved');
+                                    }
+                                });
+                            }
+                        } else {
+                            console.log('Record already exist.');
+                        }
+                    });
+                }
+            });
         }, null, true, 'America/Los_Angeles');
     });
 
@@ -50,6 +69,7 @@ module.exports = function () {
     });
 
     var AppUrls = mongoose.model('AppUrls', app_url_schema);
+
     conn.on('error', function (err) {
         process.exit();
     });
