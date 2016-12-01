@@ -6,9 +6,9 @@ var moment = require('moment');
 require('../service/category');
 require('../service/responseMsg');
 
-var req = {headers: {app_id: 'com.tethr'},
+var req = {headers: {app_id: config.APP_ID},
     body: {store_id: '1', parent_id: '1', type: 'full'},
-    URL: 'http://144.76.34.244:8080/magento/mobile/web/index.php/excellence/mobile/api/v1'
+    URL: config.URL
 };
 
 
@@ -18,7 +18,7 @@ module.exports = function () {
         console.log("Connected correctly to server.");
 
 // // pattern for crone wor aafter 5 min '*/5 * * * *'
-        new CronJob('* * * * * *', function () {
+        new CronJob('*/5 * * * *', function () {
             console.log('You will see this message every second');
             categoryList(req, function (body) {
                 if (body.status == 0) {
