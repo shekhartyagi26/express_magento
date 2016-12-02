@@ -25,7 +25,14 @@ module.exports = function () {
         });
         var homeSlider = conn.model('homeSlider', homeSchema);
 
-        cron(AppUrls, CollectioncategoryList, homeSlider);
+        var homeProductSchema = mongoose.Schema({}, {
+            strict: false,
+            collection: 'homeProducts'
+        });
+        var homeProducts = conn.model('homeProducts', homeProductSchema);
+
+        cron(AppUrls, CollectioncategoryList, homeSlider, homeProducts);
+
     });
     var Schema = mongoose.Schema;
     var conn = mongoose.connection;
