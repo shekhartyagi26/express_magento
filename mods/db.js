@@ -17,6 +17,16 @@ module.exports = function () {
             collection: 'categoryList'
         });
         var CollectioncategoryList = conn.model('categoryList', categoryListSchema);
+        var homeSchema = mongoose.Schema({}, {
+            strict: false,
+            collection: 'homeSlider'
+        });
+        var homeSlider = conn.model('homeSlider', homeSchema);
+        var homeProductSchema = mongoose.Schema({}, {
+            strict: false,
+            collection: 'homeProducts'
+        });
+        var homeProducts = conn.model('homeProducts', homeProductSchema);
         app_urls.find({}, {APP_ID: 1, _id: 0}, function (err, value) {
             if (err) {
                 console.log(err)
@@ -25,7 +35,7 @@ module.exports = function () {
             } else {
                 for (i = 0; i < value.length; i++) {
                     app_id = value[i].get('APP_ID');
-                    // cron(app_urls, CollectioncategoryList, app_id);
+                    cron(app_urls, CollectioncategoryList, homeSlider, homeProducts,app_id);
                 }
             }
         })
