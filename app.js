@@ -23,9 +23,7 @@ var staticPath = __dirname + '/static/';
 app.use(optimus(staticPath));
 // app.use(connect.static(staticPath));
 app.use(serveStatic(staticPath));
-
 //var app = connect();
-
 
 var cors = require('cors');
 // view engine setup
