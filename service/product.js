@@ -34,7 +34,10 @@ productGet = function (req, callback) {
                                     if (err) {
                                         callback({status: 0, msg: 'OOPS! How is this possible?'});
                                     } else {
-                                        redisSet('product_', body.sku, null, JSON.stringify(optmized_response), null, function () {
+                                        redisSet('product_' + body.sku, {
+                                            'id': body.sku,
+                                            "body": JSON.stringify(optmized_response)
+                                        }, function () {
                                             callback({status: status, msg: optmized_response})
                                         });
                                     }
@@ -86,8 +89,11 @@ productReview = function (req, callback) {
                         if (status == 0) {
                             callback({status: 0, msg: response});
                         } else {
-                            redisSet('product_', body.sku, null, JSON.stringify(response), null, function () {
-                                callback({status: status, msg: response})
+                            redisSet('product_' + body.sku, {
+                                'id': body.sku,
+                                "body": JSON.stringify(response)
+                            }, function () {
+                                callback({status: status, msg: response});
                             });
                         }
                     });
@@ -113,7 +119,9 @@ productGetRating = function (req, callback) {
                             if (status == 0) {
                                 callback({status: 0, msg: response});
                             } else {
-                                redisSet('product_', null, null, response, null, function () {
+                                redisSet('product_', {
+                                    "body": JSON.stringify(response),
+                                }, function () {
                                     callback({status: status, msg: response})
                                 });
                             }

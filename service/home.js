@@ -39,7 +39,10 @@ homeProducts = function (req, callback) {
                                     if (err) {
                                         callback({status: 0, msg: 'OOPS! How is this possible?'});
                                     } else {
-                                        redisSet('products_', null, null, response, body.type, function () {
+                                        redisSet('products_' + body.type, {
+                                            "body": JSON.stringify(response),
+                                            "type": body.type
+                                        }, function () {
                                             callback({status: status, msg: optmized_response});
                                         });
                                     }
@@ -88,7 +91,9 @@ homeCategories = function (req, callback) {
                         if (status == 0) {
                             callback({status: 0, msg: response});
                         } else {
-                            redisSet('categories', null, null, response, null, function () {
+                            redisSet('categories', {
+                                "body": JSON.stringify(response)
+                            }, function () {
                                 callback({status: status, msg: response});
                             });
                         }
