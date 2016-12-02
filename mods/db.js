@@ -1,17 +1,26 @@
 require('node-import');
 imports('config/index');
 require('../service/cron');
+ var mongoose = require('mongoose');
+
+var Schema = mongoose.Schema;
+    var conn = mongoose.connection;
+    var Grid = require('gridfs-stream');
+    Grid.mongo = mongoose.mongo;
+    
 
 module.exports = function () {
-    var mongoose = require('mongoose');
-    mongoose.connect(config.DB_URL, function (err, db) {
-        var app_url_schema = new Schema({
+   
+    var app_url_schema = new Schema({
             headers: {type: String, required: true, unique: true},
             url: {type: String, required: true, unique: true},
             status: {type: String, required: true, unique: true},
             cron_running_time: {type: String, required: true, unique: true}
         });
-        var app_urls = mongoose.model('AppUrls', app_url_schema);
+    var app_urls = mongoose.model('AppUrls', app_url_schema);
+    mongoose.connect(config.DB_URL, function (err, db) {
+        
+        
         var categoryListSchema = mongoose.Schema({}, {
             strict: false,
             collection: 'categoryList'
@@ -29,28 +38,23 @@ module.exports = function () {
         var homeProducts = conn.model('homeProducts', homeProductSchema);
         app_urls.find({}, {APP_ID: 1, _id: 0}, function (err, value) {
             if (err) {
-                console.log(err)
+                console.log(err);
             } else if (!value) {
-                console.log(value)
+                console.log(value);
             } else {
                 for (i = 0; i < value.length; i++) {
                     app_id = value[i].get('APP_ID');
-                    cron(app_urls, CollectioncategoryList, homeSlider, homeProducts,app_id);
+                    cron(app_urls, CollectioncategoryList, homeSlider, homeProducts, app_id);
                 }
             }
-        })
+        });
     });
 
-    var Schema = mongoose.Schema;
-    var conn = mongoose.connection;
-    var Grid = require('gridfs-stream');
-    Grid.mongo = mongoose.mongo;
-    var gfs = Grid(conn.db);
-
+    
     conn.on('error', function (err) {
         process.exit();
     });
-
+    var gfs = Grid(conn.db);
     return function (req, res, next) {
         req.mongo = conn;
         req.gfs = gfs;

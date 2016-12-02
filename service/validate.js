@@ -28,8 +28,10 @@ validate = function (req, schema, secret, callback) {
         }
     }
     if (find == true) {
+        console.log('xxx')
         callback({status: 0, body: 'Fill required fields!'});
     } else {
+        console.log('xxx')
         callback(result);
     }
 };

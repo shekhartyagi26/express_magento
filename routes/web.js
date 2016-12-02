@@ -8,17 +8,17 @@ var express = require('express');
 var router = express.Router();
 
 router.post('/config', function (req, res) {
-    validate(req, res, {secret: 'optional'}, null, function (body) {
-        API(req, res, body, '/web/config', function (status, response, msg) {
+    validate(req, {secret: 'optional'}, null, function (body) {
+        API(req, body, '/web/config', function (status, response, msg) {
             success(res, status, response);
         });
     });
 });
 
 router.post('/getAllowedCountries', function (req, res) {
-    validate(req, res, {store_id: 'required',
+    validate(req, {store_id: 'required',
         secret: 'optional'}, null, function (body) {
-        API(req, res, body, '/web/getAllowedCountries', function (status, response, msg) {
+        API(req, body, '/web/getAllowedCountries', function (status, response, msg) {
             success(res, status, response);
         });
     });
