@@ -12,7 +12,7 @@ var async = require('async');
 var redis = require("redis"),
         client = redis.createClient();
 
-homeProducts = function (req,isAdmin, callback) {
+homeProducts = function (req, callback) {
     var APP_ID = req.headers.app_id;
     validate(req, {
         type: 'required',
@@ -22,7 +22,7 @@ homeProducts = function (req,isAdmin, callback) {
         if (body.status == 0) {
             callback({status: 0, msg: body.body});
         } else {
-            redisFetch(req, 'products_', null, body.type,isAdmin, function (result) {
+            redisFetch(req, 'products_', null, body.type, function (result) {
                 if (result.status == 0) {
                     callback({status: 0, msg: result.body});
                 } else if (result.status == 1) {
@@ -72,12 +72,12 @@ homeProducts = function (req,isAdmin, callback) {
     });
 };
 
-homeCategories = function (req,isAdmin, callback) {
+homeCategories = function (req, callback) {
     validate(req, {}, null, function (body) {
         if (body.status == 0) {
             callback({status: 0, msg: body.body});
         } else {
-            redisFetch(req, 'categories', null, null,isAdmin, function (result) {
+            redisFetch(req, 'categories', null, null, function (result) {
                 if (result.status == 0) {
                     callback({status: 0, msg: result.body});
                 } else if (result.status == 1) {
@@ -98,7 +98,7 @@ homeCategories = function (req,isAdmin, callback) {
     });
 };
 
-homeSlider = function (req,isAdmin, callback) {
+homeSlider = function (req, callback) {
     var APP_ID = req.headers.app_id;
     validate(req, {
         mobile_width: 'required'
@@ -106,7 +106,7 @@ homeSlider = function (req,isAdmin, callback) {
         if (body.status == 0) {
             callback({status: 0, msg: body.body});
         } else {
-            redisFetch(req, 'slider', null, null,isAdmin, function (result) {
+            redisFetch(req, 'slider', null, null, function (result) {
                 if (result.status == 0) {
                     callback({status: 0, msg: result.body});
                 } else if (result.status == 1) {

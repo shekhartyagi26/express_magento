@@ -10,7 +10,7 @@ var express = require('express');
 var router = express.Router();
 var async = require('async');
 
-productGet = function (req, isAdmin, callback) {
+productGet = function (req, callback) {
     var APP_ID = req.headers.app_id;
     validate(req, {sku: 'required',
         secret: 'optional',
@@ -18,7 +18,7 @@ productGet = function (req, isAdmin, callback) {
         if (body.status == 0) {
             callback({status: 0, msg: body.body});
         } else {
-            redisFetch(req, 'product_', body.parent_id, null, isAdmin, function (result) {
+            redisFetch(req, 'product_', body.parent_id, null, function (result) {
                 if (result.status == 0) {
                     callback({status: 0, msg: result.body});
                 } else if (result.status == 1) {
@@ -68,7 +68,7 @@ productGet = function (req, isAdmin, callback) {
     });
 };
 
-productReview = function (req, isAdmin, callback) {
+productReview = function (req, callback) {
     validate(req, {sku: 'required',
         secret: 'optional',
         mobile_width: 'required',
@@ -76,7 +76,7 @@ productReview = function (req, isAdmin, callback) {
         if (body.status == 0) {
             callback({status: 0, msg: body.body});
         } else {
-            redisFetch(req, 'product_', body.parent_id, null, isAdmin, function (result) {
+            redisFetch(req, 'product_', body.parent_id, null, function (result) {
                 if (result.status == 0) {
                     callback({status: 0, msg: result.body});
                 } else if (result.status == 1) {
@@ -97,13 +97,13 @@ productReview = function (req, isAdmin, callback) {
     });
 };
 
-productGetRating = function (req, isAdmin, callback) {
+productGetRating = function (req, callback) {
     validate(req, {}, null, function (body) {
         if (body.status == 0) {
             callback({status: 0, msg: body.body});
         } else {
             if (req.URL) {
-                redisFetch(req, 'product_', null, null, isAdmin, function (result) {
+                redisFetch(req, 'product_', null, null, function (result) {
                     if (result.status == 0) {
                         callback({status: 0, msg: result.body});
                     } else if (result.status == 1) {

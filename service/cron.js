@@ -6,7 +6,6 @@ var timezone = jstz.determine().name();
 require('./category');
 
 cron = function (app_urls, CollectioncategoryList, app_id) {
-    var isAdmin = true;
 // pattern for crone  after 5 min '*/5 * * * *'
     new CronJob('* * * * * *', function () {
         app_urls.findOne({APP_ID: app_id}, function (err, user) {
@@ -30,7 +29,7 @@ cron = function (app_urls, CollectioncategoryList, app_id) {
                     if (error) {
                         console.log(error);
                     } else if (result.length == 0 || !result) {
-                        var req = {headers: {app_id: config.APP_ID},
+                        var req = {headers: {app_id: config.APP_ID, isAdmin: true},
                             body: {store_id: '1', parent_id: '1', type: 'full'},
                             URL: config.URL
                         };

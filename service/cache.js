@@ -1,9 +1,9 @@
 var redis = require("redis"),
         client = redis.createClient();
 
-redisFetch = function (req, productType, id, type, isAdmin, callback) {
+redisFetch = function (req, productType, id, type, callback) {
     var status = req.status;
-    if (isAdmin == true) {
+    if (req.isAdmin == true) {
         callback(null);
     } else {
         client.hgetall(productType + id, function (err, object) {

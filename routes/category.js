@@ -11,7 +11,7 @@ var express = require('express');
 var router = express.Router();
 
 router.all('/products', function (req, res) {
-    categoryProducts(req, isAdmin, function (body, isAdmin) {
+    categoryProducts(req, function (body) {
         if (body.status == 0) {
             oops(res, body.msg);
         } else {
@@ -21,7 +21,7 @@ router.all('/products', function (req, res) {
 });
 
 router.all('/categorylist', function (req, res) {
-    categoryList(req, isAdmin, function (body) {
+    categoryList(req, function (body) {
         if (body.status == 0) {
             oops(res, body.msg);
         } else {
