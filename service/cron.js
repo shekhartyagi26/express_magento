@@ -18,6 +18,10 @@ cron = function (AppUrls, CollectioncategoryList, homeSliderList, homeProductsLi
                 var time = moment().tz(timezone).format('h:mm:ss a');
 //                if (time == cron_running_time) {
                 console.log('You will see this message every minute');
+
+
+//********************* START, CRON FOR CATEGORY PRODUCTS ************************
+
 //                var categoryListDB = CollectioncategoryList;
 //                categoryListDB.findOne({
 //                    cache: 0
@@ -140,52 +144,53 @@ cron = function (AppUrls, CollectioncategoryList, homeSliderList, homeProductsLi
 //                        }
 //                    }
 //                });
-//                
+
+//********************* END, CRON FOR CATEGORY PRODUCTS ************************
 
 //********************* START, CRON FOR HOME SLIDER ************************
 
-//                homeSliderList.findOne({
-//                    cache: 0
-//                }, function (error, result) {
-//                    if (error) {
-//                        console.log(error);
-//                    } else if (!result) {
-//                        var req = {headers: {app_id: config.APP_ID},
-//                            body: {mobile_width: '300'},
-//                            URL: config.URL
-//                        };
-//                        homeSlider(req, function (body) {
-//                            if (body.status == 0) {
-//                            } else {
-//                                var allData = body.msg;
-//                                for (var a = 0; a < allData.length; a++) {
-//                                    var allRecords = new homeSliderList({cache: 0, URL: allData[a],
-//                                        type: 'Home Slider'});
-//                                    allRecords.save(function (err) {
-//                                        if (err) {
-//                                            console.log('not saved');
-//                                        } else {
-//                                            console.log('saved');
-//                                        }
-//                                    });
-//                                }
-//                            }
-//                        });
-//                    } else {
-//                        var urlId = result.get('_id');
-//                        homeSliderList.update({_id: urlId}, {
-//                            $set: {
-//                                cache: 1
-//                            }
-//                        }, function (err) {
-//                            if (err) {
-//                                console.log(err);
-//                            } else {
-//                                console.log('Home Slider cache 1 Done!!');
-//                            }
-//                        });
-//                    }
-//                });
+                homeSliderList.findOne({
+                    cache: 0
+                }, function (error, result) {
+                    if (error) {
+                        console.log(error);
+                    } else if (!result) {
+                        var req = {headers: {app_id: config.APP_ID},
+                            body: {mobile_width: '300'},
+                            URL: config.URL
+                        };
+                        homeSlider(req, function (body) {
+                            if (body.status == 0) {
+                            } else {
+                                var allData = body.msg;
+                                for (var a = 0; a < allData.length; a++) {
+                                    var allRecords = new homeSliderList({cache: 0, URL: allData[a],
+                                        type: 'Home Slider'});
+                                    allRecords.save(function (err) {
+                                        if (err) {
+                                            console.log('not saved');
+                                        } else {
+                                            console.log('saved');
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                    } else {
+                        var urlId = result.get('_id');
+                        homeSliderList.update({_id: urlId}, {
+                            $set: {
+                                cache: 1
+                            }
+                        }, function (err) {
+                            if (err) {
+                                console.log(err);
+                            } else {
+                                console.log('Home Slider cache 1 Done!!');
+                            }
+                        });
+                    }
+                });
 //                
 
 //********************* END, CRON FOR HOME SLIDER ************************
