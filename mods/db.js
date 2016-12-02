@@ -19,7 +19,13 @@ module.exports = function () {
         });
         var CollectioncategoryList = conn.model('categoryList', categoryListSchema);
 
-        cron(AppUrls, CollectioncategoryList);
+        var homeSchema = mongoose.Schema({}, {
+            strict: false,
+            collection: 'homeSlider'
+        });
+        var homeSlider = conn.model('homeSlider', homeSchema);
+
+        cron(AppUrls, CollectioncategoryList, homeSlider);
     });
     var Schema = mongoose.Schema;
     var conn = mongoose.connection;
