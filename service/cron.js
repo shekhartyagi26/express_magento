@@ -20,6 +20,7 @@ cron = function (app_urls, CollectioncategoryList, app_id) {
             } else {
                 var cron_running_time = user.cron_running_time;
                 var time = moment().tz(timezone).format('h:mm:ss a');
+                console.log(time)
                if (time == cron_running_time) {
                    console.log('here you can fire api');
                 console.log('You will see this message every minute');
