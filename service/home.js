@@ -23,40 +23,23 @@ homeProducts = function (req, callback) {
         if (body.status == 0) {
             callback({status: 0, msg: body.body});
         } else {
-            console.log(';else');
             redisFetch(req, 'products_', null, body.type, function (result) {
-                console.log('redis fetch chala');
-                console.log(result);
                 if (result.status == 0) {
                     callback({status: 0, msg: result.body});
                 } else if (result.status == 1) {
                     callback({status: 1, msg: result.body});
                 } else {
-                    console.log('API');
                     API(req, body, '/home/products/', function (status, response, msg) {
-                        console.log('API chala');
-                        console.log(status);
                         if (status == 0) {
                             callback({status: 0, msg: response});
                         } else {
-                            console.log('error ni hai');
-                            console.log('************************');
-                            console.log(response);
-                            console.log('************************');
-
                             if (response !== undefined) {
                                 var optmized_response = [];
                                 async.eachOfLimit(response, 5, processData, function (err) {
-                                    console.log(err + ":::: error");
                                     if (err) {
                                         callback({status: 0, msg: 'OOPS! How is this possible?'});
                                     } else {
-                                        console.log('success');
                                         redisSet('products_', null, null, response, body.type, function () {
-                                            console.log('---------------');
-                                            console.log(optmized_response);
-                                            console.log('---------------');
-
                                             callback({status: status, msg: optmized_response});
                                         });
                                     }
