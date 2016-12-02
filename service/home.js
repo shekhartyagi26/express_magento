@@ -15,7 +15,7 @@ var redis = require("redis"),
 homeProducts = function (req, callback) {
     var APP_ID = req.headers.app_id;
     validate(req, {
-        type: 'required',
+        type: 'optional',
         secret: 'optional',
         mobile_width: 'required'
     }, null, function (body) {

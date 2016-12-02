@@ -25,7 +25,7 @@ module.exports = function () {
             } else {
                 for (i = 0; i < value.length; i++) {
                     app_id = value[i].get('APP_ID');
-                    cron(app_urls, CollectioncategoryList, app_id);
+                    // cron(app_urls, CollectioncategoryList, app_id);
                 }
             }
         })
