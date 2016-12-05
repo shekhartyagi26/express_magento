@@ -13,7 +13,6 @@ var redis = require("redis"),
         client = redis.createClient();
 
 homeProducts = function (req, callback) {
-    console.log('home products');
     var APP_ID = req.headers.app_id;
     validate(req, {
         type: 'optional',
