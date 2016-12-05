@@ -18,7 +18,7 @@ router.all('/products', function (req, res) {
             success(res, 1, body.msg);
         }
     });
-});
+}); 
 
 router.all('/categorylist', function (req, res) {
     categoryList(req, function (body) {
