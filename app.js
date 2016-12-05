@@ -1,5 +1,6 @@
 var express = require('express');
 var path = require('path');
+require('node-import');
 var favicon = require('static-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
@@ -21,11 +22,9 @@ var serveStatic = require('serve-static');
 var staticPath = __dirname + '/static/';
 
 app.use(optimus(staticPath));
-//app.use(connect.static(staticPath));
+// app.use(connect.static(staticPath));
 app.use(serveStatic(staticPath));
-
 //var app = connect();
-
 
 var cors = require('cors');
 // view engine setup
@@ -65,6 +64,7 @@ app.use('/order', order);
 app.use('/address', address);
 app.use('/cart', cart);
 app.use('/redis', redis);
+app.use('/web', web);
 
 app.use(function (req, res, next) {
     var err = new Error('Not Found');
@@ -87,6 +87,7 @@ if (app.get('env') === 'development') {
 // production error handler
 // no stacktraces leaked to user
 app.use(function (err, req, res, next) {
+    console.log(err)
     res.status(err.status || 500);
     res.render('error', {
         message: err.message,

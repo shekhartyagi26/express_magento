@@ -52,8 +52,12 @@ categoryProducts = function (req, callback) {
                                     if (err) {
                                         callback({status: 0, msg: 'OOPS! How is this possible?'});
                                     } else {
-                                        redisSet('category_', body.id, body.limit, JSON.stringify(optmized_response), null, function () {
-                                            callback({status: status, msg: optmized_response})
+                                        redisSet('category_' + body.id, {
+                                            'id': body.id,
+                                            "limit": body.limit,
+                                            "body": JSON.stringify(optmized_response)
+                                        }, function () {
+                                            callback({status: status, msg: optmized_response});
                                         });
                                     }
                                 });
@@ -117,7 +121,11 @@ categoryList = function (req, callback) {
                         if (status == 0) {
                             callback({status: 0, msg: response});
                         } else {
-                            redisSet('category_', body.parent_id, null, response, body.type, function () {
+                            redisSet('category_' + body.parent_id, {
+                                'id': body.parent_id,
+                                "body": JSON.stringify(response),
+                                "type": body.type
+                            }, function () {
                                 callback({status: 1, msg: response});
                             });
                         }

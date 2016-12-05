@@ -15,7 +15,7 @@ var redis = require("redis"),
 homeProducts = function (req, callback) {
     var APP_ID = req.headers.app_id;
     validate(req, {
-        type: 'required',
+        type: 'optional',
         secret: 'optional',
         mobile_width: 'required'
     }, null, function (body) {
@@ -38,8 +38,11 @@ homeProducts = function (req, callback) {
                                     if (err) {
                                         callback({status: 0, msg: 'OOPS! How is this possible?'});
                                     } else {
-                                        redisSet('products_', null, null, response, body.type, function () {
-                                            callback({status: status, msg: optmized_response})
+                                        redisSet('products_' + body.type, {
+                                            "body": JSON.stringify(response),
+                                            "type": body.type
+                                        }, function () {
+                                            callback({status: status, msg: optmized_response});
                                         });
                                     }
                                 });
@@ -87,7 +90,9 @@ homeCategories = function (req, callback) {
                         if (status == 0) {
                             callback({status: 0, msg: response});
                         } else {
-                            redisSet('categories', null, null, response, null, function () {
+                            redisSet('categories', {
+                                "body": JSON.stringify(response)
+                            }, function () {
                                 callback({status: status, msg: response});
                             });
                         }
@@ -120,7 +125,7 @@ homeSlider = function (req, callback) {
                                 var optmized_response = [];
                                 async.eachOfLimit(response.url, 5, processData, function (err) {
                                     if (err) {
-                                        success(res, 0, "OOPS! How is this possible?");
+                                        callback({status: 0, msg: "OOPS! How is this possible?"});
                                     } else {
                                         client.hmset('slider', {
                                             "body": JSON.stringify(response),
@@ -128,7 +133,7 @@ homeSlider = function (req, callback) {
                                             "statuscode": msg
                                         });
                                         client.expire('categories', config.PRODUCT_EXPIRESAT);
-                                        success(res, status, optmized_response);
+                                        callback({status: status, msg: optmized_response});
                                     }
                                 });
                             } else {
