@@ -103,4 +103,17 @@ router.post('/submitreview', function (req, res) {
     });
 });
 
+router.post('/productNotification', function (req, res) {
+    validate(req, res, {sku: 'required',
+        email: 'required'}, null, function (body) {
+        if (req.headers.app_id && req.URL) {
+            API(req, res, body, '/product/productNotification/', function (status, response, msg) {
+                success(res, status, response);
+            });
+        } else {
+            success(res, 0, INVALID);
+        }
+    });
+});
+
 module.exports = router;
