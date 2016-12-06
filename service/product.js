@@ -46,22 +46,30 @@ productGet = function (req, callback) {
                                 callback({status: 0, msg: ERROR});
                             }
                             function processData(item, key, callback) {
-                                var image_url = item.small_image;
-                                resize(image_url, APP_ID, body.mobile_width, function (status, image_name) {
-                                    if (status == "200") {
-                                        minify(image_name, APP_ID, function (status, minify_image) {
-                                            item.small_image = image_name;
-                                            item.minify_image = minify_image;
-                                            optmized_response[key] = item;
-                                            callback(null);
+                                if (item.media_images) {
+                                    for (var i = 0; i < item.media_images.length; i++) {
+                                        var image_url = item.media_images[i];
+                                        image_length = item.media_images.length;
+                                        var image_url = item.small_image;
+                                        resize(image_url, APP_ID, body.mobile_width, function (status, image_name) {
+                                            if (status == "200") {
+                                                minify(image_name, APP_ID, function (status, minify_image) {
+                                                    item.media_images = image_name;
+                                                    // item.minify_image = minify_image;
+                                                    optmized_response[key] = item;
+                                                    if (image_length - 1) {
+                                                        callback(null);
+                                                    }
+                                                });
+                                            } else {
+                                                item.media_images = image_url;
+                                                // item.minify_image = image_url;
+                                                optmized_response[key] = item;
+                                                callback(null);
+                                            }
                                         });
-                                    } else {
-                                        item.small_image = image_url;
-                                        item.minify_image = image_url;
-                                        optmized_response[key] = item;
-                                        callback(null);
                                     }
-                                });
+                                }
                             }
                         }
                     });
