@@ -34,6 +34,7 @@ redisFetch = function (req, productType, id, type, callback) {
     }
 };
 
+//redisSet = function (catType, id, limit, optmized_response, type, callback) {
 redisSet = function (key, value, callback) {
     client.hmset(key, value);
     client.expire(key, config.CATEGORY_EXPIRESAT);
