@@ -2,6 +2,7 @@ require('node-import');
 imports('config/index');
 require('../service/cron');
 var mongoose = require('mongoose');
+var _ = require('lodash');
 
 var Schema = mongoose.Schema;
 var conn = mongoose.connection;
@@ -49,10 +50,10 @@ module.exports = function () {
             } else if (!value) {
                 console.log(value);
             } else {
-                for (i = 0; i < value.length; i++) {
-                    app_id = value[i].get('APP_ID');
+                _.forEach(value, function (row) {
+                    app_id = row.get('APP_ID');
                     processStore(app_urls, CollectioncategoryList, homeSlider, homeProducts, app_id);
-                }
+                });
             }
         });
     });
