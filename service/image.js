@@ -74,7 +74,7 @@ resize = function (url, APP_ID, mobile_width, callback) {
     }
 };
 
-minify = function (url, APP_ID, callback) {
+minify = function (url, APP_ID, mobile_width, callback) {
     if (url && APP_ID) {
         var image_url = URL_.parse(url).path;
         var filename = image_url.substring(0, image_url.lastIndexOf("/"));
@@ -82,12 +82,13 @@ minify = function (url, APP_ID, callback) {
         var image_name = url.substring(url_last_index_length + 1);
         var image_name_without_extension = image_name.substr(0, image_name.lastIndexOf('.'));
         var image_jpg = '/' + image_name_without_extension + '.jpg';
-        var image_minified_name = filename.replace("comtethr/300", "comtethr/300/minify");
+        var image_minified_name = filename.replace("comtethr/" + mobile_width, "comtethr/" + mobile_width + "/minify");
+        console.log(image_minified_name)
         if (filename == '/default') {
             callback(200, config.DEFAULT_IMAGE_URL);
         } else {
             if (fileExists('public' + image_minified_name + '/' + image_jpg) == false) {
-                      imagemin(["public/" + image_url], 'public/' + image_minified_name, {
+                      imagemin(["public/" + image_url], 'public' + image_minified_name, {
                        plugins: [
                        imageminMozjpeg(),
                        imageminPngquant({quality: '5'})
