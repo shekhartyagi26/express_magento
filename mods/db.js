@@ -20,22 +20,29 @@ module.exports = function () {
     var app_urls = mongoose.model('AppUrls', app_url_schema);
     mongoose.connect(config.DB_URL, function (err, db) {
 
+        var categoryListSchema = new Schema({
+            "cache": Number,
+            "key": String,
+            "name": String,
+            "type": String
+        });
+        var CollectioncategoryList = conn.model('categoryListCache', categoryListSchema);
 
-        var categoryListSchema = mongoose.Schema({}, {
-            strict: false,
-            collection: 'categoryList'
+        var homeSchema = mongoose.Schema({
+            "cache": Number,
+            "URL": String,
+            "type": String
         });
-        var CollectioncategoryList = conn.model('categoryList', categoryListSchema);
-        var homeSchema = mongoose.Schema({}, {
-            strict: false,
-            collection: 'homeSlider'
+        var homeSlider = conn.model('homeSliderCache', homeSchema);
+
+        var homeProductSchema = mongoose.Schema({
+            cache: Number,
+            key: String,
+            categoryName: String,
+            type: String
         });
-        var homeSlider = conn.model('homeSlider', homeSchema);
-        var homeProductSchema = mongoose.Schema({}, {
-            strict: false,
-            collection: 'homeProducts'
-        });
-        var homeProducts = conn.model('homeProducts', homeProductSchema);
+        var homeProducts = conn.model('homeProductsCache', homeProductSchema);
+
         app_urls.find({}, {APP_ID: 1, _id: 0}, function (err, value) {
             if (err) {
                 console.log(err);
@@ -44,16 +51,16 @@ module.exports = function () {
             } else {
                 for (i = 0; i < value.length; i++) {
                     app_id = value[i].get('APP_ID');
-                    cron(app_urls, CollectioncategoryList, homeSlider, homeProducts, app_id);
+                    processStore(app_urls, CollectioncategoryList, homeSlider, homeProducts, app_id);
                 }
             }
         });
     });
 
-
     conn.on('error', function (err) {
         process.exit();
     });
+
     var gfs = Grid(conn.db);
     return function (req, res, next) {
         req.mongo = conn;
@@ -61,4 +68,5 @@ module.exports = function () {
         req.app = app_urls;
         next();
     };
+
 };
