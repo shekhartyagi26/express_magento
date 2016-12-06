@@ -28,48 +28,40 @@ productGet = function (req, callback) {
                         if (status == 0) {
                             callback({status: 0, msg: response});
                         } else {
-                            if (response !== undefined) {
-                                var optmized_response = {};
-                                async.eachOfLimit(response, 1, processData, function (err) {
+                            if (response.data.media_images !== undefined) {
+                                var optmized_response = [];
+                                var minify_imag = [];
+                                async.eachOfLimit(response.data.media_images, 1, processData, function (err) {
+                                    response.data.media_images = optmized_response;
+                                    response.data.minify_image = minify_imag;
                                     if (err) {
                                         callback({status: 0, msg: 'OOPS! How is this possible?'});
                                     } else {
                                         redisSet('product_' + body.sku, {
                                             'id': body.sku,
-                                            "body": JSON.stringify(optmized_response)
+                                            "body": JSON.stringify(response)
                                         }, function () {
-                                            callback({status: status, msg: optmized_response})
+                                            callback({status: status, msg: response})
                                         });
                                     }
                                 });
                             } else {
                                 callback({status: 0, msg: ERROR});
                             }
-                            function processData(item, key, callback) {
-                                if (item.media_images) {
-                                    for (var i = 0; i < item.media_images.length; i++) {
-                                        var image_url = item.media_images[i];
-                                        image_length = item.media_images.length;
-                                        var image_url = item.small_image;
-                                        resize(image_url, APP_ID, body.mobile_width, function (status, image_name) {
-                                            if (status == "200") {
-                                                minify(image_name, APP_ID, function (status, minify_image) {
-                                                    item.media_images = image_name;
-                                                    // item.minify_image = minify_image;
-                                                    optmized_response[key] = item;
-                                                    if (image_length - 1) {
-                                                        callback(null);
-                                                    }
-                                                });
-                                            } else {
-                                                item.media_images = image_url;
-                                                // item.minify_image = image_url;
-                                                optmized_response[key] = item;
-                                                callback(null);
-                                            }
+                            function processData(image_url, key, callback) {
+                                resize(image_url, APP_ID, body.mobile_width, function (status, image_name) {
+                                    if (status == "200") {
+                                        minify(image_name, APP_ID, function (status, minify_image) {
+                                            optmized_response.push(image_name);
+                                            minify_imag.push(minify_image);
+                                            callback(null);
                                         });
+                                    } else {
+                                        optmized_response.push(image_url);
+                                        minify_imag.push(image_url);
+                                        callback(null);
                                     }
-                                }
+                                });
                             }
                         }
                     });
