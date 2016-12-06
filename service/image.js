@@ -107,4 +107,3 @@ minify = function (url, APP_ID, mobile_width, callback) {
         callback(500, " APP_ID or url cannot be empty");
     }
 };
-//
