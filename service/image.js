@@ -70,7 +70,7 @@ resize = function (url, APP_ID, mobile_width, callback) {
             }
         }
     } else {
-        callback(500, " APP_ID or url or mobile_width cannot be empty");
+        callback(500, "APP_ID or url or mobile_width cannot be empty");
     }
 };
 
