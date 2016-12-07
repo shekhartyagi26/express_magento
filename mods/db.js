@@ -22,6 +22,7 @@ module.exports = function () {
 
     });
 
+    var gsm_id = mongoose.model('GsmId', gsmSchema);
     conn.on('error', function (err) {
         process.exit();
     });
@@ -31,6 +32,7 @@ module.exports = function () {
         req.mongo = conn;
         req.gfs = gfs;
         req.app = app_urls;
+        req.Collection_gsm = gsm_id;
         next();
     };
 

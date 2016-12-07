@@ -1,4 +1,5 @@
 var config = {
+     "GOOGLE_API_KEY" : "AIzaSyD5qiC4qxrQENB3-0FX-4Y_mKGFPMF6Umo",
     'APP_ID': 'com.tethr',
     "DB_URL": "mongodb://127.0.0.1/magento_mobile",
     "URL": "http://144.76.34.244:8080/magento/mobile/web/index.php/excellence/mobile/api/v1",
