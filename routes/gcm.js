@@ -1,8 +1,7 @@
 imports('config/index');
 var express = require('express');
 var router = express.Router();
-var gcm = require('node-gcm');
-console.log(config.GOOGLE_API_KEY)
+var FCM = require("fcm-node");
 
 router.post('/add', function (req, res) {
     var add_gsm = req.Collection_gsm;
@@ -23,24 +22,29 @@ router.post('/add', function (req, res) {
     }
 });
 
-router.post('/pushmessage',function(req,res){
-
-var sender = new gcm.Sender(config.GOOGLE_API_KEY);
-
-// Prepare a message to be sent
-var message = new gcm.Message({
-    data: { key1: 'msg1' }
-});
-
-// Specify which registration IDs to deliver the message to
-var regTokens = ['YOUR_REG_TOKEN_HERE'];
-
-// Actually send the message
-sender.send(message, { registrationTokens: regTokens }, function (err, response) {
-    if (err) console.error(err);
-    else console.log(response);
-});
-
+router.post('/pushmessage', function (req, res) {
+    var serverKey = req.body.serverKey; //server key
+    var fcm = new FCM(serverKey);
+    var token = req.body.token; //token here
+    var message = {
+        to: token,
+        collapse_key: 'your_collapse_key',
+        notification: {
+            title: 'hello',
+            body: 'test'
+        },
+        data: {
+            my_key: 'my value',
+            contents: "http://www.news-magazine.com/world-week/21659772"
+        }
+    };
+    fcm.send(message, function (err, response) {
+        if (err) {
+            console.log("Something has gone wrong!");
+        } else {
+            console.log("Successfully sent with response: ", response);
+        }
+    });
 });
 
 module.exports = router;
