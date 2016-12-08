@@ -23,9 +23,11 @@ router.post('/add', function (req, res) {
 });
 
 router.post('/pushmessage', function (req, res) {
-    var serverKey = req.body.serverKey; //server key
+    // var serverKey = req.body.serverKey; //server key
+    // var token = req.body.token; //token here
+    var serverKey = 'AAAABZ9YBbQ:APA91bE1JXKpTGVp9ypCoT694hZ_HYMKUb7n1Aq4L32ydF5IgdtGhdDum5nc_UDPzJ72rBsUe8TI_Z8Tcdhb2RGOmVSnzyA8pBeyIVxA5RvVyxnz7VYhJVLKs6HfkHsHaictRyDp87dX';
     var fcm = new FCM(serverKey);
-    var token = req.body.token; //token here
+    var token = "d6Zs8WEhQ6A:APA91bFSAke13kcf5Uc3xUyMVtfpG5e-WIjZMfXbNNAe9vvuSoM_G3SkgTnLCeeH1xnJPQK5Rpk_DRo4mE6AdBme480fZwGNM428cMOpec4j3mjGd9yVMHdeItgWb98EAaWniETESf_J";
     var message = {
         to: token,
         collapse_key: 'your_collapse_key',
