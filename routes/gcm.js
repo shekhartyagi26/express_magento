@@ -40,4 +40,28 @@ router.post('/pushmessage', function (req, res) {
     });
 });
 
+//code for ios apn
+//     var deviceToken = 'regTokens';
+//     var note = new apn.Notification();
+//     note.badge = 1;
+//     note.contentAvailable = 1;
+//         if (message.params.data.body) {
+//             note.alert = '\uD83D\uDCE7 \u2709 ' + message.params.data.body;
+//         } else {
+//             note.alert = '\uD83D\uDCE7 \u2709 ' + message.params.notification.body;
+//         }
+//         note.payload = {"title": message.params.data.title, 'room_id': message.params.data.room_id, 'icon': message.params.data.icon, 'image': message.params.data.image, 'message': message.params.data.body};
+//         note.topic = "com.excellence.chatt";
+//             var options = {
+//                 gateway: 'gateway.push.apple.com', // this URL is different for Apple's Production Servers and changes when you go to production
+//                 production: true,
+//                 cert: 'cert.pem', // ** NEED TO SET TO YOURS
+//                 key: 'Key.pem', // ** NEED TO SET TO YOURS
+//                 passphrase: 'pass', // ** NEED TO SET TO YOURS
+//             }
+//             var apnProvider = new apn.Provider(options);
+//                 apnProvider.send(note, deviceToken).then((result) = > {
+//                     callback(true, result);
+//                 });
+
 module.exports = router;

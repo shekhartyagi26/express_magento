@@ -31,7 +31,6 @@ categoryProducts = function (req, callback) {
         type: 'optional',
         limit: 'required',
         id: 'required',
-        mobile_width: 'required',
         pageno: 'required'}, null, function (body) {
         if (body.status == 0) {
             callback({status: 0, msg: body.body});
@@ -66,9 +65,9 @@ categoryProducts = function (req, callback) {
                             }
                             function processData(item, key, callback) {
                                 var image_url = item.data.small_image;
-                                resize(image_url, APP_ID, body.mobile_width, function (status, image_name) {
+                                resize(image_url, APP_ID,function (status, image_name) {
                                     if (status == '200') {
-                                        minify(image_name, APP_ID, body.mobile_width, function (status, minify_image) {
+                                        minify(image_name, APP_ID,function (status, minify_image) {
                                             item.data.small_image = image_name;
                                             item.data.minify_image = minify_image;
                                             optmized_response[key] = item;

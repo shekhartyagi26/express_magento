@@ -17,7 +17,6 @@ homeProducts = function (req, callback) {
     validate(req, {
         type: 'optional',
         secret: 'optional',
-        mobile_width: 'required'
     }, null, function (body) {
         if (body.status == 0) {
             callback({status: 0, msg: body.body});
@@ -51,9 +50,9 @@ homeProducts = function (req, callback) {
                             }
                             function processData(item, key, callback) {
                                 var image_url = item.data.small_image;
-                                resize(image_url, APP_ID, body.mobile_width, function (status, image_name) {
+                                resize(image_url, APP_ID,function (status, image_name) {
                                     if (status == '200') {
-                                        minify(image_name, APP_ID, body.mobile_width, function (status, minify_image) {
+                                        minify(image_name, APP_ID,function (status, minify_image) {
                                             item.data.small_image = image_name;
                                             item.data.minify_image = minify_image;
                                             optmized_response[key] = item;
@@ -106,7 +105,6 @@ homeCategories = function (req, callback) {
 homeSlider = function (req, callback) {
     var APP_ID = req.headers.app_id;
     validate(req, {
-        mobile_width: 'required'
     }, null, function (body) {
         if (body.status == 0) {
             callback({status: 0, msg: body.body});
@@ -140,7 +138,7 @@ homeSlider = function (req, callback) {
                                 callback({status: 0, msg: ERROR});
                             }
                             function processData(item, key, callback) {
-                                resize(item, APP_ID, body.mobile_width, function (status, image_name) {
+                                resize(item, APP_ID, function (status, image_name) {
                                     if (status == '200') {
                                         item = image_name;
                                         optmized_response[key] = item;

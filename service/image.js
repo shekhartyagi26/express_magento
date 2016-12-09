@@ -13,16 +13,11 @@ var URL_ = require('url');
 var mkdirp = require('mkdirp');
 var path = require('path');
 
-resize = function (url, APP_ID, mobile_width, callback) {
+resize = function (url, APP_ID, callback) {
     if (url && APP_ID) {
-        if (mobile_width) {
-            mobile_width = mobile_width;
-        } else {
-            mobile_width = 200;
-        }
         var image_url = URL_.parse(url).path;
         var app_id = APP_ID.replace(/[^a-zA-Z0-9 ]/g, "");
-        var image_stored_url = app_id + '/' + mobile_width + image_url;
+        var image_stored_url = app_id + '/' + image_url;
         var url_last_index_length = url.lastIndexOf('/');
         var image_name = url.substring(url_last_index_length + 1);
         var filename = image_stored_url.substring(0, image_stored_url.lastIndexOf("/"));
@@ -33,7 +28,6 @@ resize = function (url, APP_ID, mobile_width, callback) {
             callback(200, config.DEFAULT_IMAGE_URL);
         } else {
             if (fileExists('public/original_image/' + image_name) == false) {
-                var width = parseInt(mobile_width);
                 var file = fs.createWriteStream("public/original_image/" + image_name);
                 http.get(url, function (response) {
                     mkdirp('public/' + filename, function (err) {
@@ -46,13 +40,13 @@ resize = function (url, APP_ID, mobile_width, callback) {
                         response.pipe(file);
                         response.on('end', function () {
                             sharp('public/original_image/' + image_name)
-                                    .resize(width)
+                                    .resize(200)
                                     .toFile('public/' + filename + image_webp, function (err) {
                                         if (err) {
                                             callback(500, err);
                                         } else if (err === null) {
                                             sharp('public/original_image/' + image_name)
-                                                    .resize(width)
+                                                    .resize(200)
                                                     .toFile('public/' + filename + image_png, function (err) {
                                                         callback(200, config.CDN_URL + filename + image_png);
                                                     });
@@ -70,11 +64,11 @@ resize = function (url, APP_ID, mobile_width, callback) {
             }
         }
     } else {
-        callback(500, "APP_ID or url or mobile_width cannot be empty");
+        callback(500, "APP_ID or url cannot be empty");
     }
 };
 
-minify = function (url, APP_ID, mobile_width, callback) {
+minify = function (url, APP_ID,callback) {
     if (url && APP_ID) {
         var image_url = URL_.parse(url).path;
         var filename = image_url.substring(0, image_url.lastIndexOf("/"));
@@ -82,7 +76,7 @@ minify = function (url, APP_ID, mobile_width, callback) {
         var image_name = url.substring(url_last_index_length + 1);
         var image_name_without_extension = image_name.substr(0, image_name.lastIndexOf('.'));
         var image_jpg = '/' + image_name_without_extension + '.jpg';
-        var image_minified_name = filename.replace("comtethr/" + mobile_width, "comtethr/" + mobile_width + "/minify");
+        var image_minified_name = filename.replace("comtethr/", "comtethr/minify");
         if (filename == '/default') {
             callback(200, config.DEFAULT_IMAGE_URL);
         } else {
