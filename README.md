@@ -7,7 +7,7 @@ this Express middleware is best beacuse of the speed of node. i am using here re
 you can visit this links for better understanding of request module https://github.com/request/request.
 # Redis
 I am using redis to store data in cache. and creating a api from which you can flush redis cache using FLUSHDB 
-
+```bash
 router.post('/flush', function (req, res) {
     var HeaderId_ = req.HeaderId;
     client.select(HeaderId_, function (err, res) {
@@ -21,6 +21,6 @@ router.post('/flush', function (req, res) {
         }
     });
 });
-
+```
 you can visit this links for better understanding of redis  https://www.sitepoint.com/using-redis-node-js/ . 
  
