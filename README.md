@@ -1,9 +1,9 @@
 # express_magento
 You can run it by type node bin/www
 
-# different magneto and different express(node) works together
+# Angular app which created for magento 1 and magento 2 .
  suppose we have different magento's and different express . In this  Express works as a middleware.
-this Express middleware is best beacuse of the speed of node. i am using here request module  for accessing magento's fetching data from middleware and sending it to frontend . 
+this Express middleware is best beacuse of the speed of node. i am using here request module  for accessing magento's fetching data from middleware and sending it to frontend .  just you need the install the app and storeid and that's it now we using our magento using app.
 you can visit this links for better understanding of request module https://github.com/request/request.
 # Redis
 I am using redis to store data in cache. and creating a api from which you can flush redis cache using FLUSHDB 
